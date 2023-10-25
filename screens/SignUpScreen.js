@@ -1,35 +1,41 @@
-import React from "react"
-import { Text, TextInput, TouchableOpacity, View } from "react-native"
-import { useSignIn } from "@clerk/clerk-expo"
-import { log } from "../logger"
-import { OAuthButtons } from "../components/OAuth"
-import { styles } from "../components/Styles"
+import * as React from "react";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useSignUp } from "@clerk/clerk-expo";
+import { log } from "../logger";
+import { styles } from "../components/Styles";
+import { OAuthButtons } from "../components/OAuth";
 
-export default function SignInScreen({ navigation }) {
-  const { signIn, setSession, isLoaded } = useSignIn()
+export default function SignUpScreen({ navigation }) {
+  const { isLoaded, signUp } = useSignUp();
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
+  const [emailAddress, setEmailAddress] = React.useState("");
+  const [password, setPassword] = React.useState("");
 
-  const [emailAddress, setEmailAddress] = React.useState("")
-  const [password, setPassword] = React.useState("")
-
-  const onSignInPress = async () => {
+  const onSignUpPress = async () => {
     if (!isLoaded) {
-      return
+      return;
     }
 
     try {
-      const completeSignIn = await signIn.create({
-        identifier: emailAddress,
-        password
-      })
+      await signUp.create({
+        firstName,
+        lastName,
+        emailAddress,
+        password,
+      });
 
-      await setSession(completeSignIn.createdSessionId)
+      // https://docs.clerk.dev/popular-guides/passwordless-authentication
+      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+
+      navigation.navigate("VerifyCode");
     } catch (err) {
-      log("Error:> " + err?.status || "")
-      log("Error:> " + err?.errors ? JSON.stringify(err.errors) : err)
+      log("Error:> " + err?.status || "");
+      log("Error:> " + err?.errors ? JSON.stringify(err.errors) : err);
     }
-  }
+  };
 
-  const onSignUpPress = () => navigation.replace("SignUp")
+  const onSignInPress = () => navigation.replace("SignIn");
 
   return (
     <View style={styles.container}>
@@ -39,12 +45,32 @@ export default function SignInScreen({ navigation }) {
 
       <View style={styles.inputView}>
         <TextInput
+          value={firstName}
+          style={styles.textInput}
+          placeholder="First name..."
+          placeholderTextColor="#000"
+          onChangeText={(firstName) => setFirstName(firstName)}
+        />
+      </View>
+
+      <View style={styles.inputView}>
+        <TextInput
+          value={lastName}
+          style={styles.textInput}
+          placeholder="Last name..."
+          placeholderTextColor="#000"
+          onChangeText={(lastName) => setLastName(lastName)}
+        />
+      </View>
+
+      <View style={styles.inputView}>
+        <TextInput
           autoCapitalize="none"
           value={emailAddress}
           style={styles.textInput}
           placeholder="Email..."
           placeholderTextColor="#000"
-          onChangeText={emailAddress => setEmailAddress(emailAddress)}
+          onChangeText={(email) => setEmailAddress(email)}
         />
       </View>
 
@@ -55,12 +81,12 @@ export default function SignInScreen({ navigation }) {
           placeholder="Password..."
           placeholderTextColor="#000"
           secureTextEntry={true}
-          onChangeText={password => setPassword(password)}
+          onChangeText={(password) => setPassword(password)}
         />
       </View>
 
-      <TouchableOpacity style={styles.primaryButton} onPress={onSignInPress}>
-        <Text style={styles.primaryButtonText}>Sign in</Text>
+      <TouchableOpacity style={styles.primaryButton} onPress={onSignUpPress}>
+        <Text style={styles.primaryButtonText}>Sign up</Text>
       </TouchableOpacity>
 
       <View style={styles.footer}>
@@ -68,12 +94,11 @@ export default function SignInScreen({ navigation }) {
 
         <TouchableOpacity
           style={styles.secondaryButton}
-          onPress={onSignUpPress}
+          onPress={onSignInPress}
         >
-          <Text style={styles.secondaryButtonText}>Sign up</Text>
+          <Text style={styles.secondaryButtonText}>Sign in</Text>
         </TouchableOpacity>
       </View>
     </View>
-  )
+  );
 }
-
