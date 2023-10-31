@@ -35,6 +35,6 @@ export async function createCollection(userId, firstName, lastName, collectionNa
       console.error('Error fetching collections:', error);
       return null;
     }
-    console.log(data);
+    // console.log(data);
     return data;
   }

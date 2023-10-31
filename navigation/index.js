@@ -3,16 +3,24 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import { NavigationContainer } from "@react-navigation/native"
-import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import * as React from "react"
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import * as React from "react";
 
-import SignUpScreen from "../screens/SignUpScreen"
-import SignInScreen from "../screens/SignInScreen"
-import VerifyCodeScreen from "../screens/VerifyCodeScreen"
-import MyProfileScreen from "../screens/MyProfileScreen"
-import LinkingConfiguration from "./LinkingConfiguration"
-import { ClerkLoaded, useUser } from "@clerk/clerk-expo"
+import SignUpScreen from "../screens/SignUpScreen";
+import SignInScreen from "../screens/SignInScreen";
+import VerifyCodeScreen from "../screens/VerifyCodeScreen";
+import MyProfileScreen from "../screens/MyProfileScreen";
+import HomeScreen from "../screens/HomeScreen";
+import CameraScreen from "../screens/CameraScreen";
+import SettingsScreen from "../screens/SettingsScreen";
+
+import LinkingConfiguration from "./LinkingConfiguration";
+import { ClerkLoaded, useUser } from "@clerk/clerk-expo";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+const Tab = createBottomTabNavigator();
+
 
 export default function Navigation() {
   return (
@@ -22,24 +30,31 @@ export default function Navigation() {
   )
 }
 
-const Stack = createNativeStackNavigator()
+const Stack = createNativeStackNavigator();
 
-/**
- * Read more about the protected routes pattern in React Native
- *
- * https://reactnavigation.org/docs/auth-flow
- */
+
+function MainTabs() {
+  return (
+    <Tab.Navigator>
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Camera" component={CameraScreen} />
+      <Tab.Screen name="Settings" component={SettingsScreen} />
+      <Tab.Screen name="Profile" component={MyProfileScreen} />
+    </Tab.Navigator>
+  );
+}
+
 const RootNavigator = () => {
-  const { isSignedIn } = useUser()
+  const { isSignedIn } = useUser();
 
   return (
     <ClerkLoaded>
       <Stack.Navigator>
         {isSignedIn ? (
           <Stack.Screen
-            name="MyProfile"
-            component={MyProfileScreen}
-            options={{ title: "MyProfile" }}
+            name="MainTabs"
+            component={MainTabs}
+            options={{ headerShown: false }} 
           />
         ) : (
           <>
