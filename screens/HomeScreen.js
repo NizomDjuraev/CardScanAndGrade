@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, Button, TouchableOpacity, View, Modal } from "react-native";
+import { StyleSheet, Text, TextInput, Button, TouchableOpacity, View, Modal, ScrollView, FlatList } from "react-native";
 import { createCollection } from "../backend/supabase";
 import { useCollections } from '../hooks/useCollections';
 import { useUser } from "@clerk/clerk-expo";
@@ -25,13 +25,17 @@ export default function HomeScreen() {
           <Text>Loading collections...</Text>
         ) : (
           <>
-            <Text style={styles.collectionsHeader}>My Collections</Text>
             <View style={styles.collectionsContainer}>
-              {collections.map((collection, index) => (
-                <View key={index} style={styles.collectionItem}>
-                  <Text style={styles.collectionText}>{collection.collection}</Text>
-                </View>
-              ))}
+              <FlatList
+                data={collections}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item, index }) => (
+                  <View key={index} style={styles.collectionItem}>
+                    <Text style={styles.collectionText}>{item.collection}</Text>
+                  </View>
+                )}
+                numColumns={2}
+              />
             </View>
           </>
         )}
@@ -70,7 +74,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: 20
+    padding: 10
   },
   collectionCreation: {
     flexDirection: "row",
@@ -129,15 +133,17 @@ const styles = StyleSheet.create({
   collectionsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    alignItems: "center",
     width: '100%',
+    paddingHorizontal: 5,
   },
   collectionItem: {
     backgroundColor: '#000',
-    width: '45%',
+    width: '47%',
+    margin: 5,
     aspectRatio: 1,
-    marginBottom: 20, 
+    marginBottom: 5, 
     justifyContent: 'center', 
     alignItems: 'center', 
     padding: 10,
