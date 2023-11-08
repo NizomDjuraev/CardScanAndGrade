@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import { Camera } from 'expo-camera';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons'; 
+import * as ImagePicker from 'expo-image-picker';
 
 export default function CameraScreen() {
   const [hasPermission, setHasPermission] = useState(null);
@@ -25,32 +27,49 @@ export default function CameraScreen() {
     setCapturedPhoto(null);
   };
 
+  const openCameraRoll = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (permissionResult.granted === false) {
+      alert("This app doesn have permission to access your camera roll");
+      return;
+    }
+  
+    const pickerResult = await ImagePicker.launchImageLibraryAsync();
+    
+    if (pickerResult.cancelled === true) {
+      return;
+    }
+  
+    setCapturedPhoto(pickerResult.uri);
+  };
+
+
   if (hasPermission === null) {
     return <View />;
   }
   if (hasPermission === false) {
     return <Text>No access to camera</Text>;
   }
+
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       {capturedPhoto ? (
-        <View style={{ flex: 1 }}>
-          <Image source={{ uri: capturedPhoto }} style={{ flex: 1 }} />
-          <TouchableOpacity onPress={retakePicture} style={{ position: 'absolute', top: 20, left: 20 }}>
-            <Text style={{ fontSize: 18, color: 'white' }}>X</Text>
+        <View style={styles.previewContainer}>
+          <Image source={{ uri: capturedPhoto }} style={styles.previewImage} />
+          <TouchableOpacity onPress={retakePicture} style={styles.closeButton}>
+            <Text style={styles.closeButtonText}>X</Text>
           </TouchableOpacity>
         </View>
       ) : (
-        <Camera style={{ flex: 1 }} ref={cameraRef}>
-          <View style={{ flex: 1, backgroundColor: 'transparent', flexDirection: 'row' }}>
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                alignSelf: 'flex-end',
-                alignItems: 'center',
-              }}
-              onPress={takePicture}>
-              <Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}>Take Picture</Text>
+        <Camera style={styles.camera} ref={cameraRef}>
+          <View style={styles.cameraFooter}>
+            <TouchableOpacity onPress={openCameraRoll} style={styles.iconButton}>
+              <MaterialIcons name="insert-photo" size={24} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={takePicture} style={styles.takePictureButton} />
+            <TouchableOpacity style={styles.iconButton}>
+              <Ionicons name="arrow-forward" size={24} color="white" />
             </TouchableOpacity>
           </View>
         </Camera>
@@ -58,3 +77,68 @@ export default function CameraScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  previewContainer: {
+    flex: 1,
+  },
+  previewImage: {
+    flex: 1,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+  },
+  closeButtonText: {
+    fontSize: 18,
+    color: 'white',
+  },
+  camera: {
+    flex: 1,
+  },
+  cameraFooter: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'flex-end',
+    marginBottom: 20,
+  },
+  takePictureButton: {
+    borderWidth: 2,
+    borderColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 70,
+    height: 70,
+    backgroundColor: '#1D9DB9',
+    borderRadius: 35,
+  },
+  cameraRollButton: {
+    width: 50,
+    height: 50,
+    backgroundColor: '#1D9DB9',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cameraRollButtonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  placeholderButton: {
+    width: 50,
+    height: 50,
+    backgroundColor: '#1D9DB9',
+  },
+  iconButton: {
+    width: 50,
+    height: 50,
+    backgroundColor: 'transparent',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
