@@ -42,6 +42,12 @@ function MainTabs() {
   return (
     <Tab.Navigator 
       screenOptions={{
+        headerStyle: {
+          backgroundColor: '#272727',
+        },
+        headerTitleStyle: {
+          color: '#1D9DB9'
+        },
         tabBarStyle: {
           backgroundColor: '#272727',
         }, 
@@ -50,7 +56,7 @@ function MainTabs() {
       }}
     >
       <Tab.Screen 
-        name="Home" 
+        name="My Collections" 
         component={HomeScreen} 
         options={{
             tabBarIcon: ({ color, size, focused }) => (

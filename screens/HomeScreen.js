@@ -1,69 +1,69 @@
 import React, { useState } from "react";
-import {
-  StyleSheet, Text, TextInput, Button, TouchableOpacity, View, Modal
-} from "react-native";
+import { StyleSheet, Text, TextInput, Button, TouchableOpacity, View, Modal } from "react-native";
 import { createCollection } from "../backend/supabase";
 import { useCollections } from '../hooks/useCollections';
 import { useUser } from "@clerk/clerk-expo";
 
 export default function HomeScreen() {
-  const { user } = useUser();
-  const { collections, loading, reloadCollections } = useCollections(user?.id);
-
-  const [collectionName, setCollectionName] = useState("");
-  const [modalVisible, setModalVisible] = useState(false);
-
-  const onCreateCollectionPress = async () => {
-    if (collectionName && user) {
-      await createCollection(user.id, user.firstName, user.lastName, collectionName);
-      setCollectionName("");
-      reloadCollections();
-    }
-  };
-
-  return (
-    <View style={styles.container}>
-      {loading ? (
-        <Text>Loading collections...</Text>
-      ) : (
-        <>
-          <Text style={styles.collectionsHeader}>My Collections</Text>
-          {collections.map((collection, index) => (
-            <View key={index} style={styles.collectionItem}>
-              <Text>{collection.collection}</Text>
+    const { user } = useUser();
+    const { collections, loading, reloadCollections } = useCollections(user?.id);
+  
+    const [collectionName, setCollectionName] = useState("");
+    const [modalVisible, setModalVisible] = useState(false);
+  
+    const onCreateCollectionPress = async () => {
+      if (collectionName && user) {
+        await createCollection(user.id, user.firstName, user.lastName, collectionName);
+        setCollectionName("");
+        reloadCollections();
+      }
+    };
+  
+    return (
+      <View style={styles.container}>
+        {loading ? (
+          <Text>Loading collections...</Text>
+        ) : (
+          <>
+            <Text style={styles.collectionsHeader}>My Collections</Text>
+            <View style={styles.collectionsContainer}>
+              {collections.map((collection, index) => (
+                <View key={index} style={styles.collectionItem}>
+                  <Text style={styles.collectionText}>{collection.collection}</Text>
+                </View>
+              ))}
             </View>
-          ))}
-        </>
-      )}
-      <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
-        <Text style={styles.addButtonText}>+</Text>
-      </TouchableOpacity>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <TextInput
-              style={styles.input}
-              value={collectionName}
-              onChangeText={setCollectionName}
-              placeholder="Enter collection name"
-            />
-            <Button title="Create Collection" onPress={onCreateCollectionPress} />
-            <TouchableOpacity style={{ marginTop: 10 }} onPress={() => setModalVisible(!modalVisible)}>
-              <Text>Close</Text>
-            </TouchableOpacity>
+          </>
+        )}
+        <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
+          <Text style={styles.addButtonText}>+</Text>
+        </TouchableOpacity>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <TextInput
+                style={styles.input}
+                value={collectionName}
+                onChangeText={setCollectionName}
+                placeholder="Enter collection name"
+              />
+              <Button title="Create Collection" onPress={onCreateCollectionPress} />
+              <TouchableOpacity style={{ marginTop: 10 }} onPress={() => setModalVisible(!modalVisible)}>
+                <Text>Close</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </Modal>
-    </View>
-  )
-}
+        </Modal>
+      </View>
+    );
+  }
 
 const styles = StyleSheet.create({
   container: {
@@ -125,6 +125,25 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
     marginBottom: 10,
+  },
+  collectionsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    alignItems: 'flex-start',
+    width: '100%',
+  },
+  collectionItem: {
+    backgroundColor: '#000',
+    width: '45%',
+    aspectRatio: 1,
+    marginBottom: 20, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    padding: 10,
+  },
+  collectionText: {
+    color: '#fff',
   },
 })
 
