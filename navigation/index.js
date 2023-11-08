@@ -37,14 +37,24 @@ const Stack = createNativeStackNavigator();
 
 
 function MainTabs() {
+  const iconColor = '#1D9DB9';
+
   return (
-    <Tab.Navigator>
+    <Tab.Navigator 
+      screenOptions={{
+        tabBarStyle: {
+          backgroundColor: '#272727',
+        }, 
+        tabBarActiveTintColor: 'white',
+        tabBarInactiveTintColor: iconColor,
+      }}
+    >
       <Tab.Screen 
         name="Home" 
         component={HomeScreen} 
         options={{
-            tabBarIcon: ({ color, size }) => (
-              <AntDesign name="home" size={size} color={color} />
+            tabBarIcon: ({ color, size, focused }) => (
+              <AntDesign name="home" size={size} color={focused ? 'white' : iconColor} />
             ),
         }}
       />
@@ -52,8 +62,8 @@ function MainTabs() {
         name="Camera" 
         component={CameraScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <AntDesign name="camerao" size={size} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <AntDesign name="camerao" size={size} color={focused ? 'white' : iconColor} />
           ),
         }}
       />
@@ -61,8 +71,8 @@ function MainTabs() {
         name="Settings" 
         component={SettingsScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <AntDesign name="setting" size={size} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <AntDesign name="setting" size={size} color={focused ? 'white' : iconColor} />
           ),
         }}
       />
@@ -70,8 +80,8 @@ function MainTabs() {
         name="Profile" 
         component={MyProfileScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" size={size} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons name="person-outline" size={size} color={focused ? 'white' : iconColor} />
           ),
         }}
       />
@@ -114,4 +124,3 @@ const RootNavigator = () => {
     </ClerkLoaded>
   )
 }
-
