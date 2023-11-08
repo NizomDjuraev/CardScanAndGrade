@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, Button, TouchableOpacity, View, Modal, ScrollView, FlatList } from "react-native";
+import { StyleSheet, Text, TextInput, Button, TouchableOpacity, View, Modal, FlatList } from "react-native";
 import { createCollection } from "../backend/supabase";
 import { useCollections } from '../hooks/useCollections';
 import { useUser } from "@clerk/clerk-expo";
@@ -10,6 +10,7 @@ export default function HomeScreen() {
   
     const [collectionName, setCollectionName] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
   
     const onCreateCollectionPress = async () => {
       if (collectionName && user) {
@@ -18,9 +19,21 @@ export default function HomeScreen() {
         reloadCollections();
       }
     };
+
+    const filteredCollections = collections.filter(collection => {
+      return collection.collection.toLowerCase().includes(searchQuery.toLowerCase());
+    });
   
     return (
       <View style={styles.container}>
+        <View style={styles.searchBarContainer}>
+            <TextInput
+                style={styles.searchBarInput}
+                placeholder="Search for a collection"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+            />
+        </View>
         {loading ? (
           <Text>Loading collections...</Text>
         ) : (
@@ -74,7 +87,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: 10
+    padding: 10,
+    backgroundColor: '#adadad',
   },
   collectionCreation: {
     flexDirection: "row",
@@ -150,6 +164,21 @@ const styles = StyleSheet.create({
   },
   collectionText: {
     color: '#fff',
+  },
+  searchBarContainer: {
+    backgroundColor: '#272727',
+    height: '20%',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  searchBarInput: {
+      backgroundColor: '#fff',
+      borderRadius: 20,
+      width: '80%',
+      padding: 10,
   },
 })
 
