@@ -4,6 +4,7 @@ import { useSignUp } from "@clerk/clerk-expo";
 import { log } from "../logger";
 import { styles } from "../components/Styles";
 import { OAuthButtons } from "../components/OAuth";
+import { Ionicons } from '@expo/vector-icons';
 
 export default function SignUpScreen({ navigation }) {
   const { isLoaded, signUp } = useSignUp();
@@ -38,59 +39,71 @@ export default function SignUpScreen({ navigation }) {
   const onSignInPress = () => navigation.replace("SignIn");
 
   return (
-    <View style={styles.container}>
+    <View style={styles.loginView}>
       <View style={styles.oauthView}>
         <OAuthButtons />
       </View>
 
-      <View style={styles.inputView}>
+      <View style={styles.loginInputView}>
+        <View style={styles.iconContainer}>
+          <Ionicons name="ios-person-outline" size={20} color="#fff" />
+        </View>
         <TextInput
           value={firstName}
-          style={styles.textInput}
+          style={styles.loginTextInput}
           placeholder="First name..."
-          placeholderTextColor="#000"
+          placeholderTextColor="#fff"
           onChangeText={(firstName) => setFirstName(firstName)}
         />
       </View>
 
-      <View style={styles.inputView}>
+      <View style={styles.loginInputView}>
+        <View style={styles.iconContainer}>
+          <Ionicons name="ios-person-outline" size={20} color="#fff" />
+        </View>
         <TextInput
           value={lastName}
-          style={styles.textInput}
+          style={styles.loginTextInput}
           placeholder="Last name..."
-          placeholderTextColor="#000"
+          placeholderTextColor="#fff"
           onChangeText={(lastName) => setLastName(lastName)}
         />
       </View>
 
-      <View style={styles.inputView}>
+      <View style={styles.loginInputView}>
+        <View style={styles.iconContainer}>
+          <Ionicons name="ios-mail-outline" size={20} color="#fff" />
+        </View>
         <TextInput
           autoCapitalize="none"
           value={emailAddress}
-          style={styles.textInput}
+          style={styles.loginTextInput}
           placeholder="Email..."
-          placeholderTextColor="#000"
+          placeholderTextColor="#fff"
           onChangeText={(email) => setEmailAddress(email)}
         />
       </View>
 
-      <View style={styles.inputView}>
+      <View style={styles.loginInputView}>
+        <View style={styles.iconContainer}>
+          <Ionicons name="lock-closed-outline" size={20} color="#fff" />
+        </View>
         <TextInput
           value={password}
-          style={styles.textInput}
+          style={styles.loginTextInput}
           placeholder="Password..."
-          placeholderTextColor="#000"
+          placeholderTextColor="#fff"
           secureTextEntry={true}
           onChangeText={(password) => setPassword(password)}
         />
       </View>
 
-      <TouchableOpacity style={styles.primaryButton} onPress={onSignUpPress}>
-        <Text style={styles.primaryButtonText}>Sign up</Text>
+      <TouchableOpacity style={styles.loginButton} onPress={onSignUpPress}>
+        <Text style={styles.loginButtonText}>Sign up</Text>
       </TouchableOpacity>
 
-      <View style={styles.footer}>
-        <Text>Have an account?</Text>
+      <View style={styles.loginFooter}>
+        <Text style={{ color: '#fff' }}>Have an account?</Text>
 
         <TouchableOpacity
           style={styles.secondaryButton}

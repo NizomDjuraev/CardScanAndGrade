@@ -100,7 +100,11 @@ const RootNavigator = () => {
 
   return (
     <ClerkLoaded>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{ 
+          headerStyle: {backgroundColor: "#272727"}, headerTitleStyle: {color: "#fff"},
+        }}
+      >
         {isSignedIn ? (
           <Stack.Screen
             name="MainTabs"
@@ -122,7 +126,7 @@ const RootNavigator = () => {
             <Stack.Screen
               name="VerifyCode"
               component={VerifyCodeScreen}
-              options={{ title: "Sign Up" }}
+              options={{ title: "Verify Code" }}
             />
           </>
         )}
