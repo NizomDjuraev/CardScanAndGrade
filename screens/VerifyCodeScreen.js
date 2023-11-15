@@ -27,18 +27,18 @@ export default function SignUpScreen({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.inputView}>
+    <View style={styles.loginView}>
+      <View style={styles.loginInputView}>
         <TextInput
           value={code}
-          style={styles.textInput}
+          style={styles.loginTextInput}
           placeholder="Code..."
-          placeholderTextColor="#000"
+          placeholderTextColor="#fff"
           onChangeText={code => setCode(code)}
         />
       </View>
-      <TouchableOpacity style={styles.primaryButton} onPress={onPress}>
-        <Text style={styles.primaryButtonText}>Verify Email</Text>
+      <TouchableOpacity style={styles.loginButton} onPress={onPress}>
+        <Text style={styles.loginButtonText}>Verify Email</Text>
       </TouchableOpacity>
     </View>
   )
