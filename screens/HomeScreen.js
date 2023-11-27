@@ -30,31 +30,33 @@ export default function HomeScreen() {
             <TextInput
                 style={styles.searchBarInput}
                 placeholder="Search for a collection"
+                placeholderTextColor="#000"
                 value={searchQuery}
                 onChangeText={setSearchQuery}
             />
+            <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
+              <Text style={styles.addButtonText}>+</Text>
+            </TouchableOpacity>
         </View>
         {loading ? (
           <Text>Loading collections...</Text>
         ) : (
           <>
             <View style={styles.collectionsContainer}>
-              <FlatList
-                data={collections}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item, index }) => (
-                  <View key={index} style={styles.collectionItem}>
-                    <Text style={styles.collectionText}>{item.collection}</Text>
-                  </View>
-                )}
-                numColumns={2}
-              />
+              {/* <FlatList
+                  data={collections}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={({ item, index }) => (
+                    <View key={index} style={styles.collectionItem}>
+                      <Text style={styles.collectionText}>{item.collection}</Text>
+                    </View>
+                  )}
+                  numColumns={2}
+                /> */}
             </View>
           </>
         )}
-        <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
-          <Text style={styles.addButtonText}>+</Text>
-        </TouchableOpacity>
+        
         <Modal
           animationType="slide"
           transparent={true}
@@ -87,7 +89,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: 10,
+    padding: 0,
     backgroundColor: '#adadad',
   },
   collectionCreation: {
@@ -103,19 +105,22 @@ const styles = StyleSheet.create({
     flex: 1
   },
   addButton: {
-    position: 'absolute',
-    right: 20,
-    top: 20,
     width: 50,
     height: 50,
     borderRadius: 25,
     backgroundColor: '#2e78b7',
     alignItems: 'center',
     justifyContent: 'center',
+    marginLeft: 15,
+    marginRight: 15,
+    marginTop: 40,
+    
   },
   addButtonText: {
     fontSize: 30,
     color: '#fff',
+    textAlignVertical: 'center',
+    textAlign: 'center',
   },
   centeredView: {
     flex: 1,
@@ -169,16 +174,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#272727',
     height: '20%',
     width: '100%',
-    justifyContent: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    position: "absolute",
+    top: 0,
   },
   searchBarInput: {
       backgroundColor: '#fff',
       borderRadius: 20,
-      width: '80%',
-      padding: 10,
+      padding: 15,
+      flex: 1,
+      marginLeft: 15,
+      marginTop: 40,
   },
 })
-

@@ -61,7 +61,7 @@ function MainTabs() {
         options={{
             tabBarIcon: ({ color, size, focused }) => (
               <AntDesign name="home" size={size} color={focused ? 'white' : iconColor} />
-            ),
+            ), headerShown: false,
         }}
       />
       <Tab.Screen 
