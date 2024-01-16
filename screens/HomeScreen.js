@@ -11,6 +11,10 @@ export default function HomeScreen() {
     const [collectionName, setCollectionName] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
+
+    const filteredCollections = collections.filter(collection => {
+      return collection.collection.toLowerCase().startsWith(searchQuery.toLowerCase());
+    });
   
     const onCreateCollectionPress = async () => {
       if (collectionName && user) {
@@ -20,9 +24,9 @@ export default function HomeScreen() {
       }
     };
 
-    const filteredCollections = collections.filter(collection => {
-      return collection.collection.toLowerCase().includes(searchQuery.toLowerCase());
-    });
+    const updateSearchQuery = (query) => {
+      setSearchQuery(query);
+    };
   
     return (
       <View style={styles.container}>
@@ -32,7 +36,7 @@ export default function HomeScreen() {
                 placeholder="Search for a collection"
                 placeholderTextColor="#000"
                 value={searchQuery}
-                onChangeText={setSearchQuery}
+                onChangeText={updateSearchQuery}
             />
             <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
               <Text style={styles.addButtonText}>+</Text>
@@ -43,8 +47,8 @@ export default function HomeScreen() {
         ) : (
           <>
             <View style={styles.collectionsContainer}>
-              {/* <FlatList
-                  data={collections}
+              <FlatList
+                  data={filteredCollections}
                   keyExtractor={(item, index) => index.toString()}
                   renderItem={({ item, index }) => (
                     <View key={index} style={styles.collectionItem}>
@@ -52,7 +56,8 @@ export default function HomeScreen() {
                     </View>
                   )}
                   numColumns={2}
-                /> */}
+                  style={{ height: 612 }}
+                />
             </View>
           </>
         )}
@@ -72,6 +77,7 @@ export default function HomeScreen() {
                 value={collectionName}
                 onChangeText={setCollectionName}
                 placeholder="Enter collection name"
+                placeholderTextColor="#a7a7a7"
               />
               <Button title="Create Collection" onPress={onCreateCollectionPress} />
               <TouchableOpacity style={{ marginTop: 10 }} onPress={() => setModalVisible(!modalVisible)}>
@@ -153,19 +159,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    alignItems: "center",
+    alignItems: "flex-start",
     width: '100%',
     paddingHorizontal: 5,
+    marginTop: '39%',
   },
   collectionItem: {
-    backgroundColor: '#000',
-    width: '47%',
-    margin: 5,
+    width: '48%',
     aspectRatio: 1,
-    marginBottom: 5, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    padding: 10,
+    backgroundColor: 'black',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: '1%',
+    borderRadius: 10,
   },
   collectionText: {
     color: '#fff',
