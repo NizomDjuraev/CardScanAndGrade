@@ -1,4 +1,4 @@
-Card Scanner and Grader App Using React Native and Expo as a dev environment for simplifying various aspects
+Card Scanner and Grader App Using React Native and Expo as a dev environment for simplifying the mobile development process
 
 
 Instructions For Environment Setup:
