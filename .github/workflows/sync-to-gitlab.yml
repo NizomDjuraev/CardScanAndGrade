@@ -1,0 +1,18 @@
+name: Push to GitLab
+on: [push]
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout GitHub repository
+      uses: actions/checkout@v2
+    - name: Push to GitLab
+      uses: dmnemec/copycat-action@master
+      with:
+        personal_token: ${{ secrets.GITLAB_TOKEN }}
+        src_path: .
+        dst_path: .
+        dst_owner: nd5961
+        dst_repo_name: senior-design-project
+        dst_branch: master
+        gitlab_url: https://gitlab.com
