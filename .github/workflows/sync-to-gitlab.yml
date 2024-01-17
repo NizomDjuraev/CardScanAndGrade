@@ -11,4 +11,5 @@ jobs:
         git clone https://github.com/${{ github.repository }} tmp_repo
         cd tmp_repo
         git remote add gitlab https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.cci.drexel.edu/nd5961/senior-design-project.git
-        git push --mirror gitlab
+        git push gitlab 'refs/heads/*:refs/heads/*'
+        git push gitlab 'refs/tags/*:refs/tags/*'
