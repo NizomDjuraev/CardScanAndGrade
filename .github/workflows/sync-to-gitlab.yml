@@ -7,8 +7,9 @@ jobs:
     - name: Mirror the GitHub repository to GitLab
       env:
         GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
-        GITLAB_REPO: https://gitlab.cci.drexel.edu/nd5961/senior-design-project
+        GITLAB_REPO: https://gitlab.cci.drexel.edu/nd5961/senior-design-project.git
       run: |
-        git clone --mirror https://github.com/${{ github.repository }} tmp_repo
+        git clone https://github.com/${{ github.repository }} tmp_repo
         cd tmp_repo
-        git push --mirror "${GITLAB_REPO}"
+        git remote add gitlab "${GITLAB_REPO}"
+        git push --mirror gitlab
