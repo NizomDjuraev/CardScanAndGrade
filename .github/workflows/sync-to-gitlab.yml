@@ -1,18 +1,14 @@
-name: Push to GitLab
+name: Mirror to GitLab
 on: [push]
 jobs:
-  sync:
+  mirror:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout GitHub repository
-      uses: actions/checkout@v2
-    - name: Push to GitLab
-      uses: dmnemec/copycat-action@master
-      with:
-        personal_token: ${{ secrets.GITLAB_TOKEN }}
-        src_path: .
-        dst_path: .
-        dst_owner: nd5961
-        dst_repo_name: senior-design-project
-        dst_branch: master
-        gitlab_url: https://gitlab.com
+    - name: Mirror the GitHub repository to GitLab
+      env:
+        GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+        GITLAB_REPO: https://gitlab.com/nd5961/senior-design-project.git
+      run: |
+        git clone --mirror https://github.com/${{ github.repository }} tmp_repo
+        cd tmp_repo
+        git push --mirror "${GITLAB_REPO}"
