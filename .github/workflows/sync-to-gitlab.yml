@@ -7,7 +7,7 @@ jobs:
     - name: Mirror the GitHub repository to GitLab
       env:
         GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
-        GITLAB_REPO: https://gitlab.com/nd5961/senior-design-project.git
+        GITLAB_REPO: https://gitlab.cci.drexel.edu/nd5961/senior-design-project
       run: |
         git clone --mirror https://github.com/${{ github.repository }} tmp_repo
         cd tmp_repo
