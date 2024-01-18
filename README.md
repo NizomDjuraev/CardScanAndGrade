@@ -7,7 +7,7 @@ From root dir
 npm i (installs all packages/dependencies)
 
 npm start
-Hi
+
 __________________________________________________
 
 Once the metro bundler has finished you can:
