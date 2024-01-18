@@ -1,6 +1,5 @@
 Card Scanner and Grader App Using React Native and Expo as a dev environment for simplifying the mobile development process
 
-
 Instructions For Environment Setup:
 From root dir
 
@@ -8,7 +7,7 @@ npm i (installs all packages/dependencies)
 
 npm start
 
-__________________________________________________
+---
 
 Once the metro bundler has finished you can:
 
@@ -18,4 +17,4 @@ Once the metro bundler has finished you can:
 
 Test Commit 2
 
-Wyatt was here
+Wyatt was here again
