@@ -15,6 +15,6 @@ Once the metro bundler has finished you can:
 2. Press a to open in an Android emulator
 3. Press r to reload the app
 
-Test Commit 2
+Sync
 
 Wyatt was here again

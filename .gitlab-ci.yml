@@ -1,0 +1,10 @@
+stages:
+  - push_to_github
+
+push_to_github_job:
+  stage: push_to_github
+  only:
+    - main
+  script:
+    - git remote add github https://NizomDjuraev:${GITHUB_TOKEN}@github.com/NizomDjuraev/CardScanAndGrade.git
+    - git push github HEAD:main
