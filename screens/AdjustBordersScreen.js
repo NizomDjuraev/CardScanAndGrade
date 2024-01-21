@@ -1,65 +1,63 @@
 import React, { useState } from 'react';
-import { View, Button, Image, StyleSheet, Text, TextInput } from 'react-native';
-import * as ImageManipulator from 'expo-image-manipulator';
+import {
+  View,
+  Button,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  Keyboard,
+  TextInput
+} from 'react-native';
 
 const AdjustBordersScreen = () => {
-    const [adjustedUri, setAdjustedUri] = useState(null);
-    const [cropParams, setCropParams] = useState({ originX: 0, originY: 0, width: 100, height: 100 });
+    const [isProcessing, setIsProcessing] = useState(false);
+    // Placeholder image URI for testing purposes
+    const placeholderImageUri = 'https://via.placeholder.com/300';
 
-    // Placeholder image URI
-    const placeholderImageUri = 'https://via.placeholder.com/300'; // Replace with your local image URI if needed
+    // Input states
+    const [originX, setOriginX] = useState('0');
+    const [originY, setOriginY] = useState('0');
+    const [width, setWidth] = useState('100');
+    const [height, setHeight] = useState('100');
 
-    const handleAdjustBorders = async () => {
-        try {
-            const result = await ImageManipulator.manipulateAsync(
-                placeholderImageUri,
-                [{ crop: cropParams }],
-                { compress: 1, format: ImageManipulator.SaveFormat.PNG }
-            );
-            setAdjustedUri(result.uri);
-        } catch (error) {
-            console.error('Error adjusting image:', error);
-        }
-    };
-
-    const updateCropParam = (param, value) => {
-        setCropParams({...cropParams, [param]: parseInt(value) });
+    const handleAdjustBorders = () => {
+        // Example logic for adjusting borders
+        setIsProcessing(true);
+        console.log(`Adjusting borders with: originX: ${originX}, originY: ${originY}, width: ${width}, height: ${height}`);
+        // Simulate processing time
+        setTimeout(() => {
+            setIsProcessing(false);
+        }, 2000);
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Adjust Image Borders</Text>
-            <View style={styles.inputContainer}>
-                <TextInput 
-                    style={styles.input} 
-                    onChangeText={(value) => updateCropParam('originX', value)}
-                    placeholder="Origin X"
-                    keyboardType="numeric"
-                />
-                <TextInput 
-                    style={styles.input} 
-                    onChangeText={(value) => updateCropParam('originY', value)}
-                    placeholder="Origin Y"
-                    keyboardType="numeric"
-                />
-                <TextInput 
-                    style={styles.input} 
-                    onChangeText={(value) => updateCropParam('width', value)}
-                    placeholder="Width"
-                    keyboardType="numeric"
-                />
-                <TextInput 
-                    style={styles.input} 
-                    onChangeText={(value) => updateCropParam('height', value)}
-                    placeholder="Height"
-                    keyboardType="numeric"
-                />
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <View style={styles.container}>
+                <Text style={styles.title}>Adjust Image Borders</Text>
+                <Image source={{ uri: placeholderImageUri }} style={styles.previewImage} />
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setOriginX}
+                        value={originX}
+                        keyboardType='numeric'
+                        placeholder='Origin X'
+                    />
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setOriginY}
+                        value={originY}
+                        keyboardType='numeric'
+                        placeholder='Origin Y'
+                    />
+                    {/* Inputs for Width and Height */}
+                    {/* ... */}
+                </View>
+                <Button title='Adjust Borders' onPress={handleAdjustBorders} />
+                {isProcessing && <Text style={styles.processingText}>Processing...</Text>}
             </View>
-            {adjustedUri && (
-                <Image source={{ uri: adjustedUri }} style={styles.adjustedImage} />
-            )}
-            <Button title='Adjust Borders' onPress={handleAdjustBorders} style={styles.button} />
-        </View>
+        </TouchableWithoutFeedback>
     );
 };
 
@@ -69,36 +67,41 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#f5f5f5',
+        paddingTop: 20,
     },
     title: {
         fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 20,
     },
+    previewImage: {
+        width: 300,
+        height: 300,
+        resizeMode: 'contain',
+        borderWidth: 1,
+        borderColor: '#ddd',
+    },
     inputContainer: {
         flexDirection: 'row',
-        marginBottom: 20,
+        justifyContent: 'space-around',
+        width: '100%',
+        padding: 20,
     },
     input: {
         borderWidth: 1,
         borderColor: '#ddd',
         padding: 10,
-        marginRight: 10,
-        width: 70,
+        width: '20%',
+        textAlign: 'center',
     },
-    adjustedImage: {
-        width: 300,
-        height: 300,
-        resizeMode: 'contain',
-        margin: 20,
+    processingText: {
+        marginTop: 20,
+        fontSize: 16,
+        color: 'grey',
     },
-    button: {
-        backgroundColor: '#007bff',
-        padding: 10,
-        borderRadius: 5,
-    },
-    // Additional styling as needed
+    // Add additional styling as needed
 });
 
 export default AdjustBordersScreen;
+
 
