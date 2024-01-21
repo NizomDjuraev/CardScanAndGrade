@@ -1,24 +1,26 @@
 import React, { useState } from 'react';
 import { View, Button, Image, StyleSheet, Text } from 'react-native';
 
-const AdjustBordersScreen = ({ route, navigation }) => {
+const AdjustBordersScreen = () => {
     const [isProcessing, setIsProcessing] = useState(false);
-    const [imageUri, setImageUri] = useState(route.params.imageUri); // Assuming imageUri is passed from the previous screen
+
+    // Placeholder image URI for testing purposes
+    const placeholderImageUri = 'https://via.placeholder.com/300'; // Replace with any valid image URI
 
     const handleAdjustBorders = () => {
+        // Your logic for adjusting the borders will go here
         setIsProcessing(true);
-
-        // Simulate image processing delay
+        console.log('Adjust borders clicked');
+        // Simulate processing time
         setTimeout(() => {
             setIsProcessing(false);
-            // Here you would normally call the actual image manipulation logic
         }, 2000);
     };
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Adjust Image Borders</Text>
-            {imageUri && <Image source={{ uri: imageUri }} style={styles.previewImage} />}
+            <Image source={{ uri: placeholderImageUri }} style={styles.previewImage} />
             <Button title='Adjust Borders' onPress={handleAdjustBorders} style={styles.button} />
             {isProcessing && <Text style={styles.processingText}>Processing...</Text>}
         </View>
@@ -49,13 +51,13 @@ const styles = StyleSheet.create({
         backgroundColor: '#007bff',
         padding: 10,
         borderRadius: 5,
+        color: 'white',
     },
     processingText: {
         marginTop: 20,
         fontSize: 16,
         color: 'grey',
     },
-    // Add additional styling as needed
 });
 
 export default AdjustBordersScreen;
