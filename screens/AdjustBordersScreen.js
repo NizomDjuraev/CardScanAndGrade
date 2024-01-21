@@ -2,15 +2,17 @@ import React, { useState } from 'react';
 import { View, Button, Image, StyleSheet, Text, TextInput } from 'react-native';
 import * as ImageManipulator from 'expo-image-manipulator';
 
-const AdjustBordersScreen = ({ route, navigation }) => {
+const AdjustBordersScreen = () => {
     const [adjustedUri, setAdjustedUri] = useState(null);
     const [cropParams, setCropParams] = useState({ originX: 0, originY: 0, width: 100, height: 100 });
-    const imageUri = route.params.imageUri; // Placeholder image URI
+
+    // Placeholder image URI
+    const placeholderImageUri = 'https://via.placeholder.com/300'; // Replace with your local image URI if needed
 
     const handleAdjustBorders = async () => {
         try {
             const result = await ImageManipulator.manipulateAsync(
-                imageUri,
+                placeholderImageUri,
                 [{ crop: cropParams }],
                 { compress: 1, format: ImageManipulator.SaveFormat.PNG }
             );
@@ -53,9 +55,6 @@ const AdjustBordersScreen = ({ route, navigation }) => {
                     keyboardType="numeric"
                 />
             </View>
-            {imageUri && !adjustedUri && (
-                <Image source={{ uri: imageUri }} style={styles.previewImage} />
-            )}
             {adjustedUri && (
                 <Image source={{ uri: adjustedUri }} style={styles.adjustedImage} />
             )}
@@ -87,14 +86,6 @@ const styles = StyleSheet.create({
         marginRight: 10,
         width: 70,
     },
-    previewImage: {
-        width: 300,
-        height: 300,
-        resizeMode: 'contain',
-        margin: 20,
-        borderWidth: 1,
-        borderColor: '#ddd',
-    },
     adjustedImage: {
         width: 300,
         height: 300,
@@ -110,5 +101,4 @@ const styles = StyleSheet.create({
 });
 
 export default AdjustBordersScreen;
-
 
