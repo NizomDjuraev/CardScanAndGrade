@@ -14,6 +14,7 @@ import MyProfileScreen from "../screens/MyProfileScreen";
 import HomeScreen from "../screens/HomeScreen";
 import CameraScreen from "../screens/CameraScreen";
 import SettingsScreen from "../screens/SettingsScreen";
+import AnnotateScreen from "../screens/AnnotateScreen";
 
 import LinkingConfiguration from "./LinkingConfiguration";
 import { ClerkLoaded, useUser } from "@clerk/clerk-expo";
@@ -88,6 +89,15 @@ function MainTabs() {
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons name="person-outline" size={size} color={focused ? 'white' : iconColor} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="test"
+        component={AnnotateScreen}
+        options={{
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons name="alert" size={size} color={focused ? 'white' : iconColor} />
           ),
         }}
       />
