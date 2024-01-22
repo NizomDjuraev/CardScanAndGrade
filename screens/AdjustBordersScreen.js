@@ -1,129 +1,95 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Button,
-  Image,
-  StyleSheet,
-  Text,
-  TextInput
-} from 'react-native';
-import * as ImageManipulator from 'expo-image-manipulator';
+import React, { useState, useRef } from 'react';
+import { View, StyleSheet, Image, PanResponder, Dimensions, TouchableOpacity } from 'react-native';
 
+const windowWidth = Dimensions.get('window').width;
 const AdjustBordersScreen = () => {
-    const [imageUri, setImageUri] = useState('https://via.placeholder.com/300'); // Placeholder image URI
-    const [isProcessing, setIsProcessing] = useState(false);
+  const [cropArea, setCropArea] = useState({
+    x: 50,
+    y: 50,
+    width: 200,
+    height: 200,
+  });
 
-    // Input states for crop values
-    const [originX, setOriginX] = useState('');
-    const [originY, setOriginY] = useState('');
-    const [width, setWidth] = useState('');
-    const [height, setHeight] = useState('');
+  const cropAreaRef = useRef(cropArea);
+  cropAreaRef.current = cropArea;
 
-    const handleAdjustBorders = async () => {
-        setIsProcessing(true);
-
-        try {
-            const result = await ImageManipulator.manipulateAsync(
-                imageUri,
-                [
-                    {
-                        crop: {
-                            originX: parseInt(originX, 10) || 0,
-                            originY: parseInt(originY, 10) || 0,
-                            width: parseInt(width, 10) || 300, // Default values are assuming the placeholder image size
-                            height: parseInt(height, 10) || 300,
-                        },
-                    },
-                ],
-                { compress: 1, format: ImageManipulator.SaveFormat.PNG }
-            );
-            setImageUri(result.uri);
-        } catch (error) {
-            console.error('Error adjusting borders:', error);
-            alert('Failed to adjust borders. Please try again.');
-        } finally {
-            setIsProcessing(false);
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (e, gestureState) => {
+        if (gestureState.numberActiveTouches === 1) {
+          // Single touch means move the entire crop area
+          const maxX = windowWidth - cropAreaRef.current.width;
+          const maxY = windowWidth - cropAreaRef.current.height; // Assuming a square view for simplicity
+          setCropArea((previousCropArea) => ({
+            ...previousCropArea,
+            x: Math.max(0, Math.min(maxX, previousCropArea.x + gestureState.dx)),
+            y: Math.max(0, Math.min(maxY, previousCropArea.y + gestureState.dy)),
+          }));
         }
-    };
+      },
+    })
+  ).current;
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Adjust Image Borders</Text>
-            <Image source={{ uri: imageUri }} style={styles.previewImage} />
-            <View style={styles.inputContainer}>
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setOriginX}
-                    value={originX}
-                    placeholder='Origin X'
-                    keyboardType='numeric'
-                />
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setOriginY}
-                    value={originY}
-                    placeholder='Origin Y'
-                    keyboardType='numeric'
-                />
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setWidth}
-                    value={width}
-                    placeholder='Width'
-                    keyboardType='numeric'
-                />
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setHeight}
-                    value={height}
-                    placeholder='Height'
-                    keyboardType='numeric'
-                />
-            </View>
-            <Button title='Adjust Borders' onPress={handleAdjustBorders} />
-            {isProcessing && <Text style={styles.processingText}>Processing...</Text>}
-        </View>
-    );
+  const resizePanResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (e, gestureState) => {
+        if (gestureState.numberActiveTouches === 1) {
+          // Single touch means we're resizing the crop area
+          setCropArea((previousCropArea) => ({
+            ...previousCropArea,
+            width: Math.max(100, previousCropArea.width + gestureState.dx),
+            height: Math.max(100, previousCropArea.height + gestureState.dy),
+          }));
+        }
+      },
+    })
+  ).current;
+
+  return (
+    <View style={styles.container}>
+      <Image source={{ uri: 'https://via.placeholder.com/300' }} style={styles.image} />
+      <View
+        {...panResponder.panHandlers}
+        style={[styles.cropArea, { top: cropArea.y, left: cropArea.x, width: cropArea.width, height: cropArea.height }]}
+      >
+        <View
+          {...resizePanResponder.panHandlers}
+          style={styles.corner}
+        />
+      </View>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#f5f5f5',
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 20,
-    },
-    previewImage: {
-        width: 300,
-        height: 300,
-        resizeMode: 'contain',
-        borderWidth: 1,
-        borderColor: '#ddd',
-    },
-    inputContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        width: '100%',
-        padding: 20,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ddd',
-        padding: 10,
-        width: '20%',
-        textAlign: 'center',
-    },
-    processingText: {
-        marginTop: 20,
-        fontSize: 16,
-        color: 'grey',
-    },
-    // Additional styles if needed
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f5f5f5',
+  },
+  image: {
+    width: 300,
+    height: 300,
+    position: 'absolute',
+    resizeMode: 'contain',
+  },
+  cropArea: {
+    position: 'absolute',
+    borderWidth: 1,
+    borderColor: 'blue',
+    backgroundColor: 'rgba(0,0,255,0.1)',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+  },
+  corner: {
+    width: 30,
+    height: 30,
+    backgroundColor: 'blue',
+    opacity: 0.5,
+  },
 });
 
 export default AdjustBordersScreen;
