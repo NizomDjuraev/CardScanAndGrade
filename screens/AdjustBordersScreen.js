@@ -4,12 +4,12 @@ import * as ImageManipulator from 'expo-image-manipulator';
 
 const screen = Dimensions.get('window');
 const imageDimensions = { width: 300, height: 300 }; // Assuming the image is 300x300
-const dragDampening = 0.5; // Adjust this value to decrease sensitivity, 1 for no dampening
+const dragDampening = 0.5; // Adjust this value to decrease sensitivity
 
 const AdjustBordersScreen = () => {
   // Calculate initial position to center the crop area over the image
   const initialPositionX = (screen.width - imageDimensions.width) / 2;
-  const initialPositionY = (screen.height - imageDimensions.height) / 2; // Adjust based on your nav and status bar
+  const initialPositionY = (screen.height - imageDimensions.height) / 2;
   const [imageUri, setImageUri] = useState('https://via.placeholder.com/300');
   const [cropArea, setCropArea] = useState({
     x: initialPositionX,
@@ -39,8 +39,8 @@ const AdjustBordersScreen = () => {
         [
           {
             crop: {
-              originX: cropArea.x,
-              originY: cropArea.y,
+              originX: cropArea.x - initialPositionX, // Adjust the crop origin based on the initial position
+              originY: cropArea.y - initialPositionY,
               width: cropArea.width,
               height: cropArea.height,
             },
@@ -54,20 +54,37 @@ const AdjustBordersScreen = () => {
     }
   };
 
+  // Styles need to be inside the component to access the initialPositionX and initialPositionY variables
+  const dynamicStyles = StyleSheet.create({
+    image: {
+      position: 'absolute',
+      top: initialPositionY,
+      left: initialPositionX,
+      width: imageDimensions.width,
+      height: imageDimensions.height,
+      resizeMode: 'contain',
+    },
+    cropArea: {
+      position: 'absolute',
+      top: cropArea.y,
+      left: cropArea.x,
+      width: cropArea.width,
+      height: cropArea.height,
+      borderWidth: 1,
+      borderColor: 'blue',
+      backgroundColor: 'rgba(0,0,255,0.2)',
+    },
+  });
+
   return (
     <View style={styles.container}>
       <Image
         source={{ uri: imageUri }}
-        style={[styles.image, imageDimensions]}
+        style={dynamicStyles.image}
       />
       <View
         {...panResponder.panHandlers}
-        style={[styles.cropArea, { 
-          top: cropArea.y, 
-          left: cropArea.x, 
-          width: cropArea.width, 
-          height: cropArea.height 
-        }]}
+        style={dynamicStyles.cropArea}
       />
       <Button title="Crop Image" onPress={cropImage} style={styles.cropButton} />
     </View>
@@ -81,22 +98,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
   },
-  image: {
-    position: 'absolute',
-    top: initialPositionY,
-    left: initialPositionX,
-    width: imageDimensions.width,
-    height: imageDimensions.height,
-    resizeMode: 'contain',
-  },
-  cropArea: {
-    position: 'absolute',
-    borderWidth: 1,
-    borderColor: 'blue',
-    backgroundColor: 'rgba(0,0,255,0.2)',
-  },
   cropButton: {
-    marginTop: 20,
+    position: 'absolute',
+    bottom: 20,
   },
 });
 
