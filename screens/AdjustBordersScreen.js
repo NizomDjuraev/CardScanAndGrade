@@ -1,32 +1,20 @@
 import React, { useState, useRef } from 'react';
-import { View, StyleSheet, Image, PanResponder, Dimensions, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Image, PanResponder, Dimensions, Button } from 'react-native';
+import * as ImageManipulator from 'expo-image-manipulator';
 
-const windowWidth = Dimensions.get('window').width;
 const AdjustBordersScreen = () => {
-  const [cropArea, setCropArea] = useState({
-    x: 50,
-    y: 50,
-    width: 200,
-    height: 200,
-  });
+  const [imageUri, setImageUri] = useState('https://via.placeholder.com/300');
+  const [cropArea, setCropArea] = useState({ x: 50, y: 50, width: 200, height: 200 });
 
-  const cropAreaRef = useRef(cropArea);
-  cropAreaRef.current = cropArea;
-
-  const panResponder = useRef(
+  const movePanResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: (e, gestureState) => {
-        if (gestureState.numberActiveTouches === 1) {
-          // Single touch means move the entire crop area
-          const maxX = windowWidth - cropAreaRef.current.width;
-          const maxY = windowWidth - cropAreaRef.current.height; // Assuming a square view for simplicity
-          setCropArea((previousCropArea) => ({
-            ...previousCropArea,
-            x: Math.max(0, Math.min(maxX, previousCropArea.x + gestureState.dx)),
-            y: Math.max(0, Math.min(maxY, previousCropArea.y + gestureState.dy)),
-          }));
-        }
+      onPanResponderMove: (evt, gestureState) => {
+        setCropArea((prev) => ({
+          ...prev,
+          x: Math.max(0, Math.min(prev.x + gestureState.dx, Dimensions.get('window').width - prev.width)),
+          y: Math.max(0, Math.min(prev.y + gestureState.dy, Dimensions.get('window').height - prev.height)),
+        }));
       },
     })
   ).current;
@@ -34,31 +22,48 @@ const AdjustBordersScreen = () => {
   const resizePanResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: (e, gestureState) => {
-        if (gestureState.numberActiveTouches === 1) {
-          // Single touch means we're resizing the crop area
-          setCropArea((previousCropArea) => ({
-            ...previousCropArea,
-            width: Math.max(100, previousCropArea.width + gestureState.dx),
-            height: Math.max(100, previousCropArea.height + gestureState.dy),
-          }));
-        }
+      onPanResponderMove: (evt, gestureState) => {
+        setCropArea((prev) => ({
+          ...prev,
+          width: Math.max(50, prev.width + gestureState.dx),
+          height: Math.max(50, prev.height + gestureState.dy),
+        }));
       },
     })
   ).current;
 
+  const cropImage = async () => {
+    try {
+      const result = await ImageManipulator.manipulateAsync(
+        imageUri,
+        [
+          {
+            crop: {
+              originX: cropArea.x,
+              originY: cropArea.y,
+              width: cropArea.width,
+              height: cropArea.height,
+            },
+          },
+        ],
+        { compress: 1, format: ImageManipulator.SaveFormat.PNG }
+      );
+      setImageUri(result.uri); // Update the imageUri with the cropped image uri
+    } catch (error) {
+      console.error('Error cropping image:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Image source={{ uri: 'https://via.placeholder.com/300' }} style={styles.image} />
+      <Image source={{ uri: imageUri }} style={styles.image} />
       <View
-        {...panResponder.panHandlers}
+        {...movePanResponder.panHandlers}
         style={[styles.cropArea, { top: cropArea.y, left: cropArea.x, width: cropArea.width, height: cropArea.height }]}
       >
-        <View
-          {...resizePanResponder.panHandlers}
-          style={styles.corner}
-        />
+        <View {...resizePanResponder.panHandlers} style={styles.corner} />
       </View>
+      <Button title="Crop Image" onPress={cropImage} />
     </View>
   );
 };
@@ -93,5 +98,4 @@ const styles = StyleSheet.create({
 });
 
 export default AdjustBordersScreen;
-
 
