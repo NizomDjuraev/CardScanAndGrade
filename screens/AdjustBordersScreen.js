@@ -2,30 +2,31 @@ import React, { useState, useRef } from 'react';
 import { View, StyleSheet, Image, PanResponder, Button, Dimensions } from 'react-native';
 import * as ImageManipulator from 'expo-image-manipulator';
 
-const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
+const screen = Dimensions.get('window');
+const imageDimensions = { width: 300, height: 300 }; // Assuming the image is 300x300
+const dragDampening = 0.5; // Adjust this value to decrease sensitivity, 1 for no dampening
 
 const AdjustBordersScreen = () => {
+  // Calculate initial position to center the crop area over the image
+  const initialPositionX = (screen.width - imageDimensions.width) / 2;
+  const initialPositionY = (screen.height - imageDimensions.height) / 2; // Adjust based on your nav and status bar
   const [imageUri, setImageUri] = useState('https://via.placeholder.com/300');
   const [cropArea, setCropArea] = useState({
-    x: 0,
-    y: 0,
-    width: 300,
-    height: 300,
+    x: initialPositionX,
+    y: initialPositionY,
+    width: imageDimensions.width,
+    height: imageDimensions.height,
   });
 
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (evt, gestureState) => {
-        if (gestureState.dx || gestureState.dy) {
-          // User is dragging to move the crop area
-          setCropArea((prev) => {
-            const newX = Math.max(0, Math.min(prev.x + gestureState.dx, screenWidth - prev.width));
-            const newY = Math.max(0, Math.min(prev.y + gestureState.dy, screenHeight - prev.height));
-            return { ...prev, x: newX, y: newY };
-          });
-        }
+        setCropArea((prev) => {
+          const newX = Math.max(0, Math.min(prev.x + (gestureState.dx * dragDampening), screen.width - prev.width));
+          const newY = Math.max(0, Math.min(prev.y + (gestureState.dy * dragDampening), screen.height - prev.height));
+          return { ...prev, x: newX, y: newY };
+        });
       },
       onPanResponderTerminationRequest: () => false,
     })
@@ -57,7 +58,7 @@ const AdjustBordersScreen = () => {
     <View style={styles.container}>
       <Image
         source={{ uri: imageUri }}
-        style={styles.image}
+        style={[styles.image, imageDimensions]}
       />
       <View
         {...panResponder.panHandlers}
@@ -81,8 +82,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   image: {
-    width: 300,
-    height: 300,
+    position: 'absolute',
+    top: initialPositionY,
+    left: initialPositionX,
+    width: imageDimensions.width,
+    height: imageDimensions.height,
     resizeMode: 'contain',
   },
   cropArea: {
@@ -97,4 +101,3 @@ const styles = StyleSheet.create({
 });
 
 export default AdjustBordersScreen;
-
