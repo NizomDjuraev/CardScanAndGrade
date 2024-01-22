@@ -1,33 +1,40 @@
 import React, { useState, useRef } from 'react';
-import { View, StyleSheet, Image, PanResponder, Dimensions, Button } from 'react-native';
+import { View, StyleSheet, Image, PanResponder, Button, Dimensions } from 'react-native';
 import * as ImageManipulator from 'expo-image-manipulator';
+
+const imageWidth = 300; // The width of the image
+const imageHeight = 300; // The height of the image
+const minimumCropDimensions = 50; // The minimum width and height of the crop area
 
 const AdjustBordersScreen = () => {
   const [imageUri, setImageUri] = useState('https://via.placeholder.com/300');
-  const [cropArea, setCropArea] = useState({ x: 50, y: 50, width: 200, height: 200 });
+  const [cropArea, setCropArea] = useState({
+    x: 0,
+    y: 0,
+    width: imageWidth,
+    height: imageHeight,
+  });
 
+  // PanResponder for moving the crop area
   const movePanResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (evt, gestureState) => {
-        setCropArea((prev) => ({
-          ...prev,
-          x: Math.max(0, Math.min(prev.x + gestureState.dx, Dimensions.get('window').width - prev.width)),
-          y: Math.max(0, Math.min(prev.y + gestureState.dy, Dimensions.get('window').height - prev.height)),
-        }));
+        const newX = Math.max(0, Math.min(cropArea.x + gestureState.dx, imageWidth - cropArea.width));
+        const newY = Math.max(0, Math.min(cropArea.y + gestureState.dy, imageHeight - cropArea.height));
+        setCropArea({ ...cropArea, x: newX, y: newY });
       },
     })
   ).current;
 
+  // PanResponder for resizing the crop area
   const resizePanResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (evt, gestureState) => {
-        setCropArea((prev) => ({
-          ...prev,
-          width: Math.max(50, prev.width + gestureState.dx),
-          height: Math.max(50, prev.height + gestureState.dy),
-        }));
+        const newWidth = Math.min(Math.max(cropArea.width + gestureState.dx, minimumCropDimensions), imageWidth - cropArea.x);
+        const newHeight = Math.min(Math.max(cropArea.height + gestureState.dy, minimumCropDimensions), imageHeight - cropArea.y);
+        setCropArea({ ...cropArea, width: newWidth, height: newHeight });
       },
     })
   ).current;
@@ -63,7 +70,9 @@ const AdjustBordersScreen = () => {
       >
         <View {...resizePanResponder.panHandlers} style={styles.corner} />
       </View>
-      <Button title="Crop Image" onPress={cropImage} />
+      <View style={styles.buttonContainer}>
+        <Button title="Crop Image" onPress={cropImage} />
+      </View>
     </View>
   );
 };
@@ -71,31 +80,32 @@ const AdjustBordersScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#f5f5f5',
+    alignItems: 'center',
   },
   image: {
-    width: 300,
-    height: 300,
-    position: 'absolute',
+    width: imageWidth,
+    height: imageHeight,
     resizeMode: 'contain',
   },
   cropArea: {
     position: 'absolute',
     borderWidth: 1,
     borderColor: 'blue',
-    backgroundColor: 'rgba(0,0,255,0.1)',
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
+    backgroundColor: 'rgba(0,0,255,0.2)',
   },
   corner: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
     width: 30,
     height: 30,
     backgroundColor: 'blue',
     opacity: 0.5,
   },
+  buttonContainer: {
+    marginTop: 20,
+  },
 });
 
 export default AdjustBordersScreen;
-
