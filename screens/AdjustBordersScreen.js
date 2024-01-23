@@ -3,10 +3,10 @@ import { View, StyleSheet, Image, PanResponder, Button, Dimensions } from 'react
 import * as ImageManipulator from 'expo-image-manipulator';
 
 const windowDimensions = Dimensions.get('window');
-const imageDimensions = { width: 300, height: 300 }; // Placeholder dimensions for the image
+const imageDimensions = { width: 300, height: 300 }; // Replace with your image's dimensions
 
 const AdjustBordersScreen = () => {
-  const [imageUri, setImageUri] = useState('https://via.placeholder.com/300'); // Placeholder image URI
+  const [imageUri, setImageUri] = useState('https://via.placeholder.com/300'); // Replace with your image's URI
   const [cropArea, setCropArea] = useState({
     x: (windowDimensions.width - imageDimensions.width) / 2,
     y: (windowDimensions.height - imageDimensions.height) / 2,
@@ -14,63 +14,77 @@ const AdjustBordersScreen = () => {
     height: imageDimensions.height,
   });
 
+  const cropAreaRef = useRef(cropArea);
+  const resizeHandleRef = useRef({ x: 0, y: 0 });
+
+  // PanResponder for dragging the crop area within the bounds of the image
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (evt, gestureState) => {
-        // Allow dragging only if a single finger is used
-        if (evt.nativeEvent.touches.length === 1) {
-          const newX = Math.max(0, Math.min(windowDimensions.width - imageDimensions.width, cropArea.x + gestureState.dx));
-          const newY = Math.max(0, Math.min(windowDimensions.height - imageDimensions.height, cropArea.y + gestureState.dy));
-          setCropArea((prev) => ({
-            ...prev,
-            x: newX,
-            y: newY,
-          }));
-        }
+        const newX = Math.max(
+          imageDimensions.width / 2,
+          Math.min(
+            cropAreaRef.current.x + gestureState.dx,
+            windowDimensions.width - imageDimensions.width / 2
+          )
+        );
+        const newY = Math.max(
+          imageDimensions.height / 2,
+          Math.min(
+            cropAreaRef.current.y + gestureState.dy,
+            windowDimensions.height - imageDimensions.height / 2
+          )
+        );
+        setCropArea((prev) => ({
+          ...prev,
+          x: newX,
+          y: newY,
+        }));
+      },
+      onPanResponderRelease: () => {
+        cropAreaRef.current = cropArea;
       },
       onPanResponderTerminationRequest: () => false,
     })
   ).current;
 
-  // This pan responder would be attached to a handle for resizing
+  // PanResponder for resizing the crop area using the handle
   const resizePanResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (evt, gestureState) => {
-        // Allow resizing only if two fingers are used
-        if (evt.nativeEvent.touches.length === 2) {
-          let touch1 = evt.nativeEvent.touches[0];
-          let touch2 = evt.nativeEvent.touches[1];
-          // Calculate the distance between the two fingers
-          let width = Math.abs(touch1.pageX - touch2.pageX);
-          let height = Math.abs(touch1.pageY - touch2.pageY);
-          // Update the crop area size
-          setCropArea((prev) => ({
-            ...prev,
-            width: Math.min(imageDimensions.width, width),
-            height: Math.min(imageDimensions.height, height),
-          }));
-        }
+        const { x, y } = resizeHandleRef.current;
+        let newWidth = Math.min(windowDimensions.width - cropArea.x, gestureState.moveX - x);
+        let newHeight = Math.min(windowDimensions.height - cropArea.y, gestureState.moveY - y);
+        setCropArea((prev) => ({
+          ...prev,
+          width: Math.max(50, newWidth),
+          height: Math.max(50, newHeight),
+        }));
+      },
+      onPanResponderGrant: (evt) => {
+        resizeHandleRef.current = {
+          x: evt.nativeEvent.locationX,
+          y: evt.nativeEvent.locationY,
+        };
       },
       onPanResponderTerminationRequest: () => false,
     })
   ).current;
 
+  // Function to crop the image using Expo Image Manipulator
   const cropImage = async () => {
     try {
+      const cropConfig = {
+        originX: cropArea.x - (windowDimensions.width - imageDimensions.width) / 2,
+        originY: cropArea.y - (windowDimensions.height - imageDimensions.height) / 2,
+        width: cropArea.width,
+        height: cropArea.height,
+      };
       const manipResult = await ImageManipulator.manipulateAsync(
         imageUri,
-        [
-          {
-            crop: {
-              originX: cropArea.x,
-              originY: cropArea.y,
-              width: cropArea.width,
-              height: cropArea.height,
-            },
-          },
-        ],
+        [{ crop: cropConfig }],
         { compress: 1, format: ImageManipulator.SaveFormat.PNG }
       );
       setImageUri(manipResult.uri);
@@ -83,15 +97,13 @@ const AdjustBordersScreen = () => {
     <View style={styles.container}>
       <Image source={{ uri: imageUri }} style={styles.image} />
       <View {...panResponder.panHandlers} style={[styles.cropArea, {
-        left: cropArea.x,
-        top: cropArea.y,
+        left: cropArea.x - cropArea.width / 2,
+        top: cropArea.y - cropArea.height / 2,
         width: cropArea.width,
         height: cropArea.height,
-      }]} />
-      <View {...resizePanResponder.panHandlers} style={[styles.resizeHandle, {
-        left: cropArea.x + cropArea.width - 20,
-        top: cropArea.y + cropArea.height - 20,
-      }]} />
+      }]}>
+        <View {...resizePanResponder.panHandlers} style={styles.resizeHandle} />
+      </View>
       <Button title="Crop Image" onPress={cropImage} />
     </View>
   );
@@ -122,6 +134,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 20,
     height: 20,
+    bottom: 0,
+    right: 0,
     backgroundColor: 'blue',
     opacity: 0.5,
   },
