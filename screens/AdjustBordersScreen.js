@@ -4,87 +4,70 @@ import * as ImageManipulator from 'expo-image-manipulator';
 
 const windowDimensions = Dimensions.get('window');
 const imageDimensions = { width: 300, height: 300 }; // Replace with your image's dimensions
+const initialPositionX = (windowDimensions.width - imageDimensions.width) / 2;
+const initialPositionY = (windowDimensions.height - imageDimensions.height) / 2;
 
 const AdjustBordersScreen = () => {
   const [imageUri, setImageUri] = useState('https://via.placeholder.com/300'); // Replace with your image's URI
   const [cropArea, setCropArea] = useState({
-    x: (windowDimensions.width - imageDimensions.width) / 2,
-    y: (windowDimensions.height - imageDimensions.height) / 2,
+    x: initialPositionX,
+    y: initialPositionY,
     width: imageDimensions.width,
     height: imageDimensions.height,
   });
 
-  const cropAreaRef = useRef(cropArea);
-  const resizeHandleRef = useRef({ x: 0, y: 0 });
-
-  // PanResponder for dragging the crop area within the bounds of the image
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (evt, gestureState) => {
-        const newX = Math.max(
-          imageDimensions.width / 2,
-          Math.min(
-            cropAreaRef.current.x + gestureState.dx,
-            windowDimensions.width - imageDimensions.width / 2
-          )
-        );
-        const newY = Math.max(
-          imageDimensions.height / 2,
-          Math.min(
-            cropAreaRef.current.y + gestureState.dy,
-            windowDimensions.height - imageDimensions.height / 2
-          )
-        );
-        setCropArea((prev) => ({
+        let newX = Math.max(initialPositionX, Math.min(cropArea.x + gestureState.dx, initialPositionX + imageDimensions.width - cropArea.width));
+        let newY = Math.max(initialPositionY, Math.min(cropArea.y + gestureState.dy, initialPositionY + imageDimensions.height - cropArea.height));
+        setCropArea(prev => ({
           ...prev,
           x: newX,
           y: newY,
         }));
       },
-      onPanResponderRelease: () => {
-        cropAreaRef.current = cropArea;
-      },
       onPanResponderTerminationRequest: () => false,
     })
   ).current;
 
-  // PanResponder for resizing the crop area using the handle
   const resizePanResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (evt, gestureState) => {
-        const { x, y } = resizeHandleRef.current;
-        let newWidth = Math.min(windowDimensions.width - cropArea.x, gestureState.moveX - x);
-        let newHeight = Math.min(windowDimensions.height - cropArea.y, gestureState.moveY - y);
-        setCropArea((prev) => ({
+        let newWidth = Math.min(imageDimensions.width, Math.max(50, cropArea.width + gestureState.dx));
+        let newHeight = Math.min(imageDimensions.height, Math.max(50, cropArea.height + gestureState.dy));
+        if (cropArea.x + newWidth > initialPositionX + imageDimensions.width) {
+          newWidth = initialPositionX + imageDimensions.width - cropArea.x;
+        }
+        if (cropArea.y + newHeight > initialPositionY + imageDimensions.height) {
+          newHeight = initialPositionY + imageDimensions.height - cropArea.y;
+        }
+        setCropArea(prev => ({
           ...prev,
-          width: Math.max(50, newWidth),
-          height: Math.max(50, newHeight),
+          width: newWidth,
+          height: newHeight,
         }));
-      },
-      onPanResponderGrant: (evt) => {
-        resizeHandleRef.current = {
-          x: evt.nativeEvent.locationX,
-          y: evt.nativeEvent.locationY,
-        };
       },
       onPanResponderTerminationRequest: () => false,
     })
   ).current;
 
-  // Function to crop the image using Expo Image Manipulator
   const cropImage = async () => {
     try {
-      const cropConfig = {
-        originX: cropArea.x - (windowDimensions.width - imageDimensions.width) / 2,
-        originY: cropArea.y - (windowDimensions.height - imageDimensions.height) / 2,
-        width: cropArea.width,
-        height: cropArea.height,
-      };
       const manipResult = await ImageManipulator.manipulateAsync(
         imageUri,
-        [{ crop: cropConfig }],
+        [
+          {
+            crop: {
+              originX: cropArea.x - initialPositionX,
+              originY: cropArea.y - initialPositionY,
+              width: cropArea.width,
+              height: cropArea.height,
+            },
+          },
+        ],
         { compress: 1, format: ImageManipulator.SaveFormat.PNG }
       );
       setImageUri(manipResult.uri);
@@ -95,14 +78,16 @@ const AdjustBordersScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: imageUri }} style={styles.image} />
-      <View {...panResponder.panHandlers} style={[styles.cropArea, {
-        left: cropArea.x - cropArea.width / 2,
-        top: cropArea.y - cropArea.height / 2,
-        width: cropArea.width,
-        height: cropArea.height,
-      }]}>
-        <View {...resizePanResponder.panHandlers} style={styles.resizeHandle} />
+      <View style={styles.imageContainer}>
+        <Image source={{ uri: imageUri }} style={styles.image} />
+        <View {...panResponder.panHandlers} style={[styles.cropArea, {
+          left: cropArea.x,
+          top: cropArea.y,
+          width: cropArea.width,
+          height: cropArea.height,
+        }]}>
+          <View {...resizePanResponder.panHandlers} style={styles.resizeHandle} />
+        </View>
       </View>
       <Button title="Crop Image" onPress={cropImage} />
     </View>
@@ -116,12 +101,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
   },
+  imageContainer: {
+    width: windowDimensions.width,
+    height: windowDimensions.height,
+    position: 'relative',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   image: {
     width: imageDimensions.width,
     height: imageDimensions.height,
     position: 'absolute',
-    top: (windowDimensions.height - imageDimensions.height) / 2,
-    left: (windowDimensions.width - imageDimensions.width) / 2,
+    top: initialPositionY,
+    left: initialPositionX,
     resizeMode: 'contain',
   },
   cropArea: {
@@ -129,6 +122,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'blue',
     backgroundColor: 'rgba(0,0,255,0.2)',
+    zIndex: 5, // Make sure this view is above the image
   },
   resizeHandle: {
     position: 'absolute',
@@ -138,6 +132,7 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: 'blue',
     opacity: 0.5,
+    zIndex: 10, // Make sure the resize handle is above the crop area
   },
 });
 
