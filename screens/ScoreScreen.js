@@ -11,8 +11,24 @@ import { Ionicons } from "@expo/vector-icons";
 
 export default function ScoreScreen() {
   const handleExitButtonClick = () => {
-    // add button logic here
+    // add exit button logic here
     console.log("exit button pressed");
+  };
+  const handleFrontButtonClick = () => {
+    // add front button logic here
+    console.log("front button pressed");
+  };
+  const handleToggleButtonClick = () => {
+    // add toggle button logic here
+    console.log("toggle button pressed");
+  };
+  const handleShareButtonClick = () => {
+    // add share button logic here
+    console.log("share button pressed");
+  };
+  const handleAddToCollectionButtonClick = () => {
+    // add add to collection button logic here
+    console.log("add to collection button pressed");
   };
 
   return (
@@ -47,10 +63,16 @@ export default function ScoreScreen() {
 
         {/* container for front and toggle buttons */}
         <View style={styles.frontToggleContainer}>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            onPress={handleFrontButtonClick}
+            style={styles.button}
+          >
             <Text style={styles.buttonText}>Front</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            onPress={handleToggleButtonClick}
+            style={styles.button}
+          >
             <Text style={styles.buttonText}>Toggle</Text>
           </TouchableOpacity>
         </View>
@@ -74,7 +96,63 @@ export default function ScoreScreen() {
           <View style={styles.informationBox}>
             <Text style={styles.informationText}>Variation</Text>
           </View>
+          <View style={styles.sideBySideBoxesContainer}>
+            <View style={[styles.sideBySideBox, { flex: 0.7 }]}>
+              <Text style={styles.sideBySideBoxText}>Edge</Text>
+            </View>
+            <View style={[styles.sideBySideBox, { flex: 0.3, marginLeft: 5 }]}>
+              <Text style={styles.sideBySideBoxText}>Score</Text>
+            </View>
+          </View>
+          <View style={styles.sideBySideBoxesContainer}>
+            <View style={[styles.sideBySideBox, { flex: 0.7 }]}>
+              <Text style={styles.sideBySideBoxText}>Border</Text>
+            </View>
+            <View style={[styles.sideBySideBox, { flex: 0.3, marginLeft: 5 }]}>
+              <Text style={styles.sideBySideBoxText}>Score</Text>
+            </View>
+          </View>
+          <View style={styles.sideBySideBoxesContainer}>
+            <View style={[styles.sideBySideBox, { flex: 0.7 }]}>
+              <Text style={styles.sideBySideBoxText}>Surface</Text>
+            </View>
+            <View style={[styles.sideBySideBox, { flex: 0.3, marginLeft: 5 }]}>
+              <Text style={styles.sideBySideBoxText}>Score</Text>
+            </View>
+          </View>
+          <View style={styles.sideBySideBoxesContainer}>
+            <View style={[styles.sideBySideBox, { flex: 0.7 }]}>
+              <Text style={styles.sideBySideBoxText}>Overall</Text>
+            </View>
+            <View style={[styles.sideBySideBox, { flex: 0.3, marginLeft: 5 }]}>
+              <Text style={styles.sideBySideBoxText}>Score</Text>
+            </View>
+          </View>
+
+          {/* More Details */}
+          <Text style={styles.moreDetailsText}>More Details</Text>
+          <View style={styles.moreDetailsBox}>
+            <Text style={styles.informationText}>Details</Text>
+          </View>
         </ScrollView>
+
+        {/* Share and Add to Collection Buttons */}
+        <View style={styles.shareCollectionButtonsContainer}>
+          <TouchableOpacity
+            onPress={handleShareButtonClick}
+            style={styles.shareCollectionButtons}
+          >
+            <Text style={styles.shareCollectionButtonsText}>Share</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleAddToCollectionButtonClick}
+            style={styles.shareCollectionButtons}
+          >
+            <Text style={styles.shareCollectionButtonsText}>
+              Add to Collection
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -181,5 +259,62 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 18,
     textAlign: "center",
+  },
+  sideBySideBoxesContainer: {
+    flexDirection: "row",
+    marginBottom: 5,
+    marginLeft: 10,
+    marginRight: 10,
+  },
+  sideBySideBox: {
+    backgroundColor: "white",
+    borderColor: "black",
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    height: 30,
+  },
+  sideBySideBoxText: {
+    color: "black",
+    fontSize: 18,
+    textAlign: "center",
+  },
+  moreDetailsText: {
+    color: "black",
+    fontSize: 18,
+    textAlign: "center",
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  moreDetailsBox: {
+    backgroundColor: "white",
+    padding: 3,
+    marginBottom: 5,
+    marginLeft: 10,
+    marginRight: 10,
+    borderColor: "black",
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "flex-start",
+    height: 150,
+  },
+  shareCollectionButtonsContainer: {
+    flexDirection: "row",
+    marginTop: 10,
+  },
+  shareCollectionButtons: {
+    flex: 0.5,
+    backgroundColor: "white",
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: "black",
+    height: 40,
+    marginHorizontal: 5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  shareCollectionButtonsText: {
+    color: "black",
+    fontSize: 16,
   },
 });
