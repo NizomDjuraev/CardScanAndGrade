@@ -74,7 +74,6 @@ const AdjustBordersScreen = () => {
   };
 };
 
-
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
