@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Image, PanResponder, Button, Dimensions } from 'react-native';
 import * as ImageManipulator from 'expo-image-manipulator';
 
@@ -8,8 +8,8 @@ const imageDimensions = { width: 300, height: 300 }; // Replace with your image'
 const AdjustBordersScreen = () => {
   const [imageUri, setImageUri] = useState('https://via.placeholder.com/300'); // Replace with your image's URI
   const [cropArea, setCropArea] = useState({
-    x: (windowDimensions.width - imageDimensions.width) / 2,
-    y: (windowDimensions.height - imageDimensions.height) / 2,
+    x: 0,
+    y: 0,
     width: imageDimensions.width,
     height: imageDimensions.height,
   });
@@ -18,32 +18,41 @@ const AdjustBordersScreen = () => {
   const maxX = windowDimensions.width - imageDimensions.width;
   const maxY = windowDimensions.height - imageDimensions.height;
 
-  // PanResponder for moving the crop area
+  // PanResponder for moving the crop area within the image boundaries
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gestureState) => {
-      setCropArea((prev) => {
-        const newX = Math.max(0, Math.min(prev.x + gestureState.dx, maxX));
-        const newY = Math.max(0, Math.min(prev.y + gestureState.dy, maxY));
+      setCropArea(prev => {
+        let newX = prev.x + gestureState.dx;
+        let newY = prev.y + gestureState.dy;
+
+        newX = Math.max(0, Math.min(newX, maxX)); // Ensure newX is within image boundaries
+        newY = Math.max(0, Math.min(newY, maxY)); // Ensure newY is within image boundaries
+
         return { ...prev, x: newX, y: newY };
       });
     },
     onPanResponderTerminationRequest: () => false,
   });
 
-  // PanResponder for resizing the crop area
+  // PanResponder for resizing the crop area within the image boundaries
   const resizePanResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gestureState) => {
-      setCropArea((prev) => {
-        const newWidth = Math.max(50, Math.min(windowDimensions.width - prev.x, prev.width + gestureState.dx));
-        const newHeight = Math.max(50, Math.min(windowDimensions.height - prev.y, prev.height + gestureState.dy));
+      setCropArea(prev => {
+        let newWidth = prev.width + gestureState.dx;
+        let newHeight = prev.height + gestureState.dy;
+
+        newWidth = Math.max(50, Math.min(newWidth, imageDimensions.width - prev.x)); // Adjust width within image
+        newHeight = Math.max(50, Math.min(newHeight, imageDimensions.height - prev.y)); // Adjust height within image
+
         return { ...prev, width: newWidth, height: newHeight };
       });
     },
     onPanResponderTerminationRequest: () => false,
   });
 
+  // Function to crop the image
   const cropImage = async () => {
     try {
       const manipResult = await ImageManipulator.manipulateAsync(
@@ -63,6 +72,8 @@ const AdjustBordersScreen = () => {
       console.error('Error cropping image:', error);
     }
   };
+};
+
 
   return (
     <View style={styles.container}>
