@@ -128,6 +128,5 @@ const styles = StyleSheet.create({
   // Any additional styles for other elements should go here
 });
 
-export default styles;
 
 export default AdjustBordersScreen;
