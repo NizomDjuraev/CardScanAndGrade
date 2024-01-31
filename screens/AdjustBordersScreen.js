@@ -3,36 +3,22 @@ import { View, StyleSheet, Image, PanResponder, Button, Text, Dimensions } from 
 import * as ImageManipulator from 'expo-image-manipulator';
 
 const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 const AdjustBordersScreen = () => {
-  const [imageUri, setImageUri] = useState('https://via.placeholder.com/300'); // Your image URI here
-  const [cropArea, setCropArea] = useState({ x: 0, y: 0, width: 100, height: 100 });
-  const [imageLayout, setImageLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  const [imageUri, setImageUri] = useState('https://via.placeholder.com/300');
   const imageWidth = 300;
   const imageHeight = 300;
-  const imageX = (screenWidth - imageWidth) / 2;
-  const imageY = (screenHeight - imageHeight) / 2; // Adjust this if the image is not top-aligned
+  const imageX = (windowWidth - imageWidth) / 2;
+  const imageY = (windowHeight - imageHeight) / 2; // Adjust this if the image is not centered vertically
 
-  // Initialize crop area state
+  // Initialize crop area state relative to the image position
   const [cropArea, setCropArea] = useState({
     x: imageX,
     y: imageY,
-    width: 100,
-    height: 100,
+    width: 100, // Initial width of the crop area
+    height: 100, // Initial height of the crop area
   });
-
-useEffect(() => {
-  // Assuming the image is centered horizontally, we calculate the initial X as the image's starting X plus half the difference 
-  // between the image width and the crop area width (to center the crop area over the image)
-  const initialX = imageLayout.x + (imageLayout.width - cropArea.width) / 2;
-  const initialY = imageLayout.y + (imageLayout.height - cropArea.height) / 2;
-
-  setCropArea(prev => ({
-    ...prev,
-    x: initialX,
-    y: initialY
-  }));
-}, [imageLayout]);
 
   // PanResponder for moving the crop area within the image boundaries
   const panResponder = PanResponder.create({
