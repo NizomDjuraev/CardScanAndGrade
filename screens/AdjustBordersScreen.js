@@ -8,6 +8,18 @@ const AdjustBordersScreen = () => {
   const [imageUri, setImageUri] = useState('https://via.placeholder.com/300'); // Your image URI here
   const [cropArea, setCropArea] = useState({ x: 0, y: 0, width: 100, height: 100 });
   const [imageLayout, setImageLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  const imageWidth = 300;
+  const imageHeight = 300;
+  const imageX = (screenWidth - imageWidth) / 2;
+  const imageY = (screenHeight - imageHeight) / 2; // Adjust this if the image is not top-aligned
+
+  // Initialize crop area state
+  const [cropArea, setCropArea] = useState({
+    x: imageX,
+    y: imageY,
+    width: 100,
+    height: 100,
+  });
 
 useEffect(() => {
   // Assuming the image is centered horizontally, we calculate the initial X as the image's starting X plus half the difference 
@@ -26,19 +38,21 @@ useEffect(() => {
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gestureState) => {
-      setCropArea(prev => {
-        let newX = prev.x + gestureState.dx;
-        let newY = prev.y + gestureState.dy;
-
-        // Constrain newX and newY to the image bounds
-        newX = Math.max(imageLayout.x, Math.min(newX, imageLayout.x + imageLayout.width - cropArea.width));
-        newY = Math.max(imageLayout.y, Math.min(newY, imageLayout.y + imageLayout.height - cropArea.height));
-
-        return { ...prev, x: newX, y: newY };
-      });
+  // Calculate the center point of the crop area based on the gesture
+      const centerPointX = gestureState.moveX;
+      const centerPointY = gestureState.moveY;
+  
+  // Calculate the new X and Y for the crop area, ensuring it stays within the image
+      const newX = Math.min(Math.max(centerPointX - cropArea.width / 2, imageX), imageX + imageWidth - cropArea.width);
+      const newY = Math.min(Math.max(centerPointY - cropArea.height / 2, imageY), imageY + imageHeight - cropArea.height);
+  
+      setCropArea(prev => ({
+        ...prev,
+        x: newX,
+        y: newY,
+      }));
     },
-    onPanResponderTerminationRequest: () => false,
-  });
+
 
   // Function to crop the image
   const cropImage = async () => {
