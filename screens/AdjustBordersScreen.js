@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Image, PanResponder, Button, Text } from 'react-native';
+import { View, StyleSheet, Image, PanResponder, Button, Text, Dimensions } from 'react-native';
 import * as ImageManipulator from 'expo-image-manipulator';
 
+const windowWidth = Dimensions.get('window').width;
+
 const AdjustBordersScreen = () => {
-  const [imageUri, setImageUri] = useState('https://via.placeholder.com/300'); // Placeholder image URI
+  const [imageUri, setImageUri] = useState('https://via.placeholder.com/300'); // Your image URI here
   const [cropArea, setCropArea] = useState({ x: 0, y: 0, width: 100, height: 100 });
   const [imageLayout, setImageLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
 
-  // After the image layout is set, initialize the crop area
-  useEffect(() => {
-    setCropArea({
-      x: imageLayout.x,
-      y: imageLayout.y,
-      width: 100, // Initial width of the crop area
-      height: 100, // Initial height of the crop area
-    });
-  }, [imageLayout]);
+useEffect(() => {
+  // Assuming the image is centered horizontally, we calculate the initial X as the image's starting X plus half the difference 
+  // between the image width and the crop area width (to center the crop area over the image)
+  const initialX = imageLayout.x + (imageLayout.width - cropArea.width) / 2;
+  const initialY = imageLayout.y + (imageLayout.height - cropArea.height) / 2;
+
+  setCropArea(prev => ({
+    ...prev,
+    x: initialX,
+    y: initialY
+  }));
+}, [imageLayout]);
 
   // PanResponder for moving the crop area within the image boundaries
   const panResponder = PanResponder.create({
@@ -61,9 +66,14 @@ const AdjustBordersScreen = () => {
   };
 
   // Function to get image layout from onLayout event
-  const onImageLayout = event => {
+ const onImageLayout = event => {
     const { x, y, width, height } = event.nativeEvent.layout;
-    setImageLayout({ x, y, width, height });
+    setImageLayout({
+      x: (windowWidth - width) / 2, // Centered horizontally
+      y: y, // Position from the top of the screen
+      width: width,
+      height: height
+    });
   };
 
   return (
@@ -71,18 +81,14 @@ const AdjustBordersScreen = () => {
       <View onLayout={onImageLayout} style={styles.imageContainer}>
         <Image source={{ uri: imageUri }} style={styles.image} />
         <View
-          {...panResponder.panHandlers}
           style={[styles.cropArea, { left: cropArea.x, top: cropArea.y, width: cropArea.width, height: cropArea.height }]}
+          // ... (rest of the PanResponder handlers)
         />
       </View>
       <Button title="Crop Image" onPress={cropImage} />
       {/* Debugging text to show coordinates */}
       <Text>Crop Area X: {cropArea.x}</Text>
       <Text>Crop Area Y: {cropArea.y}</Text>
-      <Text>Image Layout X: {imageLayout.x}</Text>
-      <Text>Image Layout Y: {imageLayout.y}</Text>
-      <Text>Image Width: {imageLayout.width}</Text>
-      <Text>Image Height: {imageLayout.height}</Text>
     </View>
   );
 };
@@ -92,28 +98,25 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'black', // Change the background color to something other than gray
+    backgroundColor: 'black', // Assuming you want a black background
   },
   imageContainer: {
-    width: 300, // This should match the actual width of your image
-    height: 300, // This should match the actual height of your image
-    alignItems: 'center',
+    // These dimensions should match the size of the image you are trying to crop
+    width: 300,
+    height: 300,
     justifyContent: 'center',
-    position: 'relative',
-    // If you have a border or some sort of outline on the image container, add it here
+    alignItems: 'center',
+    overflow: 'hidden', // Prevents the crop area from being drawn outside the image
   },
   image: {
-    width: '100%', // This will stretch the image to fill the container
-    height: '100%', // This will stretch the image to fill the container
-    resizeMode: 'contain', // This ensures the image aspect ratio is maintained
+    width: '100%', 
+    height: '100%',
+    resizeMode: 'contain',
   },
   cropArea: {
     position: 'absolute',
     borderWidth: 1,
     borderColor: 'blue',
-    // You can set initial width and height here or dynamically update them in the component logic
-    width: 100, // Starting width for the crop area
-    height: 100, // Starting height for the crop area
   },
   button: {
     marginTop: 20, // Add some spacing above the button
