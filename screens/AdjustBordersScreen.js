@@ -72,19 +72,18 @@ const AdjustBordersScreen = () => {
   };
 
   // Function to get the layout of the image
-  const onImageLayout = event => {
-    const { x, y, width, height } = event.nativeEvent.layout;
-    console.log("Image layout:", x, y, width, height); // Logging the layout for debugging
-    setImageLayout({
-      x: x,
-      y: y,
-      width: width,
-      height: height
-    });
-  };
+const onImageLayout = event => {
+  console.log("Image layout event:", event.nativeEvent.layout);
+  setImageLayout({
+    x: event.nativeEvent.layout.x,
+    y: event.nativeEvent.layout.y,
+    width: event.nativeEvent.layout.width,
+    height: event.nativeEvent.layout.height
+  });
+};
 
-  // Conditional rendering to ensure cropArea is set
-  if (!cropArea) {
+
+  if (!imageLayout) {
     return <View style={styles.container}><Text>Loading...</Text></View>;
   }
 
@@ -92,9 +91,9 @@ const AdjustBordersScreen = () => {
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image 
-          source={{ uri: 'https://via.placeholder.com/300' }}
-          style={styles.image}
-          onLayout={(event) => console.log('Image layout:', event.nativeEvent.layout)}
+          source={{ uri: 'https://via.placeholder.com/300' }} 
+          style={styles.image} 
+          onLayout={onImageLayout}
         />
       </View>
       <Text style={styles.debugText}>Image should be above</Text>
@@ -107,21 +106,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white', // Set to white for better visibility
+    backgroundColor: 'white',
   },
   imageContainer: {
-    width: 300, // Match the width of the image
-    height: 300, // Match the height of the image
+    width: 300,
+    height: 300,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'lightgrey', // Temporary background to visualize the container
+    backgroundColor: 'lightgrey',
   },
   image: {
-    width: '100%', 
+    width: '100%',
     height: '100%',
   },
   debugText: {
-    color: 'black', // Ensure it's visible against the white background
+    color: 'black',
     marginTop: 20,
   },
 });
