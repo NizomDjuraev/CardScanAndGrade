@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Image, StyleSheet, PanResponder, Button, Text } from 'react-native';
+import { View, Image, StyleSheet, PanResponder, Text } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
-export default function Annotate () {
+export default function AnnotateScreen () {
   const [imageUri] = useState('https://via.placeholder.com/300');  
   const [circles, setCircles] = useState([]);
   const [currentCircle, setCurrentCircle] = useState(null);
@@ -30,7 +30,7 @@ export default function Annotate () {
         startY: gesture.y0,
         cx: gesture.x0,
         cy: gesture.y0,
-        r: gesture.dx/2, // Initial radius
+        r: gesture.dx/2,
       };
       setCurrentCircle(newCircle);
       setCircles([...circles, newCircle]);
