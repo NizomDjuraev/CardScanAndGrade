@@ -95,7 +95,7 @@ function MainTabs() {
         }}
       />
       <Tab.Screen
-        name="test"
+        name="Annotate"
         component={AnnotateScreen}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
