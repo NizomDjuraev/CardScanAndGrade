@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Image, PanResponder, Button, Text, Dimensions } from 'react-native';
 import * as ImageManipulator from 'expo-image-manipulator';
 
@@ -7,31 +7,34 @@ const windowHeight = Dimensions.get('window').height;
 
 const AdjustBordersScreen = () => {
   const [imageUri, setImageUri] = useState('https://via.placeholder.com/300');
+  
+  // Image dimensions and position
   const imageWidth = 300;
   const imageHeight = 300;
   const imageX = (windowWidth - imageWidth) / 2;
-  const imageY = (windowHeight - imageHeight) / 2; // Adjust this if the image is not centered vertically
+  const imageY = (windowHeight - imageHeight) / 2;
 
   // Initialize crop area state relative to the image position
-  const [cropArea, setCropArea] = useState({
-    x: imageX,
-    y: imageY,
-    width: 100, // Initial width of the crop area
-    height: 100, // Initial height of the crop area
-  });
+const [imageLayout, setImageLayout] = useState(null);
+const [cropArea, setCropArea] = useState(null);
+
+useEffect(() => {
+  if (imageLayout) {
+    setCropArea({
+      x: imageLayout.x,
+      y: imageLayout.y,
+      width: 100, // Initial width of the crop area
+      height: 100, // Initial height of the crop area
+    });
+  }
+}, [imageLayout]);
 
   // PanResponder for moving the crop area within the image boundaries
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gestureState) => {
-  // Calculate the center point of the crop area based on the gesture
-      const centerPointX = gestureState.moveX;
-      const centerPointY = gestureState.moveY;
-  
-  // Calculate the new X and Y for the crop area, ensuring it stays within the image
-      const newX = Math.min(Math.max(centerPointX - cropArea.width / 2, imageX), imageX + imageWidth - cropArea.width);
-      const newY = Math.min(Math.max(centerPointY - cropArea.height / 2, imageY), imageY + imageHeight - cropArea.height);
-  
+      const newX = Math.max(imageX, Math.min(gestureState.moveX - cropArea.width / 2, imageX + imageWidth - cropArea.width));
+      const newY = Math.max(imageY, Math.min(gestureState.moveY - cropArea.height / 2, imageY + imageHeight - cropArea.height));
       setCropArea(prev => ({
         ...prev,
         x: newX,
@@ -43,9 +46,9 @@ const AdjustBordersScreen = () => {
   // Function to crop the image
   const cropImage = async () => {
     try {
-      // Translate the crop area's position to the image's coordinate system
-      const cropX = cropArea.x - imageLayout.x;
-      const cropY = cropArea.y - imageLayout.y;
+      // Ensure cropping coordinates are relative to the image
+      const cropX = cropArea.x - imageX;
+      const cropY = cropArea.y - imageY;
 
       const manipResult = await ImageManipulator.manipulateAsync(
         imageUri,
@@ -64,31 +67,29 @@ const AdjustBordersScreen = () => {
       console.error('Error cropping image:', error);
     }
   };
-
   // Function to get image layout from onLayout event
- const onImageLayout = event => {
+  const onImageLayout = event => {
     const { x, y, width, height } = event.nativeEvent.layout;
     setImageLayout({
-      x: (windowWidth - width) / 2, // Centered horizontally
-      y: y, // Position from the top of the screen
+      x: x, // Actual X position of the image on the screen
+      y: y, // Actual Y position of the image on the screen
       width: width,
       height: height
-    });
-  };
+  });
+};
 
   return (
     <View style={styles.container}>
       <View onLayout={onImageLayout} style={styles.imageContainer}>
         <Image source={{ uri: imageUri }} style={styles.image} />
         <View
+          {...panResponder.panHandlers}
           style={[styles.cropArea, { left: cropArea.x, top: cropArea.y, width: cropArea.width, height: cropArea.height }]}
-          // ... (rest of the PanResponder handlers)
         />
       </View>
       <Button title="Crop Image" onPress={cropImage} />
-      {/* Debugging text to show coordinates */}
-      <Text>Crop Area X: {cropArea.x}</Text>
-      <Text>Crop Area Y: {cropArea.y}</Text>
+      <Text style={styles.debugText}>Crop Area X: {cropArea.x}</Text>
+      <Text style={styles.debugText}>Crop Area Y: {cropArea.y}</Text>
     </View>
   );
 };
