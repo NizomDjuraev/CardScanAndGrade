@@ -23,8 +23,8 @@ const AdjustBordersScreen = () => {
       setCropArea({
         x: imageLayout.x,
         y: imageLayout.y,
-        width: 100, // Initial width of the crop area
-        height: 100, // Initial height of the crop area
+        width: 100,
+        height: 100,
       });
     }
   }, [imageLayout]);
@@ -74,9 +74,10 @@ const AdjustBordersScreen = () => {
   // Function to get the layout of the image
   const onImageLayout = event => {
     const { x, y, width, height } = event.nativeEvent.layout;
+    console.log("Image layout:", x, y, width, height); // Logging the layout for debugging
     setImageLayout({
-      x: x, // Actual X position of the image on the screen
-      y: y, // Actual Y position of the image on the screen
+      x: x,
+      y: y,
       width: width,
       height: height
     });
@@ -91,14 +92,16 @@ const AdjustBordersScreen = () => {
     <View style={styles.container}>
       <View onLayout={onImageLayout} style={styles.imageContainer}>
         <Image source={{ uri: imageUri }} style={styles.image} />
-        <View
-          {...panResponder.panHandlers}
-          style={[styles.cropArea, { left: cropArea.x, top: cropArea.y, width: cropArea.width, height: cropArea.height }]}
-        />
+        {cropArea && (
+          <View
+            {...panResponder.panHandlers}
+            style={[styles.cropArea, { left: cropArea.x, top: cropArea.y, width: cropArea.width, height: cropArea.height }]}
+          />
+        )}
       </View>
       <Button title="Crop Image" onPress={cropImage} />
-      <Text style={styles.debugText}>Crop Area X: {cropArea.x}</Text>
-      <Text style={styles.debugText}>Crop Area Y: {cropArea.y}</Text>
+      <Text style={styles.debugText}>Crop Area X: {cropArea ? cropArea.x : 'N/A'}</Text>
+      <Text style={styles.debugText}>Crop Area Y: {cropArea ? cropArea.y : 'N/A'}</Text>
     </View>
   );
 };
