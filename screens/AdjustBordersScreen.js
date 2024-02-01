@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Image, PanResponder, Button, Text, Dimensions } from 'react-native';
 import * as ImageManipulator from 'expo-image-manipulator';
 
@@ -15,19 +15,19 @@ const AdjustBordersScreen = () => {
   const imageY = (windowHeight - imageHeight) / 2;
 
   // Initialize crop area state relative to the image position
-const [imageLayout, setImageLayout] = useState(null);
-const [cropArea, setCropArea] = useState(null);
+  const [imageLayout, setImageLayout] = useState(null);
+  const [cropArea, setCropArea] = useState(null);
 
-useEffect(() => {
-  if (imageLayout) {
-    setCropArea({
-      x: imageLayout.x,
-      y: imageLayout.y,
-      width: 100, // Initial width of the crop area
-      height: 100, // Initial height of the crop area
-    });
-  }
-}, [imageLayout]);
+  useEffect(() => {
+    if (imageLayout) {
+      setCropArea({
+        x: imageLayout.x,
+        y: imageLayout.y,
+        width: 100, // Initial width of the crop area
+        height: 100, // Initial height of the crop area
+      });
+    }
+  }, [imageLayout]);
 
   // PanResponder for moving the crop area within the image boundaries
   const panResponder = PanResponder.create({
@@ -41,7 +41,10 @@ useEffect(() => {
         y: newY,
       }));
     },
-
+    onPanResponderRelease: () => {
+      // Handle end of drag if needed
+    },
+  });
 
   // Function to crop the image
   const cropImage = async () => {
@@ -67,7 +70,8 @@ useEffect(() => {
       console.error('Error cropping image:', error);
     }
   };
-  // Function to get image layout from onLayout event
+
+  // Function to get the layout of the image
   const onImageLayout = event => {
     const { x, y, width, height } = event.nativeEvent.layout;
     setImageLayout({
@@ -75,8 +79,13 @@ useEffect(() => {
       y: y, // Actual Y position of the image on the screen
       width: width,
       height: height
-  });
-};
+    });
+  };
+
+  // Conditional rendering to ensure cropArea is set
+  if (!cropArea) {
+    return <View style={styles.container}><Text>Loading...</Text></View>;
+  }
 
   return (
     <View style={styles.container}>
