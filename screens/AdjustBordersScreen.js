@@ -90,18 +90,14 @@ const AdjustBordersScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View onLayout={onImageLayout} style={styles.imageContainer}>
-        <Image source={{ uri: imageUri }} style={styles.image} />
-        {cropArea && (
-          <View
-            {...panResponder.panHandlers}
-            style={[styles.cropArea, { left: cropArea.x, top: cropArea.y, width: cropArea.width, height: cropArea.height }]}
-          />
-        )}
+      <View style={styles.imageContainer}>
+        <Image 
+          source={{ uri: 'https://via.placeholder.com/300' }}
+          style={styles.image}
+          onLayout={(event) => console.log('Image layout:', event.nativeEvent.layout)}
+        />
       </View>
-      <Button title="Crop Image" onPress={cropImage} />
-      <Text style={styles.debugText}>Crop Area X: {cropArea ? cropArea.x : 'N/A'}</Text>
-      <Text style={styles.debugText}>Crop Area Y: {cropArea ? cropArea.y : 'N/A'}</Text>
+      <Text style={styles.debugText}>Image should be above</Text>
     </View>
   );
 };
@@ -111,35 +107,25 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'black', // Assuming you want a black background
+    backgroundColor: 'white', // Set to white for better visibility
   },
   imageContainer: {
-    // These dimensions should match the size of the image you are trying to crop
-    width: 300,
-    height: 300,
+    width: 300, // Match the width of the image
+    height: 300, // Match the height of the image
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden', // Prevents the crop area from being drawn outside the image
+    backgroundColor: 'lightgrey', // Temporary background to visualize the container
   },
   image: {
     width: '100%', 
     height: '100%',
-    resizeMode: 'contain',
-  },
-  cropArea: {
-    position: 'absolute',
-    borderWidth: 1,
-    borderColor: 'blue',
-  },
-  button: {
-    marginTop: 20, // Add some spacing above the button
   },
   debugText: {
-    color: 'white', // Ensure the debug text is visible against the background
-    margin: 5, // Add some spacing around the text
+    color: 'black', // Ensure it's visible against the white background
+    marginTop: 20,
   },
-  // Any additional styles for other elements should go here
 });
+
 
 
 export default AdjustBordersScreen;
