@@ -72,15 +72,15 @@ const AdjustBordersScreen = () => {
   };
 
   // Function to get the layout of the image
-const onImageLayout = event => {
-  console.log("Image layout event:", event.nativeEvent.layout);
-  setImageLayout({
-    x: event.nativeEvent.layout.x,
-    y: event.nativeEvent.layout.y,
-    width: event.nativeEvent.layout.width,
-    height: event.nativeEvent.layout.height
-  });
-};
+  const onImageLayout = event => {
+    const { x, y, width, height } = event.nativeEvent.layout;
+    setImageLayout({
+      x: x,
+      y: y,
+      width: width,
+      height: height
+    });
+  };
 
 
   if (!imageLayout) {
@@ -91,12 +91,20 @@ const onImageLayout = event => {
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image 
-          source={{ uri: 'https://via.placeholder.com/300' }} 
+          source={{ uri: imageUri }} 
           style={styles.image} 
           onLayout={onImageLayout}
         />
+        {cropArea && (
+          <View
+            {...panResponder.panHandlers}
+            style={[styles.cropArea, { left: cropArea.x, top: cropArea.y, width: cropArea.width, height: cropArea.height }]}
+          />
+        )}
       </View>
-      <Text style={styles.debugText}>Image should be above</Text>
+      <Button title="Crop Image" onPress={cropImage} />
+      <Text style={styles.debugText}>Crop Area X: {cropArea.x}</Text>
+      <Text style={styles.debugText}>Crop Area Y: {cropArea.y}</Text>
     </View>
   );
 };
