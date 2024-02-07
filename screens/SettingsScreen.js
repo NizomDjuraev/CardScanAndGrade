@@ -7,19 +7,8 @@ import {
   Text,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useAuth } from "@clerk/clerk-expo";
 
 export default function SettingsScreen({ navigation }) {
-  const { signOut } = useAuth();
-
-  const handleSignOutPress = async () => {
-    try {
-      await signOut();
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
@@ -171,19 +160,6 @@ export default function SettingsScreen({ navigation }) {
           style={styles.settingArrow}
         />
       </TouchableOpacity>
-      {/* Divider */}
-      <View style={styles.divider}></View>
-
-      {/* Logout */}
-      <TouchableOpacity style={styles.logoutItem} onPress={handleSignOutPress}>
-        <Ionicons
-          name="log-out-outline"
-          size={24}
-          color="#8E0909"
-          style={styles.logoutIcon}
-        />
-        <Text style={styles.logoutText}>Logout</Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -223,7 +199,7 @@ const styles = StyleSheet.create({
   settingItem: {
     flexDirection: "row",
     alignItems: "center",
-    width: "80%",
+    width: "90%",
     marginBottom: 10,
     marginTop: 10,
   },
@@ -240,21 +216,6 @@ const styles = StyleSheet.create({
   divider: {
     borderBottomWidth: 1,
     borderBottomColor: "#272727",
-    width: "80%",
-  },
-  logoutText: {
-    fontSize: 18,
-    color: "#8E0909",
-  },
-  logoutIcon: {
-    marginRight: 10,
-    transform: [{ scaleX: -1 }],
-  },
-  logoutItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "30%",
-    marginBottom: 10,
-    marginTop: 10,
+    width: "90%",
   },
 });
