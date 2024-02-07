@@ -8,48 +8,37 @@ const windowHeight = Dimensions.get('window').height;
 const AdjustBordersScreen = () => {
   const [imageUri, setImageUri] = useState('https://via.placeholder.com/300');
   
-  // Image dimensions and position
+  // Image dimensions and position are known and static
   const imageWidth = 300;
   const imageHeight = 300;
   const imageX = (windowWidth - imageWidth) / 2;
   const imageY = (windowHeight - imageHeight) / 2;
 
-  // Initialize crop area state relative to the image position
-  const [imageLayout, setImageLayout] = useState(null);
-  const [cropArea, setCropArea] = useState(null);
+  // Directly initialize crop area state relative to the image position
+  const [cropArea, setCropArea] = useState({
+    x: imageX,
+    y: imageY,
+    width: 100,
+    height: 100,
+  });
 
-  useEffect(() => {
-    if (imageLayout) {
-      setCropArea({
-        x: imageLayout.x,
-        y: imageLayout.y,
-        width: 100,
-        height: 100,
-      });
-    }
-  }, [imageLayout]);
-
-  // PanResponder for moving the crop area within the image boundaries
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gestureState) => {
-      const newX = Math.max(imageX, Math.min(gestureState.moveX - cropArea.width / 2, imageX + imageWidth - cropArea.width));
-      const newY = Math.max(imageY, Math.min(gestureState.moveY - cropArea.height / 2, imageY + imageHeight - cropArea.height));
+      // Constrain the movement within the image boundaries
+      const newX = Math.max(imageX, Math.min(gestureState.moveX - gestureState.dx, imageX + imageWidth - cropArea.width));
+      const newY = Math.max(imageY, Math.min(gestureState.moveY - gestureState.dy, imageY + imageHeight - cropArea.height));
       setCropArea(prev => ({
         ...prev,
         x: newX,
         y: newY,
       }));
     },
-    onPanResponderRelease: () => {
-      // Handle end of drag if needed
-    },
   });
 
-  // Function to crop the image
   const cropImage = async () => {
     try {
-      // Ensure cropping coordinates are relative to the image
+      // Cropping coordinates adjusted to be relative to the image
       const cropX = cropArea.x - imageX;
       const cropY = cropArea.y - imageY;
 
@@ -65,42 +54,23 @@ const AdjustBordersScreen = () => {
         }],
         { compress: 1, format: ImageManipulator.SaveFormat.PNG }
       );
-      setImageUri(manipResult.uri); // Update the imageUri state with the new cropped image
+      setImageUri(manipResult.uri);
     } catch (error) {
       console.error('Error cropping image:', error);
     }
   };
-
-  // Function to get the layout of the image
-  const onImageLayout = event => {
-    const { x, y, width, height } = event.nativeEvent.layout;
-    setImageLayout({
-      x: x,
-      y: y,
-      width: width,
-      height: height
-    });
-  };
-
-
-  if (!imageLayout) {
-    return <View style={styles.container}><Text>Loading...</Text></View>;
-  }
 
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image 
           source={{ uri: imageUri }} 
-          style={styles.image} 
-          onLayout={onImageLayout}
+          style={styles.image}
         />
-        {cropArea && (
-          <View
-            {...panResponder.panHandlers}
-            style={[styles.cropArea, { left: cropArea.x, top: cropArea.y, width: cropArea.width, height: cropArea.height }]}
-          />
-        )}
+        <View
+          {...panResponder.panHandlers}
+          style={[styles.cropArea, { left: cropArea.x, top: cropArea.y, width: cropArea.width, height: cropArea.height }]}
+        />
       </View>
       <Button title="Crop Image" onPress={cropImage} />
       <Text style={styles.debugText}>Crop Area X: {cropArea.x}</Text>
@@ -117,8 +87,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   imageContainer: {
-    width: 300,
-    height: 300,
+    width: imageWidth,
+    height: imageHeight,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'lightgrey',
@@ -127,12 +97,15 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  cropArea: {
+    position: 'absolute',
+    borderWidth: 1,
+    borderColor: 'blue',
+  },
   debugText: {
     color: 'black',
     marginTop: 20,
   },
 });
-
-
 
 export default AdjustBordersScreen;
