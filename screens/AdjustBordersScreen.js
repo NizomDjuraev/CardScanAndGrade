@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Image, PanResponder, Button, Text, Dimensions } from 'react-native';
 import * as ImageManipulator from 'expo-image-manipulator';
 
@@ -7,14 +7,11 @@ const windowHeight = Dimensions.get('window').height;
 
 const AdjustBordersScreen = () => {
   const [imageUri, setImageUri] = useState('https://via.placeholder.com/300');
-  
-  // Image dimensions and position are known and static
   const imageWidth = 300;
   const imageHeight = 300;
   const imageX = (windowWidth - imageWidth) / 2;
   const imageY = (windowHeight - imageHeight) / 2;
 
-  // Directly initialize crop area state relative to the image position
   const [cropArea, setCropArea] = useState({
     x: imageX,
     y: imageY,
@@ -25,7 +22,6 @@ const AdjustBordersScreen = () => {
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gestureState) => {
-      // Constrain the movement within the image boundaries
       const newX = Math.max(imageX, Math.min(gestureState.moveX - gestureState.dx, imageX + imageWidth - cropArea.width));
       const newY = Math.max(imageY, Math.min(gestureState.moveY - gestureState.dy, imageY + imageHeight - cropArea.height));
       setCropArea(prev => ({
@@ -38,7 +34,6 @@ const AdjustBordersScreen = () => {
 
   const cropImage = async () => {
     try {
-      // Cropping coordinates adjusted to be relative to the image
       const cropX = cropArea.x - imageX;
       const cropY = cropArea.y - imageY;
 
@@ -62,7 +57,7 @@ const AdjustBordersScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.imageContainer}>
+      <View style={[styles.imageContainer, { width: imageWidth, height: imageHeight }]}>
         <Image 
           source={{ uri: imageUri }} 
           style={styles.image}
@@ -87,8 +82,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   imageContainer: {
-    width: imageWidth,
-    height: imageHeight,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'lightgrey',
@@ -109,3 +102,4 @@ const styles = StyleSheet.create({
 });
 
 export default AdjustBordersScreen;
+
