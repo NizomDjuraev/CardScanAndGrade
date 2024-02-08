@@ -5,11 +5,13 @@ import * as ImageManipulator from 'expo-image-manipulator';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
+// Constants for the image dimensions
+const imageWidth = 300;
+const imageHeight = 300;
+
 const AdjustBordersScreen = () => {
   const [imageUri, setImageUri] = useState('https://via.placeholder.com/300');
   const [isResizing, setIsResizing] = useState(false);
-  const imageWidth = 300;
-  const imageHeight = 300;
   const imageX = (windowWidth - imageWidth) / 2;
   const imageY = (windowHeight - imageHeight) / 2;
 
@@ -24,8 +26,8 @@ const AdjustBordersScreen = () => {
     onStartShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gestureState) => {
       if (isResizing) {
-        const newWidth = Math.max(50, cropArea.width + gestureState.dx);
-        const newHeight = Math.max(50, cropArea.height + gestureState.dy);
+        const newWidth = Math.max(50, Math.min(imageWidth, cropArea.width + gestureState.dx));
+        const newHeight = Math.max(50, Math.min(imageHeight, cropArea.height + gestureState.dy));
         setCropArea(prev => ({
           ...prev,
           width: newWidth,
@@ -107,17 +109,17 @@ const styles = StyleSheet.create({
     height: imageHeight,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'lightgrey', // To visualize the container area
+    backgroundColor: 'lightgrey',
   },
   image: {
     width: '100%',
     height: '100%',
+    resizeMode: 'contain',
   },
   cropArea: {
     position: 'absolute',
     borderWidth: 1,
     borderColor: 'blue',
-    // The width and height will be dynamically updated
   },
   resizeHandle: {
     position: 'absolute',
@@ -135,4 +137,3 @@ const styles = StyleSheet.create({
 });
 
 export default AdjustBordersScreen;
-
