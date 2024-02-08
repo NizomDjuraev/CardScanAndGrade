@@ -115,8 +115,4 @@ const styles = StyleSheet.create({
 });
 
 export default AdjustBordersScreen;
-    marginTop: 20,
-  },
-});
 
-export default AdjustBordersScreen;
