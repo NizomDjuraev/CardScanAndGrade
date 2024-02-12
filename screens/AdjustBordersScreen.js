@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Image, PanResponder, Text, Dimensions } from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;
@@ -18,39 +18,46 @@ const AdjustBordersScreen = () => {
     right: imageX + imageWidth,
     bottom: imageY + imageHeight,
   });
+  const [panResponders, setPanResponders] = useState({});
 
-  const createBorderPanResponder = (borderName) => {
-    return PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: (evt, gestureState) => {
-        let newBorders = { ...borders };
-        switch (borderName) {
-          case 'left':
-            newBorders.left = Math.min(newBorders.right - 50, Math.max(imageX, gestureState.moveX));
-            break;
-          case 'top':
-            newBorders.top = Math.min(newBorders.bottom - 50, Math.max(imageY, gestureState.moveY));
-            break;
-          case 'right':
-            newBorders.right = Math.max(newBorders.left + 50, Math.min(imageX + imageWidth, gestureState.moveX));
-            break;
-          case 'bottom':
-            newBorders.bottom = Math.max(newBorders.top + 50, Math.min(imageY + imageHeight, gestureState.moveY));
-            break;
-        }
-        setBorders(newBorders);
-      },
-      onPanResponderTerminationRequest: () => false,
+  useEffect(() => {
+    const createBorderPanResponder = (borderName) => {
+      return PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onPanResponderMove: (evt, gestureState) => {
+          setBorders((currentBorders) => {
+            let newBorders = { ...currentBorders };
+            let update = {};
+            switch (borderName) {
+              case 'left':
+                update.left = Math.min(newBorders.right - 50, Math.max(imageX, gestureState.moveX));
+                break;
+              case 'top':
+                update.top = Math.min(newBorders.bottom - 50, Math.max(imageY, gestureState.moveY));
+                break;
+              case 'right':
+                update.right = Math.max(newBorders.left + 50, Math.min(imageX + imageWidth, gestureState.moveX));
+                break;
+              case 'bottom':
+                update.bottom = Math.max(newBorders.top + 50, Math.min(imageY + imageHeight, gestureState.moveY));
+                break;
+            }
+            return { ...newBorders, ...update };
+          });
+        },
+        onPanResponderTerminationRequest: () => false,
+      });
+    };
+
+    setPanResponders({
+      left: createBorderPanResponder('left'),
+      top: createBorderPanResponder('top'),
+      right: createBorderPanResponder('right'),
+      bottom: createBorderPanResponder('bottom'),
     });
-  };
+  }, []);
 
-  // Handlers for moving the border lines
-  const leftPanResponder = createBorderPanResponder('left');
-  const topPanResponder = createBorderPanResponder('top');
-  const rightPanResponder = createBorderPanResponder('right');
-  const bottomPanResponder = createBorderPanResponder('bottom');
-
-  // Calculate the centering based on the position of the borders
+    // Calculate the centering based on the position of the borders
   const calculateCentering = () => {
     const leftMargin = borders.left - imageX;
     const rightMargin = imageWidth - (borders.right - imageX);
@@ -78,28 +85,28 @@ const AdjustBordersScreen = () => {
     console.log(centering);
   };
 
-  // Render the draggable border lines
+  // Render the draggable border lines using the pan responders from state
   const renderBorderLines = () => (
     <>
       <View
-        {...leftPanResponder.panHandlers}
+        {...panResponders.left?.panHandlers}
         style={[styles.borderLineVertical, { left: borders.left - 1 }]}
       />
       <View
-        {...topPanResponder.panHandlers}
+        {...panResponders.top?.panHandlers}
         style={[styles.borderLineHorizontal, { top: borders.top - 1 }]}
       />
       <View
-        {...rightPanResponder.panHandlers}
+        {...panResponders.right?.panHandlers}
         style={[styles.borderLineVertical, { left: borders.right - 1 }]}
       />
       <View
-        {...bottomPanResponder.panHandlers}
+        {...panResponders.bottom?.panHandlers}
         style={[styles.borderLineHorizontal, { top: borders.bottom - 1 }]}
       />
     </>
   );
-  
+
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
