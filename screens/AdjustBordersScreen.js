@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Image, PanResponder, Button, Text, Dimensions } from 'react-native';
-import * as ImageManipulator from 'expo-image-manipulator';
+import { View, StyleSheet, Image, PanResponder, Text, Dimensions } from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -9,101 +8,107 @@ const windowHeight = Dimensions.get('window').height;
 const imageWidth = 300;
 const imageHeight = 300;
 const imageX = (windowWidth - imageWidth) / 2;
-const imageY = 100; // Adjust this as needed
+const imageY = (windowHeight - imageHeight) / 2;
 
 const AdjustBordersScreen = () => {
-  const [imageUri, setImageUri] = useState('https://via.placeholder.com/300');
-  const [cropArea, setCropArea] = useState({
-    x: imageX,
-    y: imageY,
-    width: 100,
-    height: 100,
-  });
-  const [isResizing, setIsResizing] = useState(false);
-
-  // PanResponder to handle the movement of the crop area
-  const movePanResponder = PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
-    onPanResponderMove: (evt, gestureState) => {
-      if (!isResizing) {
-        const newX = Math.max(imageX, Math.min(gestureState.moveX - gestureState.dx, imageX + imageWidth - cropArea.width));
-        const newY = Math.max(imageY, Math.min(gestureState.moveY - gestureState.dy, imageY + imageHeight - cropArea.height));
-        setCropArea(prev => ({
-          ...prev,
-          x: newX,
-          y: newY,
-        }));
-      }
-    },
+  const [imageUri] = useState('https://via.placeholder.com/300');
+  const [borders, setBorders] = useState({
+    left: imageX,
+    top: imageY,
+    right: imageX + imageWidth,
+    bottom: imageY + imageHeight,
   });
 
-  // PanResponder to handle resizing of the crop area
-  const resizePanResponder = PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
-    onPanResponderMove: (evt, gestureState) => {
-      if (isResizing) {
-        const newWidth = Math.max(50, Math.min(imageWidth, cropArea.width + gestureState.dx));
-        const newHeight = Math.max(50, Math.min(imageHeight, cropArea.height + gestureState.dy));
-        setCropArea(prev => ({
-          ...prev,
-          width: newWidth,
-          height: newHeight,
-        }));
-      }
-    },
-    onPanResponderGrant: () => {
-      setIsResizing(true);
-    },
-    onPanResponderRelease: () => {
-      setIsResizing(false);
-    },
-  });
-
-  const cropImage = async () => {
-    try {
-      const cropX = cropArea.x - imageX;
-      const cropY = cropArea.y - imageY;
-
-      const manipResult = await ImageManipulator.manipulateAsync(
-        imageUri,
-        [{
-          crop: {
-            originX: cropX,
-            originY: cropY,
-            width: cropArea.width,
-            height: cropArea.height,
-          },
-        }],
-        { compress: 1, format: ImageManipulator.SaveFormat.PNG }
-      );
-      setImageUri(manipResult.uri);
-    } catch (error) {
-      console.error('Error cropping image:', error);
-    }
+  const createBorderPanResponder = (borderName) => {
+    return PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (evt, gestureState) => {
+        let newBorders = { ...borders };
+        switch (borderName) {
+          case 'left':
+            newBorders.left = Math.min(newBorders.right - 50, Math.max(imageX, gestureState.moveX));
+            break;
+          case 'top':
+            newBorders.top = Math.min(newBorders.bottom - 50, Math.max(imageY, gestureState.moveY));
+            break;
+          case 'right':
+            newBorders.right = Math.max(newBorders.left + 50, Math.min(imageX + imageWidth, gestureState.moveX));
+            break;
+          case 'bottom':
+            newBorders.bottom = Math.max(newBorders.top + 50, Math.min(imageY + imageHeight, gestureState.moveY));
+            break;
+        }
+        setBorders(newBorders);
+      },
+      onPanResponderTerminationRequest: () => false,
+    });
   };
 
-  return (
-    <View style={styles.container}>
-      <Image
-        source={{ uri: imageUri }}
-        style={[styles.image, { marginTop: imageY }]}
+  // Handlers for moving the border lines
+  const leftPanResponder = createBorderPanResponder('left');
+  const topPanResponder = createBorderPanResponder('top');
+  const rightPanResponder = createBorderPanResponder('right');
+  const bottomPanResponder = createBorderPanResponder('bottom');
+
+  // Calculate the centering based on the position of the borders
+  const calculateCentering = () => {
+    const leftMargin = borders.left - imageX;
+    const rightMargin = imageWidth - (borders.right - imageX);
+    const topMargin = borders.top - imageY;
+    const bottomMargin = imageHeight - (borders.bottom - imageY);
+
+    // Calculate centering as the difference between opposing margins
+    // as a percentage of the total width or height.
+    const horizontalCentering = ((rightMargin - leftMargin) / (leftMargin + rightMargin)) * 100;
+    const verticalCentering = ((bottomMargin - topMargin) / (topMargin + bottomMargin)) * 100;
+
+    // Ensure centering is within the range -100 to 100
+    // Negative values mean the image is off-center to the left or top
+    // Positive values mean the image is off-center to the right or bottom
+    return {
+      horizontalCentering: Math.max(-100, Math.min(100, horizontalCentering)),
+      verticalCentering: Math.max(-100, Math.min(100, verticalCentering)),
+    };
+  };
+
+  // Function to submit centering data
+  const submitCentering = () => {
+    const centering = calculateCentering();
+    // Here you would handle the submission of the centering data
+    console.log(centering);
+  };
+
+  // Render the draggable border lines
+  const renderBorderLines = () => (
+    <>
+      <View
+        {...leftPanResponder.panHandlers}
+        style={[styles.borderLineVertical, { left: borders.left - 1 }]}
       />
       <View
-        {...movePanResponder.panHandlers}
-        style={[styles.cropArea, {
-          left: cropArea.x,
-          top: cropArea.y,
-          width: cropArea.width,
-          height: cropArea.height
-        }]}
-      >
-        <View
-          {...resizePanResponder.panHandlers}
-          style={styles.resizeHandle}
-        />
+        {...topPanResponder.panHandlers}
+        style={[styles.borderLineHorizontal, { top: borders.top - 1 }]}
+      />
+      <View
+        {...rightPanResponder.panHandlers}
+        style={[styles.borderLineVertical, { left: borders.right - 1 }]}
+      />
+      <View
+        {...bottomPanResponder.panHandlers}
+        style={[styles.borderLineHorizontal, { top: borders.bottom - 1 }]}
+      />
+    </>
+  );
+  
+  return (
+    <View style={styles.container}>
+      <View style={styles.imageContainer}>
+        <Image source={{ uri: imageUri }} style={styles.image} />
+        {renderBorderLines()}
       </View>
-      <Button title="Crop Image" onPress={cropImage} />
-      <Text>Crop Area X: {cropArea.x}, Y: {cropArea.y}</Text>
+      <Text style={styles.debugText} onPress={submitCentering}>
+        Submit Centering
+      </Text>
     </View>
   );
 };
@@ -111,35 +116,32 @@ const AdjustBordersScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
   },
   imageContainer: {
     width: imageWidth,
     height: imageHeight,
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
+    position: 'relative',
   },
   image: {
     width: imageWidth,
     height: imageHeight,
   },
-  cropArea: {
+  borderLineVertical: {
     position: 'absolute',
-    borderWidth: 1,
-    borderColor: 'blue',
+    top: imageY,
+    height: imageHeight,
+    width: 2,
+    backgroundColor: 'red',
   },
-// ...
-  resizeHandle: {
+  borderLineHorizontal: {
     position: 'absolute',
-    width: 20,
-    height: 20,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'blue',
-    opacity: 0.5,
+    left: imageX,
+    width: imageWidth,
+    height: 2,
+    backgroundColor: 'red',
   },
   debugText: {
     color: 'black',
