@@ -15,25 +15,35 @@ const AdjustBordersScreen = () => {
   const [margins, setMargins] = useState({ left: imageX, top: imageY, right: windowWidth - (imageX + imageWidth), bottom: windowHeight - (imageY + imageHeight) });
 
   // Create pan responders for each edge
-  const createPanResponder = (edge) => {
-    return PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: (event, gestureState) => {
-        setMargins((prev) => {
-          let change = gestureState.dx; // Default to horizontal movement
-          if (edge === 'top' || edge === 'bottom') {
-            change = gestureState.dy; // Adjust for vertical movement
-          }
+const createPanResponder = (edge) => {
+  return PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onPanResponderMove: (event, gestureState) => {
+      setMargins((prev) => {
+        // Get the changes based on the gesture state
+        let dx = gestureState.dx;
+        let dy = gestureState.dy;
 
-          const newMargin = Math.max(0, prev[edge] + change); // Prevent negative margins
-          return { ...prev, [edge]: newMargin };
-        });
-      },
-      onPanResponderRelease: () => {
-        // No action needed on release as per current requirements
-      },
-    });
-  };
+        // Create a new margins object based on the edge being moved
+        let newMargins = { ...prev };
+        if (edge === 'left' && prev.left + dx < imageWidth - prev.right) {
+          newMargins.left = Math.max(0, prev.left + dx);
+        } else if (edge === 'right' && prev.right - dx < imageWidth - prev.left) {
+          newMargins.right = Math.max(0, prev.right - dx);
+        } else if (edge === 'top' && prev.top + dy < imageHeight - prev.bottom) {
+          newMargins.top = Math.max(0, prev.top + dy);
+        } else if (edge === 'bottom' && prev.bottom - dy < imageHeight - prev.top) {
+          newMargins.bottom = Math.max(0, prev.bottom - dy);
+        }
+        return newMargins;
+      });
+    },
+    onPanResponderRelease: () => {
+      // Re-activate the pan responder for the current edge
+      panResponders[edge] = createPanResponder(edge);
+    },
+  });
+};
 
   // PanResponders for each border
   const panResponders = {
