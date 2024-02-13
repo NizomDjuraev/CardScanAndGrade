@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, StyleSheet, Image, Text, PanResponder, Dimensions } from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;
@@ -18,74 +18,72 @@ const AdjustBordersScreen = () => {
     bottom: windowHeight - (imageY + imageHeight),
   });
 
-  // Update margins within the valid bounds
+  const createPanResponder = (edge) => {
+    return PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (evt, gestureState) => {
+        const change = (edge === 'left' || edge === 'right') ? gestureState.dx : gestureState.dy;
+        updateMargins(edge, change);
+      },
+      onPanResponderRelease: () => {
+        // No action needed on release
+      },
+    });
+  };
+
   const updateMargins = (edge, change) => {
     setMargins((prev) => {
       let newMargins = { ...prev };
       switch (edge) {
         case 'left':
-          newMargins.left = Math.min(Math.max(0, prev.left + change), imageWidth - prev.right - 2);
+          newMargins.left = Math.max(0, prev.left + change);
           break;
         case 'right':
-          newMargins.right = Math.min(Math.max(0, prev.right - change), imageWidth - prev.left - 2);
+          newMargins.right = Math.max(0, prev.right - change);
           break;
         case 'top':
-          newMargins.top = Math.min(Math.max(0, prev.top + change), imageHeight - prev.bottom - 2);
+          newMargins.top = Math.max(0, prev.top + change);
           break;
         case 'bottom':
-          newMargins.bottom = Math.min(Math.max(0, prev.bottom - change), imageHeight - prev.top - 2);
-          break;
-        default:
+          newMargins.bottom = Math.max(0, prev.bottom - change);
           break;
       }
       return newMargins;
     });
   };
 
-  // PanResponder logic
-  const createPanResponder = (edge) => PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
-    onPanResponderMove: (evt, gestureState) => {
-      const change = (edge === 'left' || edge === 'right') ? gestureState.dx : gestureState.dy;
-      updateMargins(edge, change);
-    },
-    onPanResponderRelease: () => {
-      // No action needed on release
-    },
-  });
+  const panResponders = useMemo(() => ({
+    left: createPanResponder('left'),
+    right: createPanResponder('right'),
+    top: createPanResponder('top'),
+    bottom: createPanResponder('bottom'),
+  }), []);
 
-  // Initialize panResponders only once
-  const [panResponders, setPanResponders] = useState({});
-  useEffect(() => {
-    setPanResponders({
-      left: createPanResponder('left'),
-      right: createPanResponder('right'),
-      top: createPanResponder('top'),
-      bottom: createPanResponder('bottom'),
-    });
-  }, []);
-
-    // Calculate the centering score
   const calculateCentering = () => {
     const horizontalCentering = ((margins.left - margins.right) / imageWidth) * 100;
     const verticalCentering = ((margins.top - margins.bottom) / imageHeight) * 100;
     return {
-      horizontal: horizontalCentering.toFixed(2),
-      vertical: verticalCentering.toFixed(2),
+      horizontal: Math.abs(horizontalCentering).toFixed(2), // Using Math.abs to ensure positive values
+      vertical: Math.abs(verticalCentering).toFixed(2),
     };
   };
 
-  // Render the draggable borders and the image
-  const renderBorders = () => (
-    <>
-      <View {...panResponders.left.panHandlers} style={[styles.border, { left: -1, top: 0, bottom: 0, width: 2 }]} />
-      <View {...panResponders.top.panHandlers} style={[styles.border, { top: -1, left: 0, right: 0, height: 2 }]} />
-      <View {...panResponders.right.panHandlers} style={[styles.border, { right: -1, top: 0, bottom: 0, width: 2 }]} />
-      <View {...panResponders.bottom.panHandlers} style={[styles.border, { bottom: -1, left: 0, right: 0, height: 2 }]} />
-    </>
-  );
-
   const centering = calculateCentering();
+
+  const getBorderStyle = (key, margins) => {
+    switch (key) {
+      case 'left':
+        return { left: -1, top: 0, bottom: 0, width: 2 };
+      case 'right':
+        return { right: -1, top: 0, bottom: 0, width: 2 };
+      case 'top':
+        return { top: -1, left: 0, right: 0, height: 2 };
+      case 'bottom':
+        return { bottom: -1, left: 0, right: 0, height: 2 };
+      default:
+        return {};
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -95,13 +93,13 @@ const AdjustBordersScreen = () => {
         marginRight: margins.right,
         marginBottom: margins.bottom,
       }]}>
-        {renderBorders()}
         <Image source={{ uri: imageUri }} style={styles.image} />
+        {Object.keys(panResponders).map((key) => (
+          <View {...panResponders[key].panHandlers} key={key} style={[styles.border, getBorderStyle(key, margins)]} />
+        ))}
       </View>
-      <View style={styles.centeringInfo}>
-        <Text style={styles.centeringText}>Horizontal Centering: {centering.horizontal}%</Text>
-        <Text style={styles.centeringText}>Vertical Centering: {centering.vertical}%</Text>
-      </View>
+      <Text style={styles.centeringText}>Horizontal Centering: {centering.horizontal}%</Text>
+      <Text style={styles.centeringText}>Vertical Centering: {centering.vertical}%</Text>
     </View>
   );
 };
@@ -113,6 +111,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fff',
   },
+
   imageContainer: {
     width: windowWidth,
     height: windowHeight,
@@ -129,13 +128,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     backgroundColor: 'blue',
   },
-  centeringInfo: {
-    position: 'absolute',
-    bottom: 20,
-  },
   centeringText: {
     fontSize: 16,
     color: 'black',
+    marginTop: 20,
   },
 });
 
