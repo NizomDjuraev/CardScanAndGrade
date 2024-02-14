@@ -1,4 +1,32 @@
-import React, { useState } from "react";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: screens/HomeScreen.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: screens/HomeScreen.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, Button, TouchableOpacity, View, Modal, FlatList } from "react-native";
 import { createCollection } from "../backend/supabase";
 import { useCollections } from '../hooks/useCollections';
@@ -44,10 +72,10 @@ export default function HomeScreen() {
      * 
      * @async
      * @function onCreateCollectionPress
-     * @returns {Promise<void>}promise that resolves once the collection has been created and the list reloaded.
+     * @returns {Promise&lt;void>}promise that resolves once the collection has been created and the list reloaded.
      */
     const onCreateCollectionPress = async () => {
-      if (collectionName && user) {
+      if (collectionName &amp;&amp; user) {
         await createCollection(user.id, user.firstName, user.lastName, collectionName);
         setCollectionName("");
         reloadCollections();
@@ -65,40 +93,40 @@ export default function HomeScreen() {
     };
   
     return (
-      <View style={styles.container}>
-        <View style={styles.searchBarContainer}>
-            <TextInput
+      &lt;View style={styles.container}>
+        &lt;View style={styles.searchBarContainer}>
+            &lt;TextInput
                 style={styles.searchBarInput}
                 placeholder="Search for a collection"
                 placeholderTextColor="#000"
                 value={searchQuery}
                 onChangeText={updateSearchQuery}
             />
-            <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
-              <Text style={styles.addButtonText}>+</Text>
-            </TouchableOpacity>
-        </View>
+            &lt;TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
+              &lt;Text style={styles.addButtonText}>+&lt;/Text>
+            &lt;/TouchableOpacity>
+        &lt;/View>
         {loading ? (
-          <Text>Loading collections...</Text>
+          &lt;Text>Loading collections...&lt;/Text>
         ) : (
-          <>
-            <View style={styles.collectionsContainer}>
-              <FlatList
+          &lt;>
+            &lt;View style={styles.collectionsContainer}>
+              &lt;FlatList
                   data={filteredCollections}
                   keyExtractor={(item, index) => index.toString()}
                   renderItem={({ item, index }) => (
-                    <View key={index} style={styles.collectionItem}>
-                      <Text style={styles.collectionText}>{item.collection}</Text>
-                    </View>
+                    &lt;View key={index} style={styles.collectionItem}>
+                      &lt;Text style={styles.collectionText}>{item.collection}&lt;/Text>
+                    &lt;/View>
                   )}
                   numColumns={2}
                   style={{ height: 612 }}
                 />
-            </View>
-          </>
+            &lt;/View>
+          &lt;/>
         )}
         
-        <Modal
+        &lt;Modal
           animationType="slide"
           transparent={true}
           visible={modalVisible}
@@ -106,23 +134,23 @@ export default function HomeScreen() {
             setModalVisible(!modalVisible);
           }}
         >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <TextInput
+          &lt;View style={styles.centeredView}>
+            &lt;View style={styles.modalView}>
+              &lt;TextInput
                 style={styles.input}
                 value={collectionName}
                 onChangeText={setCollectionName}
                 placeholder="Enter collection name"
                 placeholderTextColor="#a7a7a7"
               />
-              <Button title="Create Collection" onPress={onCreateCollectionPress} />
-              <TouchableOpacity style={{ marginTop: 10 }} onPress={() => setModalVisible(!modalVisible)}>
-                <Text>Close</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-      </View>
+              &lt;Button title="Create Collection" onPress={onCreateCollectionPress} />
+              &lt;TouchableOpacity style={{ marginTop: 10 }} onPress={() => setModalVisible(!modalVisible)}>
+                &lt;Text>Close&lt;/Text>
+              &lt;/TouchableOpacity>
+            &lt;/View>
+          &lt;/View>
+        &lt;/Modal>
+      &lt;/View>
     );
   }
 
@@ -231,3 +259,26 @@ const styles = StyleSheet.create({
       marginTop: 40,
   },
 })
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#MainTabs">MainTabs</a></li><li><a href="global.html#OAuthButtons">OAuthButtons</a></li><li><a href="global.html#RootNavigator">RootNavigator</a></li><li><a href="global.html#createCollection">createCollection</a></li><li><a href="global.html#getCollections">getCollections</a></li><li><a href="global.html#onCreateCollectionPress">onCreateCollectionPress</a></li><li><a href="global.html#onPress">onPress</a></li><li><a href="global.html#onSignInPress">onSignInPress</a></li><li><a href="global.html#onSignOutPress">onSignOutPress</a></li><li><a href="global.html#onSignUpPress">onSignUpPress</a></li><li><a href="global.html#supabase">supabase</a></li><li><a href="global.html#updateSearchQuery">updateSearchQuery</a></li><li><a href="global.html#useCollections">useCollections</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Feb 14 2024 14:34:59 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

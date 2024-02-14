@@ -6,6 +6,12 @@ import { styles } from "../components/Styles";
 import { OAuthButtons } from "../components/OAuth";
 import { Ionicons } from '@expo/vector-icons';
 
+
+/**
+ * SignUpScreen component for user registration. Utilizes custom hook for sign-up logic and manages form state.
+ * 
+ * @param {Object} props.navigation - Navigation prop for navigating between screens.
+ */
 export default function SignUpScreen({ navigation }) {
   const { isLoaded, signUp } = useSignUp();
   const [firstName, setFirstName] = React.useState("");

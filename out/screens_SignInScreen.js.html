@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: screens/SignInScreen.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: screens/SignInScreen.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from "react"
+import { Text, TextInput, TouchableOpacity, View } from "react-native"
+import { useSignIn } from "@clerk/clerk-expo"
+import { log } from "../logger"
+import { OAuthButtons } from "../components/OAuth"
+import { styles } from "../components/Styles"
+import { Ionicons } from '@expo/vector-icons';
+
+/**
+ * SignInScreen component provides a UI for users to sign in. Uses useSignIn
+ * for authentication processes including signing in and session management. The component manages
+ * input states for email address and password.
+ * 
+ * @param {Object} props.navigation - Navigation prop for navigating between screens.
+ */
+export default function SignInScreen({ navigation }) {
+  const { signIn, setSession, isLoaded } = useSignIn()
+
+  const [emailAddress, setEmailAddress] = React.useState("")
+  const [password, setPassword] = React.useState("")
+
+  /**
+   * Sign in the user with email and password.
+   * If successful, sets the user session. If not loaded or an error occurs, logs the error.
+   * 
+   * @async
+   * @function onSignInPress
+   * @returns {Promise&lt;void>}
+   */
+  const onSignInPress = async () => {
+    if (!isLoaded) {
+      return
+    }
+
+    try {
+      const completeSignIn = await signIn.create({
+        identifier: emailAddress,
+        password
+      })
+
+      await setSession(completeSignIn.createdSessionId)
+    } catch (err) {
+      log("Error:> " + err?.status || "")
+      log("Error:> " + err?.errors ? JSON.stringify(err.errors) : err)
+    }
+  }
+
+  /**
+   * Navigates to the SignUp screen.
+   * 
+   * @function onSignUpPress
+   */
+  const onSignUpPress = () => navigation.replace("SignUp")
+
+  return (
+    &lt;View style={styles.loginView}>
+      &lt;View style={styles.oauthView}>
+        &lt;OAuthButtons />
+      &lt;/View>
+
+      &lt;View style={styles.loginInputView}>
+        &lt;View style={styles.iconContainer}>
+          &lt;Ionicons name="ios-mail-outline" size={20} color="#fff" />
+        &lt;/View>
+        &lt;TextInput
+          autoCapitalize="none"
+          value={emailAddress}
+          style={styles.loginTextInput}
+          placeholder="Email..."
+          placeholderTextColor="#fff"
+          onChangeText={emailAddress => setEmailAddress(emailAddress)}
+        />
+      &lt;/View>
+
+      &lt;View style={styles.loginInputView}>
+        &lt;View style={styles.iconContainer}>
+          &lt;Ionicons name="lock-closed-outline" size={20} color="#fff" />
+        &lt;/View>
+        &lt;TextInput
+          value={password}
+          style={styles.loginTextInput}
+          placeholder="Password..."
+          placeholderTextColor="#fff"
+          secureTextEntry={true}
+          onChangeText={password => setPassword(password)}
+        />
+      &lt;/View>
+
+      &lt;TouchableOpacity style={styles.loginButton} onPress={onSignInPress}>
+        &lt;Text style={styles.loginButtonText}>Sign in&lt;/Text>
+      &lt;/TouchableOpacity>
+
+      &lt;View style={styles.loginFooter}>
+        &lt;Text style={{ color: '#fff' }}>Don't have an account?&lt;/Text>
+
+        &lt;TouchableOpacity
+          style={styles.secondaryButton}
+          onPress={onSignUpPress}
+        >
+          &lt;Text style={styles.secondaryButtonText}>Sign up&lt;/Text>
+        &lt;/TouchableOpacity>
+      &lt;/View>
+    &lt;/View>
+  )
+}
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#MainTabs">MainTabs</a></li><li><a href="global.html#OAuthButtons">OAuthButtons</a></li><li><a href="global.html#RootNavigator">RootNavigator</a></li><li><a href="global.html#createCollection">createCollection</a></li><li><a href="global.html#getCollections">getCollections</a></li><li><a href="global.html#onCreateCollectionPress">onCreateCollectionPress</a></li><li><a href="global.html#onPress">onPress</a></li><li><a href="global.html#onSignInPress">onSignInPress</a></li><li><a href="global.html#onSignOutPress">onSignOutPress</a></li><li><a href="global.html#onSignUpPress">onSignUpPress</a></li><li><a href="global.html#supabase">supabase</a></li><li><a href="global.html#updateSearchQuery">updateSearchQuery</a></li><li><a href="global.html#useCollections">useCollections</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Feb 14 2024 14:34:59 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

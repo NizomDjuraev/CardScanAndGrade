@@ -7,6 +7,11 @@ import { useWamUpBrowser } from "../hooks/useWarmUpBrowser";
 
 WebBrowser.maybeCompleteAuthSession();
 
+/**
+ * Renders OAuth buttons for authentication, specifically for Google OAuth
+ * Uses the `useOAuth` hook from `@clerk/clerk-expo` for starting the OAuth flow
+ * @returns {React.ReactElement} A React component that displays a button for initiating OAuth flow with Google
+ */
 export function OAuthButtons() {
   // Warm up the android browser to improve UX
   // https://docs.expo.dev/guides/authentication/#improving-user-experience

@@ -1,4 +1,32 @@
-import React, { useState, useEffect, useRef } from 'react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: screens/CameraScreen.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: screens/CameraScreen.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image, PanResponder } from 'react-native';
 import { Camera } from 'expo-camera';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'; 
@@ -60,7 +88,7 @@ export default function CameraScreen() {
   /**
    * Uses the camera API to capture a photo. After capturing, the photo is manipulated (cropped and formatted) using ImageManipulator.
    * @async
-   * @returns {Promise<void>} Promise that resolves once the photo has been captured
+   * @returns {Promise&lt;void>} Promise that resolves once the photo has been captured
    */
   const takePicture = async () => {
     if (cameraRef.current) {
@@ -86,7 +114,7 @@ export default function CameraScreen() {
    * Requests permission to access the camera roll and allows the user to pick a photo.
    * Displays an alert if access is denied.
    * @async
-   * @returns {Promise<void>} A promise that resolves after the user has selected a photo or the action has been cancelled.
+   * @returns {Promise&lt;void>} A promise that resolves after the user has selected a photo or the action has been cancelled.
    */
   const openCameraRoll = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -107,58 +135,58 @@ export default function CameraScreen() {
 
 
   if (hasPermission === null) {
-    return <View />;
+    return &lt;View />;
   }
   if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+    return &lt;Text>No access to camera&lt;/Text>;
   }
 
   return (
-    <View style={styles.container}>
+    &lt;View style={styles.container}>
       {capturedPhoto ? (
-        <View style={styles.previewContainer}>
-          <Image source={{ uri: capturedPhoto }} style={styles.previewImage} />
-        <TouchableOpacity
+        &lt;View style={styles.previewContainer}>
+          &lt;Image source={{ uri: capturedPhoto }} style={styles.previewImage} />
+        &lt;TouchableOpacity
           style={[styles.corner, { top: corners.topLeft.y, left: corners.topLeft.x }]}
           // {...topLeftResponder.panHandlers}
         />
-        <TouchableOpacity
+        &lt;TouchableOpacity
           style={[styles.corner, { top: corners.topRight.y, right: corners.topRight.x }]}
           // {...topRightResponder.panHandlers}
         />
-        <TouchableOpacity
+        &lt;TouchableOpacity
           style={[styles.corner, { bottom: corners.bottomLeft.y, left: corners.bottomLeft.x }]}
           // {...bottomLeftResponder.panHandlers}
         />
-        <TouchableOpacity
+        &lt;TouchableOpacity
           style={[styles.corner, { bottom: corners.bottomRight.y, right: corners.bottomRight.x }]}
           // {...bottomRightResponder.panHandlers}
         />
-          <TouchableOpacity onPress={retakePicture} style={styles.closeButton}>
-            <Text style={styles.closeButtonText}>X</Text>
-          </TouchableOpacity>
-        </View>
+          &lt;TouchableOpacity onPress={retakePicture} style={styles.closeButton}>
+            &lt;Text style={styles.closeButtonText}>X&lt;/Text>
+          &lt;/TouchableOpacity>
+        &lt;/View>
       ) : (
-        <Camera style={styles.camera} ref={cameraRef}>
-          <View style={styles.overlay} />
-          <View style={styles.rectangleContainer}>
-            <View style={styles.tab}>
-              <Text style={styles.tabText}>Front of Card</Text>
-            </View>
-            <View style={styles.rectangle} />
-          </View>
-          <View style={styles.cameraFooter}>
-            <TouchableOpacity onPress={openCameraRoll} style={styles.iconButton}>
-              <MaterialIcons name="insert-photo" size={24} color="white" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={takePicture} style={styles.takePictureButton} />
-            <TouchableOpacity style={styles.iconButton}>
-              <Ionicons name="arrow-forward" size={24} color="white" />
-            </TouchableOpacity>
-          </View>
-        </Camera>
+        &lt;Camera style={styles.camera} ref={cameraRef}>
+          &lt;View style={styles.overlay} />
+          &lt;View style={styles.rectangleContainer}>
+            &lt;View style={styles.tab}>
+              &lt;Text style={styles.tabText}>Front of Card&lt;/Text>
+            &lt;/View>
+            &lt;View style={styles.rectangle} />
+          &lt;/View>
+          &lt;View style={styles.cameraFooter}>
+            &lt;TouchableOpacity onPress={openCameraRoll} style={styles.iconButton}>
+              &lt;MaterialIcons name="insert-photo" size={24} color="white" />
+            &lt;/TouchableOpacity>
+            &lt;TouchableOpacity onPress={takePicture} style={styles.takePictureButton} />
+            &lt;TouchableOpacity style={styles.iconButton}>
+              &lt;Ionicons name="arrow-forward" size={24} color="white" />
+            &lt;/TouchableOpacity>
+          &lt;/View>
+        &lt;/Camera>
       )}
-    </View>
+    &lt;/View>
   );
 }
 
@@ -269,4 +297,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 1, // Ensure it's above other elements
   },
-});
+});</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#MainTabs">MainTabs</a></li><li><a href="global.html#OAuthButtons">OAuthButtons</a></li><li><a href="global.html#RootNavigator">RootNavigator</a></li><li><a href="global.html#createCollection">createCollection</a></li><li><a href="global.html#getCollections">getCollections</a></li><li><a href="global.html#onCreateCollectionPress">onCreateCollectionPress</a></li><li><a href="global.html#onPress">onPress</a></li><li><a href="global.html#onSignInPress">onSignInPress</a></li><li><a href="global.html#onSignOutPress">onSignOutPress</a></li><li><a href="global.html#onSignUpPress">onSignUpPress</a></li><li><a href="global.html#supabase">supabase</a></li><li><a href="global.html#updateSearchQuery">updateSearchQuery</a></li><li><a href="global.html#useCollections">useCollections</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Feb 14 2024 14:34:59 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
