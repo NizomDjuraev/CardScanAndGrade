@@ -6,15 +6,12 @@ import Navigation from "./navigation"
 import { ClerkProvider } from "@clerk/clerk-expo"
 import { tokenCache } from "./cache"
 
-// Your publishable Key goes here
 const publishableKey = "pk_test_Y29ycmVjdC1jb2QtMTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
 
 /**
- * Main entry point of the application. Initializes the app.
- * Uses `useCachedResources` to ensure that all assets are loaded before the app is rendered.
- * Wraps the app navigation within `ClerkProvider` to manage authentication using Clerk.
- * 
- * @returns {React.ReactElement|null} The root component of the app or null if assets are still loading.
+ * Main entry point of the application. It initializes the app, ensuring all assets are loaded before rendering. The app's navigation is wrapped within `ClerkProvider` for authentication management.
+ * @function App
+ * @returns {Object} The root component of the app, or null if assets are still loading.
  */
 export default function App() {
   const isLoadingComplete = useCachedResources()

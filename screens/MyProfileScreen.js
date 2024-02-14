@@ -4,29 +4,24 @@ import { useAuth, useUser } from "@clerk/clerk-expo";
 import { log } from "../logger";
 
 /**
- * ProfileScreen component that displays the user's profile and provides an option to sign out.
- * Utilizes authentication and user context hooks for functionality.
- * @component
- * @returns {React.ReactElement} The Profile screen
+ * ProfileScreen component displays the user's profile with sign-out functionality. It uses authentication and user context hooks.
+ * @function ProfileScreen
+ * @returns {Object} The Profile screen component.
  */
 export default function ProfileScreen() {
-  /**
-   * Authentication actions and user information from context.
-   */
+
+  //Authentication actions and user information from context.
   const { getToken, signOut } = useAuth();
   const { user } = useUser();
 
-  /**
-   * State to store the session token.
-   */
+  //State to store the session token.
   const [sessionToken, setSessionToken] = React.useState("");
 
   /**
-   * Signs out the current user.
-   * 
+   * Signs out the current user and handles potential errors.
    * @async
    * @function onSignOutPress
-   * @returns {Promise<void>}
+   * @returns {Promise<void>} A promise that resolves when the user is signed out.
    */
   const onSignOutPress = async () => {
     try {
@@ -38,9 +33,8 @@ export default function ProfileScreen() {
   };
 
   /**
-   * Fetches and updates the session token periodically.
-   * 
-   * @useEffect
+   * Periodically fetches and updates the session token.
+   * @function useSessionTokenEffect
    */
   React.useEffect(() => {
     const scheduler = setInterval(async () => {

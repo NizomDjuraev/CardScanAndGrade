@@ -5,8 +5,9 @@ import * as React from "react";
 
 
 /**
- * Hook that manages the loading of fonts and other assets.
- * @returns {boolean} The loading completion status (true if loading is complete).
+ * @function useCachedResources
+ * @description Hook that manages the loading of fonts and other assets to ensure they are loaded before the app is rendered.
+ * @returns {boolean} The loading completion status, true if loading is complete and false otherwise.
  */
 export default function useCachedResources() {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);

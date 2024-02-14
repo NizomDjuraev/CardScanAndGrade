@@ -34,10 +34,9 @@ import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 
 /**
- * CameraScreen component for capturing and selecting photos.
- * Manages camera permissions, captures photos, allows photo retaking, and accesses the camera roll.
- * @component
- * @returns {React.ReactElement} The Camera screen
+ * CameraScreen component for capturing and selecting photos.Manages camera permissions, captures photos, allows photo retaking, and accesses the camera roll.
+ * @function CameraScreen
+ * @returns {Object} The Camera screen
  */
 export default function CameraScreen() {
   const [hasPermission, setHasPermission] = useState(null);
@@ -52,7 +51,7 @@ export default function CameraScreen() {
   
   /**
    * Initializes pan responders for draggable corner markers in the UI. This enables interactive photo cropping.
-   * @useEffect
+   * @function useEffect 
    */
   useEffect(() => {
     const createPanResponder = (cornerName) => PanResponder.create({
@@ -76,7 +75,7 @@ export default function CameraScreen() {
 
   /**
    * Requests camera permissions sets the permission state accordingly.
-   * @useEffect
+   * @function useEffect 
    */
   useEffect(() => {
     (async () => {
@@ -86,10 +85,11 @@ export default function CameraScreen() {
   }, []);
 
   /**
-   * Uses the camera API to capture a photo. After capturing, the photo is manipulated (cropped and formatted) using ImageManipulator.
-   * @async
-   * @returns {Promise&lt;void>} Promise that resolves once the photo has been captured
-   */
+  * Captures a photo using the camera API, then manipulates the image.
+  * @async
+  * @function takePicture
+  * @returns {Promise&lt;void>} Resolves once the photo has been captured.
+  */
   const takePicture = async () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
@@ -103,18 +103,18 @@ export default function CameraScreen() {
   };
   
   /**
-   * Resets the captured photo state, allowing the user to take or select another photo.
-   * @function
+   * Resets the captured photo state, allowing the user to take another photo.
+   * @function retakePicture
    */
   const retakePicture = () => {
     setCapturedPhoto(null);
   };
 
   /**
-   * Requests permission to access the camera roll and allows the user to pick a photo.
-   * Displays an alert if access is denied.
+   * Requests permission to access the camera roll and allows the user to pick a photo. Displays an alert if access is denied.
    * @async
-   * @returns {Promise&lt;void>} A promise that resolves after the user has selected a photo or the action has been cancelled.
+   * @function openCameraRoll
+   * @returns {Promise&lt;void>} Resolves after the user has selected a photo or the action has been cancelled.
    */
   const openCameraRoll = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -307,13 +307,13 @@ const styles = StyleSheet.create({
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#MainTabs">MainTabs</a></li><li><a href="global.html#OAuthButtons">OAuthButtons</a></li><li><a href="global.html#RootNavigator">RootNavigator</a></li><li><a href="global.html#createCollection">createCollection</a></li><li><a href="global.html#getCollections">getCollections</a></li><li><a href="global.html#onCreateCollectionPress">onCreateCollectionPress</a></li><li><a href="global.html#onPress">onPress</a></li><li><a href="global.html#onSignInPress">onSignInPress</a></li><li><a href="global.html#onSignOutPress">onSignOutPress</a></li><li><a href="global.html#onSignUpPress">onSignUpPress</a></li><li><a href="global.html#supabase">supabase</a></li><li><a href="global.html#updateSearchQuery">updateSearchQuery</a></li><li><a href="global.html#useCollections">useCollections</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#CameraScreen">CameraScreen</a></li><li><a href="global.html#HomeScreen">HomeScreen</a></li><li><a href="global.html#MainTabs">MainTabs</a></li><li><a href="global.html#Navigation">Navigation</a></li><li><a href="global.html#OAuthButtons">OAuthButtons</a></li><li><a href="global.html#ProfileScreen">ProfileScreen</a></li><li><a href="global.html#RootNavigator">RootNavigator</a></li><li><a href="global.html#SettingsScreen">SettingsScreen</a></li><li><a href="global.html#SignInScreen">SignInScreen</a></li><li><a href="global.html#SignUpScreen">SignUpScreen</a></li><li><a href="global.html#VerifyCodeScreen">VerifyCodeScreen</a></li><li><a href="global.html#createCollection">createCollection</a></li><li><a href="global.html#filteredCollections">filteredCollections</a></li><li><a href="global.html#getCollections">getCollections</a></li><li><a href="global.html#onCreateCollectionPress">onCreateCollectionPress</a></li><li><a href="global.html#onPress">onPress</a></li><li><a href="global.html#onSignInPress">onSignInPress</a></li><li><a href="global.html#onSignOutPress">onSignOutPress</a></li><li><a href="global.html#onSignUpPress">onSignUpPress</a></li><li><a href="global.html#openCameraRoll">openCameraRoll</a></li><li><a href="global.html#retakePicture">retakePicture</a></li><li><a href="global.html#supabase">supabase</a></li><li><a href="global.html#takePicture">takePicture</a></li><li><a href="global.html#updateSearchQuery">updateSearchQuery</a></li><li><a href="global.html#useCachedResources">useCachedResources</a></li><li><a href="global.html#useCollections">useCollections</a></li><li><a href="global.html#useEffect">useEffect</a></li><li><a href="global.html#useSessionTokenEffect">useSessionTokenEffect</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Feb 14 2024 14:34:59 GMT-0500 (Eastern Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Feb 14 2024 16:29:05 GMT-0500 (Eastern Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

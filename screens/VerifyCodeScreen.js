@@ -5,9 +5,10 @@ import { styles } from "../components/Styles"
 import { log } from "../logger"
 
 /**
- * SignUpScreen component for handling email address verification during the sign-up process.
- * 
- * @param {Object} props.navigation
+ * SignUpScreen component manages email address verification during the sign-up process. Utilizes the useSignUp hook for verification logic.
+ * @function VerifyCodeScreen
+ * @param {Object} navigation - Navigation prop for screen transitions.
+ * @returns {Object} The SignUp screen component focused on email verification.
  */
 export default function SignUpScreen({ navigation }) {
   const { isLoaded, signUp, setSession } = useSignUp()
@@ -15,12 +16,10 @@ export default function SignUpScreen({ navigation }) {
   const [code, setCode] = React.useState("")
 
   /**
-   * Attempts to verify the user's email address using a verification code. If successful, sets the user session.
-   * Handles loading state and logs errors in case of failure.
-   * 
+   * Verifies the user's email address using the provided verification code. Sets the user session upon successful verification.
    * @async
    * @function onPress
-   * @returns {Promise<void>} Returns nothing, session gets set or error is handled.
+   * @returns {Promise<void>} A promise that resolves once the email address verification process is complete.
    */
   const onPress = async () => {
     if (!isLoaded) {

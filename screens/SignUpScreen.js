@@ -8,9 +8,10 @@ import { Ionicons } from '@expo/vector-icons';
 
 
 /**
- * SignUpScreen component for user registration. Utilizes custom hook for sign-up logic and manages form state.
- * 
- * @param {Object} props.navigation - Navigation prop for navigating between screens.
+ * SignUpScreen component enables user registration using their personal information. Leverages the useSignUp hook for registration processes and state management for user input.
+ * @function SignUpScreen
+ * @param {Object} navigation - Navigation prop for screen transitions.
+ * @returns {Object} The SignUp screen component.
  */
 export default function SignUpScreen({ navigation }) {
   const { isLoaded, signUp } = useSignUp();
@@ -19,6 +20,12 @@ export default function SignUpScreen({ navigation }) {
   const [emailAddress, setEmailAddress] = React.useState("");
   const [password, setPassword] = React.useState("");
 
+  /**
+   * Initiates the sign-up process with provided user information. Upon successful sign-up, prepares for email address verification and navigates to the verification code screen.
+   * @async
+   * @function onSignUpPress
+   * @returns {Promise<void>} Promimse resolves when the sign-up process is complete.
+   */
   const onSignUpPress = async () => {
     if (!isLoaded) {
       return;
@@ -42,6 +49,10 @@ export default function SignUpScreen({ navigation }) {
     }
   };
 
+  /**
+   * Handles navigation back to the SignIn screen.
+   * @function onSignInPress
+   */
   const onSignInPress = () => navigation.replace("SignIn");
 
   return (

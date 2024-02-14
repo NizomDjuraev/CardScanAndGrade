@@ -7,11 +7,10 @@ import { styles } from "../components/Styles"
 import { Ionicons } from '@expo/vector-icons';
 
 /**
- * SignInScreen component provides a UI for users to sign in. Uses useSignIn
- * for authentication processes including signing in and session management. The component manages
- * input states for email address and password.
- * 
- * @param {Object} props.navigation - Navigation prop for navigating between screens.
+ * SignInScreen component enables users to sign in using their email and password. It leverages the useSignIn hook for authentication processes, including signing in and managing user sessions. Manages state for user input fields.
+ * @function SignInScreen
+ * @param {Object} navigation - Navigation prop for screen transitions.
+ * @returns {Object} The SignIn screen component.
  */
 export default function SignInScreen({ navigation }) {
   const { signIn, setSession, isLoaded } = useSignIn()
@@ -20,12 +19,10 @@ export default function SignInScreen({ navigation }) {
   const [password, setPassword] = React.useState("")
 
   /**
-   * Sign in the user with email and password.
-   * If successful, sets the user session. If not loaded or an error occurs, logs the error.
-   * 
+   * Attempts to sign in the user using provided credentials. Sets the user session upon successful sign-in.
    * @async
    * @function onSignInPress
-   * @returns {Promise<void>}
+   * @returns {Promise<void>} A promise resolving when sign-in process is complete.
    */
   const onSignInPress = async () => {
     if (!isLoaded) {
@@ -46,8 +43,7 @@ export default function SignInScreen({ navigation }) {
   }
 
   /**
-   * Navigates to the SignUp screen.
-   * 
+   * Handles navigation to the SignUp screen.
    * @function onSignUpPress
    */
   const onSignUpPress = () => navigation.replace("SignUp")

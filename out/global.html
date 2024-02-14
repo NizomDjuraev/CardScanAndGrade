@@ -98,6 +98,130 @@
 
         
             
+<h4 class="name" id="MainTabs"><span class="type-signature"></span>MainTabs<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    Defines the main tab navigation interface, including tabs for the Home, Camera, Settings, and Profile screens, each with custom icons and styling.
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="navigation_index.js.html">navigation/index.js</a>, <a href="navigation_index.js.html#line42">line 42</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="Navigation"><span class="type-signature"></span>Navigation<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    Sets up the app's navigation using React Navigation, including a bottom tab navigator for main app sections and a stack navigator for authentication and profile management. Integrates Clerk for authentication, dynamically adjusting navigation based on the user's sign-in status.
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="navigation_index.js.html">navigation/index.js</a>, <a href="navigation_index.js.html#line27">line 27</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
 <h4 class="name" id="supabase"><span class="type-signature">(constant) </span>supabase<span class="type-signature"> :SupabaseClient</span></h4>
 
 
@@ -180,7 +304,7 @@
     
 
     
-    <h4 class="name" id="MainTabs"><span class="type-signature"></span>MainTabs<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="App"><span class="type-signature"></span>App<span class="signature">()</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
@@ -188,7 +312,7 @@
 
 
 <div class="description">
-    Main tab navigation interface of the app. It includes tabs for the Home screen, Camera, Settings,and Profile, each with custom icons and styling.
+    Main entry point of the application. It initializes the app, ensuring all assets are loaded before rendering. The app's navigation is wrapped within `ClerkProvider` for authentication management.
 </div>
 
 
@@ -232,7 +356,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="navigation_index.js.html">navigation/index.js</a>, <a href="navigation_index.js.html#line47">line 47</a>
+        <a href="App.js.html">App.js</a>, <a href="App.js.html#line11">line 11</a>
     </li></ul></dd>
     
 
@@ -257,6 +381,248 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The root component of the app, or null if assets are still loading.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="CameraScreen"><span class="type-signature"></span>CameraScreen<span class="signature">()</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    CameraScreen component for capturing and selecting photos.Manages camera permissions, captures photos, allows photo retaking, and accesses the camera roll.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="screens_CameraScreen.js.html">screens/CameraScreen.js</a>, <a href="screens_CameraScreen.js.html#line8">line 8</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The Camera screen
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="HomeScreen"><span class="type-signature"></span>HomeScreen<span class="signature">()</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    HomeScreen component displays a searchable list of collections. It allows users to search for collections and add new collections. Utilizes custom hooks for fetching user data and collections, and manages local state for UI control.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="screens_HomeScreen.js.html">screens/HomeScreen.js</a>, <a href="screens_HomeScreen.js.html#line7">line 7</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The Home screen
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -378,6 +744,116 @@
     
 
     
+    <h4 class="name" id="ProfileScreen"><span class="type-signature"></span>ProfileScreen<span class="signature">()</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    ProfileScreen component displays the user's profile with sign-out functionality. It uses authentication and user context hooks.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="screens_MyProfileScreen.js.html">screens/MyProfileScreen.js</a>, <a href="screens_MyProfileScreen.js.html#line6">line 6</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The Profile screen component.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="RootNavigator"><span class="type-signature"></span>RootNavigator<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
@@ -455,6 +931,642 @@
 
 
 
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="SettingsScreen"><span class="type-signature"></span>SettingsScreen<span class="signature">(navigation)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    SettingsScreen component that displays settings options for the user. This screen is part of a navigation stack, where the user can navigate to different parts of the application. Currently, it only displays a static title.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>navigation</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Navigation prop provided by the navigation library.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="screens_SettingsScreen.js.html">screens/SettingsScreen.js</a>, <a href="screens_SettingsScreen.js.html#line4">line 4</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The Settings screen element.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="SignInScreen"><span class="type-signature"></span>SignInScreen<span class="signature">(navigation)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    SignInScreen component enables users to sign in using their email and password. It leverages the useSignIn hook for authentication processes, including signing in and managing user sessions. Manages state for user input fields.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>navigation</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Navigation prop for screen transitions.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="screens_SignInScreen.js.html">screens/SignInScreen.js</a>, <a href="screens_SignInScreen.js.html#line9">line 9</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The SignIn screen component.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="SignUpScreen"><span class="type-signature"></span>SignUpScreen<span class="signature">(navigation)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    SignUpScreen component enables user registration using their personal information. Leverages the useSignUp hook for registration processes and state management for user input.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>navigation</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Navigation prop for screen transitions.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="screens_SignUpScreen.js.html">screens/SignUpScreen.js</a>, <a href="screens_SignUpScreen.js.html#line10">line 10</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The SignUp screen component.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="VerifyCodeScreen"><span class="type-signature"></span>VerifyCodeScreen<span class="signature">(navigation)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    SignUpScreen component manages email address verification during the sign-up process. Utilizes the useSignUp hook for verification logic.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>navigation</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Navigation prop for screen transitions.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="screens_VerifyCodeScreen.js.html">screens/VerifyCodeScreen.js</a>, <a href="screens_VerifyCodeScreen.js.html#line7">line 7</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The SignUp screen component focused on email verification.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -694,6 +1806,116 @@
     
 
     
+    <h4 class="name" id="filteredCollections"><span class="type-signature"></span>filteredCollections<span class="signature">()</span><span class="type-signature"> &rarr; {Array}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Filters collections based on search query. Case-insensitive.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="screens_HomeScreen.js.html">screens/HomeScreen.js</a>, <a href="screens_HomeScreen.js.html#line20">line 20</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Filtered list of collections.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="getCollections"><span class="type-signature"></span>getCollections<span class="signature">(userid)</span><span class="type-signature"> &rarr; {Promise.&lt;(Array|null)>}</span></h4>
     
 
@@ -905,7 +2127,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="screens_HomeScreen.js.html">screens/HomeScreen.js</a>, <a href="screens_HomeScreen.js.html#line41">line 41</a>
+        <a href="screens_HomeScreen.js.html">screens/HomeScreen.js</a>, <a href="screens_HomeScreen.js.html#line29">line 29</a>
     </li></ul></dd>
     
 
@@ -971,7 +2193,7 @@
 
 
 <div class="description">
-    Attempts to verify the user's email address using a verification code. If successful, sets the user session.Handles loading state and logs errors in case of failure.
+    Verifies the user's email address using the provided verification code. Sets the user session upon successful verification.
 </div>
 
 
@@ -1015,7 +2237,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="screens_VerifyCodeScreen.js.html">screens/VerifyCodeScreen.js</a>, <a href="screens_VerifyCodeScreen.js.html#line17">line 17</a>
+        <a href="screens_VerifyCodeScreen.js.html">screens/VerifyCodeScreen.js</a>, <a href="screens_VerifyCodeScreen.js.html#line18">line 18</a>
     </li></ul></dd>
     
 
@@ -1044,7 +2266,7 @@
 
         
 <div class="param-desc">
-    Returns nothing, session gets set or error is handled.
+    A promise that resolves once the email address verification process is complete.
 </div>
 
 
@@ -1081,7 +2303,7 @@
 
 
 <div class="description">
-    Sign in the user with email and password.If successful, sets the user session. If not loaded or an error occurs, logs the error.
+    Attempts to sign in the user using provided credentials. Sets the user session upon successful sign-in.
 </div>
 
 
@@ -1125,7 +2347,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="screens_SignInScreen.js.html">screens/SignInScreen.js</a>, <a href="screens_SignInScreen.js.html#line22">line 22</a>
+        <a href="screens_SignInScreen.js.html">screens/SignInScreen.js</a>, <a href="screens_SignInScreen.js.html#line21">line 21</a>
     </li></ul></dd>
     
 
@@ -1153,6 +2375,10 @@
 <h5>Returns:</h5>
 
         
+<div class="param-desc">
+    A promise resolving when sign-in process is complete.
+</div>
+
 
 
 <dl>
@@ -1179,7 +2405,7 @@
     
 
     
-    <h4 class="name" id="onSignOutPress"><span class="type-signature">(async) </span>onSignOutPress<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
+    <h4 class="name" id="onSignInPress"><span class="type-signature"></span>onSignInPress<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -1187,7 +2413,7 @@
 
 
 <div class="description">
-    Signs out the current user.
+    Handles navigation back to the SignIn screen.
 </div>
 
 
@@ -1231,7 +2457,95 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="screens_MyProfileScreen.js.html">screens/MyProfileScreen.js</a>, <a href="screens_MyProfileScreen.js.html#line24">line 24</a>
+        <a href="screens_SignUpScreen.js.html">screens/SignUpScreen.js</a>, <a href="screens_SignUpScreen.js.html#line52">line 52</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="onSignOutPress"><span class="type-signature">(async) </span>onSignOutPress<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Signs out the current user and handles potential errors.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="screens_MyProfileScreen.js.html">screens/MyProfileScreen.js</a>, <a href="screens_MyProfileScreen.js.html#line20">line 20</a>
     </li></ul></dd>
     
 
@@ -1259,6 +2573,10 @@
 <h5>Returns:</h5>
 
         
+<div class="param-desc">
+    A promise that resolves when the user is signed out.
+</div>
+
 
 
 <dl>
@@ -1293,7 +2611,7 @@
 
 
 <div class="description">
-    Navigates to the SignUp screen.
+    Handles navigation to the SignUp screen.
 </div>
 
 
@@ -1337,7 +2655,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="screens_SignInScreen.js.html">screens/SignInScreen.js</a>, <a href="screens_SignInScreen.js.html#line48">line 48</a>
+        <a href="screens_SignInScreen.js.html">screens/SignInScreen.js</a>, <a href="screens_SignInScreen.js.html#line45">line 45</a>
     </li></ul></dd>
     
 
@@ -1362,6 +2680,424 @@
 
 
 
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="onSignUpPress"><span class="type-signature">(async) </span>onSignUpPress<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Initiates the sign-up process with provided user information. Upon successful sign-up, prepares for email address verification and navigates to the verification code screen.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="screens_SignUpScreen.js.html">screens/SignUpScreen.js</a>, <a href="screens_SignUpScreen.js.html#line23">line 23</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Promimse resolves when the sign-up process is complete.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="openCameraRoll"><span class="type-signature">(async) </span>openCameraRoll<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Requests permission to access the camera roll and allows the user to pick a photo. Displays an alert if access is denied.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="screens_CameraScreen.js.html">screens/CameraScreen.js</a>, <a href="screens_CameraScreen.js.html#line85">line 85</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Resolves after the user has selected a photo or the action has been cancelled.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="retakePicture"><span class="type-signature"></span>retakePicture<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Resets the captured photo state, allowing the user to take another photo.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="screens_CameraScreen.js.html">screens/CameraScreen.js</a>, <a href="screens_CameraScreen.js.html#line77">line 77</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="takePicture"><span class="type-signature">(async) </span>takePicture<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Captures a photo using the camera API, then manipulates the image.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="screens_CameraScreen.js.html">screens/CameraScreen.js</a>, <a href="screens_CameraScreen.js.html#line59">line 59</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Resolves once the photo has been captured.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -1474,7 +3210,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="screens_HomeScreen.js.html">screens/HomeScreen.js</a>, <a href="screens_HomeScreen.js.html#line57">line 57</a>
+        <a href="screens_HomeScreen.js.html">screens/HomeScreen.js</a>, <a href="screens_HomeScreen.js.html#line44">line 44</a>
     </li></ul></dd>
     
 
@@ -1499,6 +3235,116 @@
 
 
 
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="useCachedResources"><span class="type-signature"></span>useCachedResources<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Hook that manages the loading of fonts and other assets to ensure they are loaded before the app is rendered.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hooks_useCachedResources.js.html">hooks/useCachedResources.js</a>, <a href="hooks_useCachedResources.js.html#line7">line 7</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The loading completion status, true if loading is complete and false otherwise.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -1664,6 +3510,270 @@
 
 
         
+            
+
+    
+
+    
+    <h4 class="name" id="useEffect"><span class="type-signature"></span>useEffect<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Initializes pan responders for draggable corner markers in the UI. This enables interactive photo cropping.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="screens_CameraScreen.js.html">screens/CameraScreen.js</a>, <a href="screens_CameraScreen.js.html#line24">line 24</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="useEffect"><span class="type-signature"></span>useEffect<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Requests camera permissions sets the permission state accordingly.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="screens_CameraScreen.js.html">screens/CameraScreen.js</a>, <a href="screens_CameraScreen.js.html#line48">line 48</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="useSessionTokenEffect"><span class="type-signature"></span>useSessionTokenEffect<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Periodically fetches and updates the session token.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="screens_MyProfileScreen.js.html">screens/MyProfileScreen.js</a>, <a href="screens_MyProfileScreen.js.html#line35">line 35</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
     
 
     
@@ -1679,13 +3789,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#MainTabs">MainTabs</a></li><li><a href="global.html#OAuthButtons">OAuthButtons</a></li><li><a href="global.html#RootNavigator">RootNavigator</a></li><li><a href="global.html#createCollection">createCollection</a></li><li><a href="global.html#getCollections">getCollections</a></li><li><a href="global.html#onCreateCollectionPress">onCreateCollectionPress</a></li><li><a href="global.html#onPress">onPress</a></li><li><a href="global.html#onSignInPress">onSignInPress</a></li><li><a href="global.html#onSignOutPress">onSignOutPress</a></li><li><a href="global.html#onSignUpPress">onSignUpPress</a></li><li><a href="global.html#supabase">supabase</a></li><li><a href="global.html#updateSearchQuery">updateSearchQuery</a></li><li><a href="global.html#useCollections">useCollections</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#CameraScreen">CameraScreen</a></li><li><a href="global.html#HomeScreen">HomeScreen</a></li><li><a href="global.html#MainTabs">MainTabs</a></li><li><a href="global.html#Navigation">Navigation</a></li><li><a href="global.html#OAuthButtons">OAuthButtons</a></li><li><a href="global.html#ProfileScreen">ProfileScreen</a></li><li><a href="global.html#RootNavigator">RootNavigator</a></li><li><a href="global.html#SettingsScreen">SettingsScreen</a></li><li><a href="global.html#SignInScreen">SignInScreen</a></li><li><a href="global.html#SignUpScreen">SignUpScreen</a></li><li><a href="global.html#VerifyCodeScreen">VerifyCodeScreen</a></li><li><a href="global.html#createCollection">createCollection</a></li><li><a href="global.html#filteredCollections">filteredCollections</a></li><li><a href="global.html#getCollections">getCollections</a></li><li><a href="global.html#onCreateCollectionPress">onCreateCollectionPress</a></li><li><a href="global.html#onPress">onPress</a></li><li><a href="global.html#onSignInPress">onSignInPress</a></li><li><a href="global.html#onSignOutPress">onSignOutPress</a></li><li><a href="global.html#onSignUpPress">onSignUpPress</a></li><li><a href="global.html#openCameraRoll">openCameraRoll</a></li><li><a href="global.html#retakePicture">retakePicture</a></li><li><a href="global.html#supabase">supabase</a></li><li><a href="global.html#takePicture">takePicture</a></li><li><a href="global.html#updateSearchQuery">updateSearchQuery</a></li><li><a href="global.html#useCachedResources">useCachedResources</a></li><li><a href="global.html#useCollections">useCollections</a></li><li><a href="global.html#useEffect">useEffect</a></li><li><a href="global.html#useSessionTokenEffect">useSessionTokenEffect</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Feb 14 2024 14:34:59 GMT-0500 (Eastern Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Feb 14 2024 16:29:05 GMT-0500 (Eastern Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

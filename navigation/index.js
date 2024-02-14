@@ -25,10 +25,9 @@ import { Ionicons } from '@expo/vector-icons';
 const Tab = createBottomTabNavigator();
 
 /**
- * Sets up the navigation for the app using React Navigation. This includes a bottom tab navigator for the main app sections
- * and a stack navigator for authentication and profile management screens. It integrates with Clerk for authentication,
- * dynamically adjusting navigation based on the user's sign-in status. The naviation contains screens for collections, camera, settings,
- * and user profile.
+ * @name Navigation
+ * @description Sets up the app's navigation using React Navigation, including a bottom tab navigator for main app sections and a stack navigator for authentication and profile management. Integrates Clerk for authentication, dynamically adjusting navigation based on the user's sign-in status.
+ * @global
  */
 export default function Navigation() {
   return (
@@ -41,8 +40,9 @@ export default function Navigation() {
 const Stack = createNativeStackNavigator();
 
 /**
- * Main tab navigation interface of the app. It includes tabs for the Home screen, Camera, Settings,
- * and Profile, each with custom icons and styling.
+ * @name MainTabs
+ * @description Defines the main tab navigation interface, including tabs for the Home, Camera, Settings, and Profile screens, each with custom icons and styling.
+ * @global
  */
 function MainTabs() {
   const iconColor = '#1D9DB9';

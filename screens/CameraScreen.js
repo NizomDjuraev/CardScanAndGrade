@@ -6,10 +6,9 @@ import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 
 /**
- * CameraScreen component for capturing and selecting photos.
- * Manages camera permissions, captures photos, allows photo retaking, and accesses the camera roll.
- * @component
- * @returns {React.ReactElement} The Camera screen
+ * CameraScreen component for capturing and selecting photos.Manages camera permissions, captures photos, allows photo retaking, and accesses the camera roll.
+ * @function CameraScreen
+ * @returns {Object} The Camera screen
  */
 export default function CameraScreen() {
   const [hasPermission, setHasPermission] = useState(null);
@@ -24,7 +23,7 @@ export default function CameraScreen() {
   
   /**
    * Initializes pan responders for draggable corner markers in the UI. This enables interactive photo cropping.
-   * @useEffect
+   * @function useEffect 
    */
   useEffect(() => {
     const createPanResponder = (cornerName) => PanResponder.create({
@@ -48,7 +47,7 @@ export default function CameraScreen() {
 
   /**
    * Requests camera permissions sets the permission state accordingly.
-   * @useEffect
+   * @function useEffect 
    */
   useEffect(() => {
     (async () => {
@@ -58,10 +57,11 @@ export default function CameraScreen() {
   }, []);
 
   /**
-   * Uses the camera API to capture a photo. After capturing, the photo is manipulated (cropped and formatted) using ImageManipulator.
-   * @async
-   * @returns {Promise<void>} Promise that resolves once the photo has been captured
-   */
+  * Captures a photo using the camera API, then manipulates the image.
+  * @async
+  * @function takePicture
+  * @returns {Promise<void>} Resolves once the photo has been captured.
+  */
   const takePicture = async () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
@@ -75,18 +75,18 @@ export default function CameraScreen() {
   };
   
   /**
-   * Resets the captured photo state, allowing the user to take or select another photo.
-   * @function
+   * Resets the captured photo state, allowing the user to take another photo.
+   * @function retakePicture
    */
   const retakePicture = () => {
     setCapturedPhoto(null);
   };
 
   /**
-   * Requests permission to access the camera roll and allows the user to pick a photo.
-   * Displays an alert if access is denied.
+   * Requests permission to access the camera roll and allows the user to pick a photo. Displays an alert if access is denied.
    * @async
-   * @returns {Promise<void>} A promise that resolves after the user has selected a photo or the action has been cancelled.
+   * @function openCameraRoll
+   * @returns {Promise<void>} Resolves after the user has selected a photo or the action has been cancelled.
    */
   const openCameraRoll = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();

@@ -5,33 +5,21 @@ import { useCollections } from '../hooks/useCollections';
 import { useUser } from "@clerk/clerk-expo";
 
 /**
-* HomeScreen component displays a searchable list of collections. It allows users to search for collections and
-* add new collections. Utilizes custom hooks for fetching user data
-* and collections, and manages local state for UI control.
-* @component
-* @returns {React.ReactElement} The Home screen
+* HomeScreen component displays a searchable list of collections. It allows users to search for collections and add new collections. Utilizes custom hooks for fetching user data and collections, and manages local state for UI control.
+* @function HomeScreen
+* @returns {Object} The Home screen
 */
 export default function HomeScreen() {
-    /**
-     * User information from authentication hook.
-     */
     const { user } = useUser();
-
-    /**
-     * Collections data, loading state, and function to reload collections from hook.
-     */
     const { collections, loading, reloadCollections } = useCollections(user?.id);
-  
-    /**
-     * State management for collection name input, modal visibility, and search query.
-     */
+
     const [collectionName, setCollectionName] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
 
     /**
      * Filters collections based on search query. Case-insensitive.
-     * 
+     * @function filteredCollections
      * @returns {Array} Filtered list of collections.
      */
     const filteredCollections = collections.filter(collection => {
@@ -41,7 +29,6 @@ export default function HomeScreen() {
     /**
      * Creates a new collection for the user and reloads the collection list.
      * Requires the user to be defined and collectionName to be not empty.
-     * 
      * @async
      * @function onCreateCollectionPress
      * @returns {Promise<void>}promise that resolves once the collection has been created and the list reloaded.
@@ -56,7 +43,6 @@ export default function HomeScreen() {
 
     /**
      * Updates the search query state.
-     * 
      * @function updateSearchQuery
      * @param {string} query - The current text in the search input.
      */

@@ -33,33 +33,21 @@ import { useCollections } from '../hooks/useCollections';
 import { useUser } from "@clerk/clerk-expo";
 
 /**
-* HomeScreen component displays a searchable list of collections. It allows users to search for collections and
-* add new collections. Utilizes custom hooks for fetching user data
-* and collections, and manages local state for UI control.
-* @component
-* @returns {React.ReactElement} The Home screen
+* HomeScreen component displays a searchable list of collections. It allows users to search for collections and add new collections. Utilizes custom hooks for fetching user data and collections, and manages local state for UI control.
+* @function HomeScreen
+* @returns {Object} The Home screen
 */
 export default function HomeScreen() {
-    /**
-     * User information from authentication hook.
-     */
     const { user } = useUser();
-
-    /**
-     * Collections data, loading state, and function to reload collections from hook.
-     */
     const { collections, loading, reloadCollections } = useCollections(user?.id);
-  
-    /**
-     * State management for collection name input, modal visibility, and search query.
-     */
+
     const [collectionName, setCollectionName] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
 
     /**
      * Filters collections based on search query. Case-insensitive.
-     * 
+     * @function filteredCollections
      * @returns {Array} Filtered list of collections.
      */
     const filteredCollections = collections.filter(collection => {
@@ -69,7 +57,6 @@ export default function HomeScreen() {
     /**
      * Creates a new collection for the user and reloads the collection list.
      * Requires the user to be defined and collectionName to be not empty.
-     * 
      * @async
      * @function onCreateCollectionPress
      * @returns {Promise&lt;void>}promise that resolves once the collection has been created and the list reloaded.
@@ -84,7 +71,6 @@ export default function HomeScreen() {
 
     /**
      * Updates the search query state.
-     * 
      * @function updateSearchQuery
      * @param {string} query - The current text in the search input.
      */
@@ -269,13 +255,13 @@ const styles = StyleSheet.create({
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#MainTabs">MainTabs</a></li><li><a href="global.html#OAuthButtons">OAuthButtons</a></li><li><a href="global.html#RootNavigator">RootNavigator</a></li><li><a href="global.html#createCollection">createCollection</a></li><li><a href="global.html#getCollections">getCollections</a></li><li><a href="global.html#onCreateCollectionPress">onCreateCollectionPress</a></li><li><a href="global.html#onPress">onPress</a></li><li><a href="global.html#onSignInPress">onSignInPress</a></li><li><a href="global.html#onSignOutPress">onSignOutPress</a></li><li><a href="global.html#onSignUpPress">onSignUpPress</a></li><li><a href="global.html#supabase">supabase</a></li><li><a href="global.html#updateSearchQuery">updateSearchQuery</a></li><li><a href="global.html#useCollections">useCollections</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#CameraScreen">CameraScreen</a></li><li><a href="global.html#HomeScreen">HomeScreen</a></li><li><a href="global.html#MainTabs">MainTabs</a></li><li><a href="global.html#Navigation">Navigation</a></li><li><a href="global.html#OAuthButtons">OAuthButtons</a></li><li><a href="global.html#ProfileScreen">ProfileScreen</a></li><li><a href="global.html#RootNavigator">RootNavigator</a></li><li><a href="global.html#SettingsScreen">SettingsScreen</a></li><li><a href="global.html#SignInScreen">SignInScreen</a></li><li><a href="global.html#SignUpScreen">SignUpScreen</a></li><li><a href="global.html#VerifyCodeScreen">VerifyCodeScreen</a></li><li><a href="global.html#createCollection">createCollection</a></li><li><a href="global.html#filteredCollections">filteredCollections</a></li><li><a href="global.html#getCollections">getCollections</a></li><li><a href="global.html#onCreateCollectionPress">onCreateCollectionPress</a></li><li><a href="global.html#onPress">onPress</a></li><li><a href="global.html#onSignInPress">onSignInPress</a></li><li><a href="global.html#onSignOutPress">onSignOutPress</a></li><li><a href="global.html#onSignUpPress">onSignUpPress</a></li><li><a href="global.html#openCameraRoll">openCameraRoll</a></li><li><a href="global.html#retakePicture">retakePicture</a></li><li><a href="global.html#supabase">supabase</a></li><li><a href="global.html#takePicture">takePicture</a></li><li><a href="global.html#updateSearchQuery">updateSearchQuery</a></li><li><a href="global.html#useCachedResources">useCachedResources</a></li><li><a href="global.html#useCollections">useCollections</a></li><li><a href="global.html#useEffect">useEffect</a></li><li><a href="global.html#useSessionTokenEffect">useSessionTokenEffect</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Feb 14 2024 14:34:59 GMT-0500 (Eastern Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Feb 14 2024 16:29:05 GMT-0500 (Eastern Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
