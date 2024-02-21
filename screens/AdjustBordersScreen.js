@@ -6,89 +6,69 @@ const windowHeight = Dimensions.get('window').height;
 
 const imageWidth = 300;
 const imageHeight = 300;
-const imageX = (windowWidth - imageWidth) / 2;
-const imageY = (windowHeight - imageHeight) / 2;
 
 const AdjustBordersScreen = () => {
   const [imageUri] = useState('https://via.placeholder.com/300');
   const [margins, setMargins] = useState({
     left: 0,
     top: 0,
-    right: 0,
-    bottom: 0,
+    right: imageWidth,
+    bottom: imageHeight,
   });
 
   const updateMargin = (edge, change) => {
     setMargins((currentMargins) => {
-      let newMargins = { ...currentMargins };
-      const maxRight = imageWidth - newMargins.left;
-      const maxBottom = imageHeight - newMargins.top;
-
+      const newMargins = { ...currentMargins };
       switch (edge) {
         case 'left':
-          newMargins.left = Math.min(Math.max(0, newMargins.left + change), maxRight);
+          newMargins.left = Math.max(0, Math.min(newMargins.left + change, newMargins.right - 10));
           break;
         case 'right':
-          newMargins.right = Math.min(Math.max(0, newMargins.right - change), maxRight);
+          newMargins.right = Math.max(newMargins.left + 10, Math.min(imageWidth, newMargins.right + change));
           break;
         case 'top':
-          newMargins.top = Math.min(Math.max(0, newMargins.top + change), maxBottom);
+          newMargins.top = Math.max(0, Math.min(newMargins.top + change, newMargins.bottom - 10));
           break;
         case 'bottom':
-          newMargins.bottom = Math.min(Math.max(0, newMargins.bottom - change), maxBottom);
-          break;
-        default:
+          newMargins.bottom = Math.max(newMargins.top + 10, Math.min(imageHeight, newMargins.bottom + change));
           break;
       }
       return newMargins;
     });
   };
 
-  const createPanResponder = (edge) => {
-    return PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: (_, gesture) => {
-        const change = edge === 'top' || edge === 'bottom' ? gesture.dy : gesture.dx;
-        updateMargin(edge, change);
-      },
-    });
-  };
-
-  const panResponders = {
-    left: createPanResponder('left'),
-    top: createPanResponder('top'),
-    right: createPanResponder('right'),
-    bottom: createPanResponder('bottom'),
-  };
+  const panResponder = PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onPanResponderMove: (e, gestureState) => {
+      if (gestureState.dy !== 0 && (gestureState.moveY > margins.top && gestureState.moveY < margins.bottom)) {
+        updateMargin('top', gestureState.dy);
+        updateMargin('bottom', gestureState.dy);
+      }
+      if (gestureState.dx !== 0 && (gestureState.moveX > margins.left && gestureState.moveX < margins.right)) {
+        updateMargin('left', gestureState.dx);
+        updateMargin('right', gestureState.dx);
+      }
+    },
+  });
 
   // Function to generate dotted lines
-  const generateDots = (orientation) => {
+  const generateDots = (orientation, length) => {
     let dots = [];
-    const numDots = orientation === 'horizontal' ? Math.floor(imageWidth / 10) : Math.floor(imageHeight / 10);
+    const numDots = Math.floor(length / 10);
     for (let i = 0; i < numDots; i++) {
-      dots.push(
-        <View key={i} style={[styles.dot, orientation === 'horizontal' ? styles.dotHorizontal : styles.dotVertical]} />
-      );
+      dots.push(<View key={i} style={[styles.dot, orientation === 'horizontal' ? styles.dotHorizontal : styles.dotVertical]} />);
     }
     return dots;
   };
 
   return (
     <View style={styles.container}>
-      <View style={[styles.imageContainer, { marginLeft: margins.left, marginTop: margins.top }]}>
+      <View {...panResponder.panHandlers} style={[styles.imageContainer, { marginLeft: margins.left, marginTop: margins.top, width: margins.right - margins.left, height: margins.bottom - margins.top }]}>
         <Image source={{ uri: imageUri }} style={styles.image} />
-        <View {...panResponders.left.panHandlers} style={[styles.marginTouchable, styles.marginLeft]}>
-          {generateDots('vertical')}
-        </View>
-        <View {...panResponders.top.panHandlers} style={[styles.marginTouchable, styles.marginTop]}>
-          {generateDots('horizontal')}
-        </View>
-        <View {...panResponders.right.panHandlers} style={[styles.marginTouchable, styles.marginRight]}>
-          {generateDots('vertical')}
-        </View>
-        <View {...panResponders.bottom.panHandlers} style={[styles.marginTouchable, styles.marginBottom]}>
-          {generateDots('horizontal')}
-        </View>
+        <View style={[styles.dottedLine, styles.dottedLineTop]}>{generateDots('horizontal', margins.right - margins.left)}</View>
+        <View style={[styles.dottedLine, styles.dottedLineLeft]}>{generateDots('vertical', margins.bottom - margins.top)}</View>
+        <View style={[styles.dottedLine, styles.dottedLineRight, { right: 0 }]}>{generateDots('vertical', margins.bottom - margins.top)}</View>
+        <View style={[styles.dottedLine, styles.dottedLineBottom, { bottom: 0 }]}>{generateDots('horizontal', margins.right - margins.left)}</View>
       </View>
       <Button title="Submit Margins" onPress={() => console.log('Margins:', margins)} />
     </View>
@@ -103,50 +83,33 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   imageContainer: {
-    width: imageWidth,
-    height: imageHeight,
     position: 'relative',
     borderWidth: 1,
     borderColor: 'grey',
-    overflow: 'hidden',
   },
   image: {
     width: '100%',
     height: '100%',
   },
-  marginTouchable: {
+  dottedLine: {
     position: 'absolute',
-    backgroundColor: 'transparent', // Ensure dots are visible, not the touchable area
-  },
-  marginLeft: {
-    left: 0,
-    width: 20,
-    top: 0,
-    bottom: 0,
-    justifyContent: 'space-between',
-  },
-  marginRight: {
-    right: 0,
-    width: 20,
-    top: 0,
-    bottom: 0,
-    justifyContent: 'space-between',
-  },
-  marginTop: {
-    top: 0,
-    height: 20,
-    left: 0,
-    right: 0,
     flexDirection: 'row',
-    justifyContent: 'space-between',
   },
-  marginBottom: {
-    bottom: 0,
-    height: 20,
+  dottedLineTop: {
+    top: -1,
     left: 0,
-    right: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  },
+  dottedLineLeft: {
+    top: 0,
+    left: -1,
+    flexDirection: 'column',
+  },
+  dottedLineRight: {
+    top: 0,
+    flexDirection: 'column',
+  },
+  dottedLineBottom: {
+    left: 0,
   },
   dot: {
     backgroundColor: 'black',
@@ -155,10 +118,12 @@ const styles = StyleSheet.create({
   dotHorizontal: {
     width: 2,
     height: 2,
+    marginHorizontal: 4,
   },
   dotVertical: {
     width: 2,
     height: 2,
+    marginVertical: 4,
   },
 });
 
