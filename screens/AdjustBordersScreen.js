@@ -14,26 +14,25 @@ const AdjustBordersScreen = () => {
   const [margins, setMargins] = useState({
     left: 0,
     top: 0,
-    right: 0,
-    bottom: 0,
+    right: windowWidth - imageWidth,
+    bottom: windowHeight - imageHeight,
   });
 
-  const updateMargins = (edge, change) => {
-    // Update margins ensuring they stay within the photo's boundaries
-    setMargins((prev) => {
-      let newMargins = { ...prev };
+  const updateMargin = (edge, change) => {
+    setMargins((currentMargins) => {
+      const newMargins = { ...currentMargins };
       switch (edge) {
         case 'left':
-          newMargins.left = Math.min(Math.max(0, prev.left + change), imageWidth - prev.right);
+          newMargins.left = Math.min(Math.max(0, newMargins.left + change), imageWidth - newMargins.right - 10); // Ensure margin does not exceed image bounds
           break;
         case 'right':
-          newMargins.right = Math.min(Math.max(0, prev.right - change), imageWidth - prev.left);
+          newMargins.right = Math.min(Math.max(0, newMargins.right - change), imageWidth - newMargins.left - 10);
           break;
         case 'top':
-          newMargins.top = Math.min(Math.max(0, prev.top + change), imageHeight - prev.bottom);
+          newMargins.top = Math.min(Math.max(0, newMargins.top + change), imageHeight - newMargins.bottom - 10);
           break;
         case 'bottom':
-          newMargins.bottom = Math.min(Math.max(0, prev.bottom - change), imageHeight - prev.top);
+          newMargins.bottom = Math.min(Math.max(0, newMargins.bottom - change), imageHeight - newMargins.top - 10);
           break;
         default:
           break;
@@ -45,9 +44,12 @@ const AdjustBordersScreen = () => {
   const createPanResponder = (edge) => {
     return PanResponder.create({
       onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: (event, gestureState) => {
-        const change = edge === 'left' || edge === 'right' ? gestureState.dx : gestureState.dy;
-        updateMargins(edge, change);
+      onPanResponderMove: (_, gesture) => {
+        const change = edge === 'top' || edge === 'bottom' ? gesture.dy : gesture.dx;
+        updateMargin(edge, change);
+      },
+      onPanResponderRelease: () => {
+        // Optionally add code for when the pan responder releases the margin
       },
     });
   };
@@ -59,29 +61,16 @@ const AdjustBordersScreen = () => {
     bottom: createPanResponder('bottom'),
   };
 
-  const handleSubmit = () => {
-    console.log('Margins submitted:', margins);
-  };
-
   return (
     <View style={styles.container}>
       <View style={[styles.imageContainer, { marginLeft: margins.left, marginTop: margins.top }]}>
         <Image source={{ uri: imageUri }} style={styles.image} />
-        {Object.keys(panResponders).map((edge) => (
-          <View
-            key={edge}
-            {...panResponders[edge].panHandlers}
-            style={[
-              styles.border,
-              edge === 'left' || edge === 'right'
-                ? { height: imageHeight, width: 20 }
-                : { width: imageWidth, height: 20 },
-              styles[edge],
-            ]}
-          />
-        ))}
+        <View {...panResponders.left.panHandlers} style={[styles.border, styles.leftBorder, { height: imageHeight - margins.top - margins.bottom }]} />
+        <View {...panResponders.top.panHandlers} style={[styles.border, styles.topBorder, { width: imageWidth - margins.left - margins.right }]} />
+        <View {...panResponders.right.panHandlers} style={[styles.border, styles.rightBorder, { height: imageHeight - margins.top - margins.bottom }]} />
+        <View {...panResponders.bottom.panHandlers} style={[styles.border, styles.bottomBorder, { width: imageWidth - margins.left - margins.right }]} />
       </View>
-      <Button title="Submit Margins" onPress={handleSubmit} />
+      <Button title="Submit Margins" onPress={() => console.log('Margins:', margins)} />
     </View>
   );
 };
@@ -99,6 +88,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     borderWidth: 1,
     borderColor: 'grey',
+    overflow: 'hidden', // Ensure borders do not extend outside this container
   },
   image: {
     width: '100%',
@@ -106,27 +96,27 @@ const styles = StyleSheet.create({
   },
   border: {
     position: 'absolute',
-    backgroundColor: 'black', // Changed to black for visibility
+    backgroundColor: 'black', // Solid color for visibility
   },
-  left: {
+  leftBorder: {
+    width: 2, // Visually smaller width
     left: 0,
-    top: 0,
-    bottom: 0,
+    cursor: 'col-resize', // Improve UX with cursor hint
   },
-  right: {
+  rightBorder: {
+    width: 2,
     right: 0,
-    top: 0,
-    bottom: 0,
+    cursor: 'col-resize',
   },
-  top: {
+  topBorder: {
+    height: 2,
     top: 0,
-    left: 0,
-    right: 0,
+    cursor: 'row-resize',
   },
-  bottom: {
+  bottomBorder: {
+    height: 2,
     bottom: 0,
-    left: 0,
-    right: 0,
+    cursor: 'row-resize',
   },
 });
 
