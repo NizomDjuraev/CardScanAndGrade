@@ -46,6 +46,12 @@ const AdjustBordersScreen = () => {
     console.log('Margins submitted:', margins);
   };
 
+  // Calculate centering score
+  const centeringScore = {
+    horizontal: ((margins.left - (windowWidth - margins.right - imageWidth)) / imageWidth) * 100,
+    vertical: ((margins.top - (windowHeight - margins.bottom - imageHeight)) / imageHeight) * 100,
+  };
+
   return (
     <View style={styles.container}>
       <View style={[styles.imageContainer, { marginTop: imageY - margins.top, marginLeft: imageX - margins.left }]}>
@@ -95,4 +101,3 @@ const styles = StyleSheet.create({
 });
 
 export default AdjustBordersScreen;
-
