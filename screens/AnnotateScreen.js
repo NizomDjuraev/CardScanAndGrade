@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { View, Image, StyleSheet, PanResponder, Text } from 'react-native';
+import { View, Image, StyleSheet, PanResponder, Text, TouchableOpacity } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
-export default function AnnotateScreen () {
-  const [imageUri] = useState('https://via.placeholder.com/300');  
+export default function AnnotateScreen() {
+  const [imageUri] = useState('https://via.placeholder.com/300');
   const [circles, setCircles] = useState([]);
   const [currentCircle, setCurrentCircle] = useState(null);
+  const [circleColor, setCircleColor] = useState('black'); 
+  const [buttonPressed, setButtonPressed] = useState(false); 
 
   const handlePanResponderMove = (event, gesture) => {
     if (currentCircle) {
@@ -30,7 +32,8 @@ export default function AnnotateScreen () {
         startY: gesture.y0,
         cx: gesture.x0,
         cy: gesture.y0,
-        r: gesture.dx/2,
+        r: gesture.dx / 2,
+        color: buttonPressed ? circleColor : 'transparent', 
       };
       setCurrentCircle(newCircle);
       setCircles([...circles, newCircle]);
@@ -41,21 +44,47 @@ export default function AnnotateScreen () {
     },
   });
 
+  const changeCircleColor = (color) => {
+    setButtonPressed(true);
+    setCircleColor(color); 
+  };
+
   return (
     <View style={styles.container}>
-        <View style={styles.imageContainer}>
-      <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
+      <View style={styles.imageContainer}>
+        <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
 
-      <Svg height="100%" width="100%" style={styles.svgContainer}>
-        {circles.map((circle) => (
-          <Circle key={circle.id} cx={circle.cx - 40} cy={circle.cy - 80} r={circle.r - 20} fill="transparent" stroke="black" strokeWidth={2} />
-        ))}
-      </Svg>
+        <Svg height="100%" width="100%" style={styles.svgContainer}>
+          {circles.map((circle) => (
+            <Circle
+              key={circle.id}
+              cx={circle.cx - 40}
+              cy={circle.cy - 80}
+              r={circle.r - 20}
+              fill='transparent'
+              stroke={circle.color}
+              strokeWidth={2}
+            />
+          ))}
+        </Svg>
 
-      <View style={styles.gestureContainer} {...panResponder.panHandlers} />
-      <Text title="Next" style={styles.Text} />
+        <View style={styles.gestureContainer} {...panResponder.panHandlers} />
       </View>
 
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={() => changeCircleColor('red')} style={[styles.button, { backgroundColor: 'red' }]}>
+          <Text style={styles.buttonText}>Tare</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => changeCircleColor('green')} style={[styles.button, { backgroundColor: 'green' }]}>
+          <Text style={styles.buttonText}>Dent</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => changeCircleColor('blue')} style={[styles.button, { backgroundColor: 'blue' }]}>
+          <Text style={styles.buttonText}>Misprint</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => changeCircleColor('brown')} style={[styles.button, { backgroundColor: 'brown'}]}>
+          <Text style={styles.buttonText}>Dirt</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -81,9 +110,17 @@ const styles = StyleSheet.create({
   gestureContainer: {
     ...StyleSheet.absoluteFillObject,
   },
-  Text: {
-    color: "black",
-    textAlign: "center",
+  buttonContainer: {
+    flexDirection: 'row',
+    marginTop: 20,
+  },
+  button: {
+    padding: 10,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  buttonText: {
+    color: 'white',
+    textAlign: 'center',
   },
 });
-
