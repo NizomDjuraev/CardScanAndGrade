@@ -1,78 +1,71 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Image, PanResponder, Dimensions, Button } from 'react-native';
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
-
-// Assuming the image is centered on the screen
+const windowDimensions = Dimensions.get('window');
 const imageWidth = 300;
 const imageHeight = 300;
-const imageX = (windowWidth - imageWidth) / 2;
-const imageY = (windowHeight - imageHeight) / 2;
 
 const AdjustBordersScreen = () => {
-  const [imageUri] = useState('https://via.placeholder.com/300');
-  // Margins initialized to simulate no initial adjustment
+  // Margins state to hold the offsets
   const [margins, setMargins] = useState({
-    left: 0,
     top: 0,
-    right: imageWidth,
     bottom: imageHeight,
+    left: 0,
+    right: imageWidth,
   });
 
-  const adjustMargin = (direction, change) => {
-    setMargins((currentMargins) => {
-      const newMargins = { ...currentMargins };
+  // Helper to update margins based on the movement
+  const updateMargin = (direction, change) => {
+    setMargins((prevMargins) => {
+      let newMargins = { ...prevMargins };
       switch (direction) {
         case 'left':
-          newMargins.left = Math.max(0, newMargins.left + change);
+          newMargins.left = Math.max(0, Math.min(newMargins.left + change, prevMargins.right - 10));
           break;
         case 'right':
-          newMargins.right = Math.min(imageWidth, newMargins.right + change);
+          newMargins.right = Math.max(newMargins.right + change, prevMargins.left + 10);
           break;
         case 'top':
-          newMargins.top = Math.max(0, newMargins.top + change);
+          newMargins.top = Math.max(0, Math.min(newMargins.top + change, prevMargins.bottom - 10));
           break;
         case 'bottom':
-          newMargins.bottom = Math.min(imageHeight, newMargins.bottom + change);
+          newMargins.bottom = Math.max(newMargins.bottom + change, prevMargins.top + 10);
           break;
       }
       return newMargins;
     });
   };
 
-  // Handlers for each margin's pan responder
-  const panResponder = (direction) => PanResponder.create({
+  // Creating pan responders for each margin
+  const createPanResponder = (direction) => PanResponder.create({
     onStartShouldSetPanResponder: () => true,
-    onMoveShouldSetPanResponder: () => true,
-    onPanResponderMove: (evt, gestureState) => {
-      if (direction === 'left' || direction === 'right') {
-        adjustMargin(direction, gestureState.dx);
+    onPanResponderMove: (_, gesture) => {
+      if (['left', 'right'].includes(direction)) {
+        updateMargin(direction, gesture.dx);
       } else {
-        adjustMargin(direction, gestureState.dy);
+        updateMargin(direction, gesture.dy);
       }
-    },
-    onPanResponderRelease: () => {
-      // Optionally, handle the release of the margin adjustment here
     },
   });
 
-  // Create pan responders for each margin
-  const leftPanResponder = panResponder('left');
-  const rightPanResponder = panResponder('right');
-  const topPanResponder = panResponder('top');
-  const bottomPanResponder = panResponder('bottom');
+  const leftPanResponder = createPanResponder('left');
+  const rightPanResponder = createPanResponder('right');
+  const topPanResponder = createPanResponder('top');
+  const bottomPanResponder = createPanResponder('bottom');
 
   return (
     <View style={styles.container}>
-      <View style={[styles.imageContainer, { marginTop: imageY, marginLeft: imageX }]}>
-        <Image source={{ uri: imageUri }} style={styles.image} />
-        <View {...leftPanResponder.panHandlers} style={[styles.touchArea, { left: margins.left - 20 }]} />
-        <View {...topPanResponder.panHandlers} style={[styles.touchArea, { top: margins.top - 20 }]} />
-        <View {...rightPanResponder.panHandlers} style={[styles.touchArea, { right: windowWidth - margins.right - imageX - 20 }]} />
-        <View {...bottomPanResponder.panHandlers} style={[styles.touchArea, { bottom: windowHeight - margins.bottom - imageY - 20 }]} />
+      <View style={styles.imageContainer}>
+        {/* Image */}
+        <Image source={{ uri: 'https://via.placeholder.com/300' }} style={styles.image} />
+
+        {/* Margin Handlers */}
+        <View {...leftPanResponder.panHandlers} style={[styles.handler, styles.leftHandler, { left: margins.left - 20 }]} />
+        <View {...topPanResponder.panHandlers} style={[styles.handler, styles.topHandler, { top: margins.top - 20 }]} />
+        <View {...rightPanResponder.panHandlers} style={[styles.handler, styles.rightHandler, { right: (imageWidth - margins.right) - 20 }]} />
+        <View {...bottomPanResponder.panHandlers} style={[styles.handler, styles.bottomHandler, { bottom: (imageHeight - margins.bottom) - 20 }]} />
       </View>
-      <Button title="Submit Margins" onPress={() => console.log('Adjusted Margins:', margins)} />
+      <Button title="Submit Margins" onPress={() => console.log('Margins:', margins)} />
     </View>
   );
 };
@@ -85,21 +78,34 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   imageContainer: {
-    position: 'relative',
     width: imageWidth,
     height: imageHeight,
+    position: 'relative',
   },
   image: {
     width: '100%',
     height: '100%',
   },
-  touchArea: {
+  handler: {
     position: 'absolute',
+    backgroundColor: 'rgba(0,0,0,0.5)', // Semi-transparent for visibility
     width: 40,
     height: 40,
-    backgroundColor: 'rgba(0,0,0,0)', // Transparent touch area
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  leftHandler: {
+    marginLeft: -20,
+  },
+  rightHandler: {
+    marginRight: -20,
+  },
+  topHandler: {
+    marginTop: -20,
+  },
+  bottomHandler: {
+    marginBottom: -20,
   },
 });
 
 export default AdjustBordersScreen;
-
