@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Image, Text, PanResponder, Dimensions } from 'react-native';
+import { View, StyleSheet, Image, Text, PanResponder, Dimensions, Button } from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -11,31 +11,29 @@ const imageY = (windowHeight - imageHeight) / 2;
 
 const AdjustBordersScreen = () => {
   const [imageUri] = useState('https://via.placeholder.com/300');
-  // Initialize margins so the draggable borders start at the edges of the image
-  const [margins, setMargins] = useState({ left: imageX, top: imageY, right: windowWidth - (imageX + imageWidth), bottom: windowHeight - (imageY + imageHeight) });
+  const [margins, setMargins] = useState({
+    left: imageX, 
+    top: imageY, 
+    right: windowWidth - (imageX + imageWidth), 
+    bottom: windowHeight - (imageY + imageHeight)
+  });
 
-  // Create pan responders for each edge
   const createPanResponder = (edge) => {
     return PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (event, gestureState) => {
         setMargins((prev) => {
-          let change = gestureState.dx; // Default to horizontal movement
+          let change = gestureState.dx;
           if (edge === 'top' || edge === 'bottom') {
-            change = gestureState.dy; // Adjust for vertical movement
+            change = gestureState.dy;
           }
-
-          const newMargin = Math.max(0, prev[edge] + change); // Prevent negative margins
+          const newMargin = Math.max(0, prev[edge] + change);
           return { ...prev, [edge]: newMargin };
         });
-      },
-      onPanResponderRelease: () => {
-        // No action needed on release as per current requirements
       },
     });
   };
 
-  // PanResponders for each border
   const panResponders = {
     left: createPanResponder('left'),
     top: createPanResponder('top'),
@@ -43,23 +41,23 @@ const AdjustBordersScreen = () => {
     bottom: createPanResponder('bottom'),
   };
 
-  // Calculate the centering score
-  const centeringScore = {
-    horizontal: ((margins.left - margins.right) / imageWidth) * 100,
-    vertical: ((margins.top - margins.bottom) / imageHeight) * 100,
+  const handleSubmit = () => {
+    // Handle submit logic here
+    console.log('Margins submitted:', margins);
   };
 
   return (
     <View style={styles.container}>
       <View style={[styles.imageContainer, { marginTop: imageY - margins.top, marginLeft: imageX - margins.left }]}>
         <Image source={{ uri: imageUri }} style={styles.image} />
-        <View {...panResponders.left.panHandlers} style={[styles.border, { left: margins.left - imageX, top: 0, bottom: 0, width: 2 }]} />
-        <View {...panResponders.top.panHandlers} style={[styles.border, { top: margins.top - imageY, left: 0, right: 0, height: 2 }]} />
-        <View {...panResponders.right.panHandlers} style={[styles.border, { right: windowWidth - margins.right - imageWidth - imageX, top: 0, bottom: 0, width: 2 }]} />
-        <View {...panResponders.bottom.panHandlers} style={[styles.border, { bottom: windowHeight - margins.bottom - imageHeight - imageY, left: 0, right: 0, height: 2 }]} />
+        <View {...panResponders.left.panHandlers} style={[styles.border, { left: margins.left - imageX, top: -10, bottom: -10, width: 10 }]} />
+        <View {...panResponders.top.panHandlers} style={[styles.border, { top: margins.top - imageY, left: -10, right: -10, height: 10 }]} />
+        <View {...panResponders.right.panHandlers} style={[styles.border, { right: windowWidth - margins.right - imageWidth - imageX, top: -10, bottom: -10, width: 10 }]} />
+        <View {...panResponders.bottom.panHandlers} style={[styles.border, { bottom: windowHeight - margins.bottom - imageHeight - imageY, left: -10, right: -10, height: 10 }]} />
       </View>
       <Text style={styles.centeringText}>Horizontal Centering: {centeringScore.horizontal.toFixed(2)}%</Text>
       <Text style={styles.centeringText}>Vertical Centering: {centeringScore.vertical.toFixed(2)}%</Text>
+      <Button title="Submit Margins" onPress={handleSubmit} />
     </View>
   );
 };
@@ -85,6 +83,9 @@ const styles = StyleSheet.create({
   border: {
     position: 'absolute',
     backgroundColor: 'blue',
+    // Increase the touch area for better user experience
+    margin: -10, // Extend the touchable area outside the border
+    padding: 10, // Increase the size of the border for touch
   },
   centeringText: {
     fontSize: 16,
@@ -94,3 +95,4 @@ const styles = StyleSheet.create({
 });
 
 export default AdjustBordersScreen;
+
