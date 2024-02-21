@@ -12,10 +12,10 @@ const imageY = (windowHeight - imageHeight) / 2;
 const AdjustBordersScreen = () => {
   const [imageUri] = useState('https://via.placeholder.com/300');
   const [margins, setMargins] = useState({
-    left: imageX, 
-    top: imageY, 
-    right: windowWidth - (imageX + imageWidth), 
-    bottom: windowHeight - (imageY + imageHeight)
+    left: imageX,
+    top: imageY,
+    right: windowWidth - (imageX + imageWidth),
+    bottom: windowHeight - (imageY + imageHeight),
   });
 
   const createPanResponder = (edge) => {
@@ -27,7 +27,18 @@ const AdjustBordersScreen = () => {
           if (edge === 'top' || edge === 'bottom') {
             change = gestureState.dy;
           }
-          const newMargin = Math.max(0, prev[edge] + change);
+
+          let newMargin = prev[edge] + change;
+
+          // Constrain the margins to the image area
+          if (edge === 'left' || edge === 'right') {
+            const maxHorizontalMargin = windowWidth - imageWidth;
+            newMargin = Math.min(Math.max(0, newMargin), maxHorizontalMargin);
+          } else {
+            const maxVerticalMargin = windowHeight - imageHeight;
+            newMargin = Math.min(Math.max(0, newMargin), maxVerticalMargin);
+          }
+
           return { ...prev, [edge]: newMargin };
         });
       },
@@ -56,10 +67,10 @@ const AdjustBordersScreen = () => {
     <View style={styles.container}>
       <View style={[styles.imageContainer, { marginTop: imageY - margins.top, marginLeft: imageX - margins.left }]}>
         <Image source={{ uri: imageUri }} style={styles.image} />
-        <View {...panResponders.left.panHandlers} style={[styles.border, { left: margins.left - imageX, top: -10, bottom: -10, width: 10 }]} />
-        <View {...panResponders.top.panHandlers} style={[styles.border, { top: margins.top - imageY, left: -10, right: -10, height: 10 }]} />
-        <View {...panResponders.right.panHandlers} style={[styles.border, { right: windowWidth - margins.right - imageWidth - imageX, top: -10, bottom: -10, width: 10 }]} />
-        <View {...panResponders.bottom.panHandlers} style={[styles.border, { bottom: windowHeight - margins.bottom - imageHeight - imageY, left: -10, right: -10, height: 10 }]} />
+        <View {...panResponders.left.panHandlers} style={[styles.border, { left: margins.left - imageX, top: -10, bottom: -10, width: 20 }]} />
+        <View {...panResponders.top.panHandlers} style={[styles.border, { top: margins.top - imageY, left: -10, right: -10, height: 20 }]} />
+        <View {...panResponders.right.panHandlers} style={[styles.border, { right: windowWidth - margins.right - imageWidth - imageX, top: -10, bottom: -10, width: 20 }]} />
+        <View {...panResponders.bottom.panHandlers} style={[styles.border, { bottom: windowHeight - margins.bottom - imageHeight - imageY, left: -10, right: -10, height: 20 }]} />
       </View>
       <Text style={styles.centeringText}>Horizontal Centering: {centeringScore.horizontal.toFixed(2)}%</Text>
       <Text style={styles.centeringText}>Vertical Centering: {centeringScore.vertical.toFixed(2)}%</Text>
@@ -88,10 +99,13 @@ const styles = StyleSheet.create({
   },
   border: {
     position: 'absolute',
-    backgroundColor: 'blue',
-    // Increase the touch area for better user experience
-    margin: -10, // Extend the touchable area outside the border
-    padding: 10, // Increase the size of the border for touch
+    backgroundColor: 'black', // Change border color to black
+    // Note: React Native does not directly support dotted borders in the same way as CSS
+    // For a dotted effect, consider using a repeating background image or a custom drawing approach
+    margin: -10, // Keep the extended touchable area
+    padding: 10, // Retain the larger touch target size
+    width: 20, // Increase the visual width for vertical borders
+    height: 20, // Increase the visual height for horizontal borders
   },
   centeringText: {
     fontSize: 16,
