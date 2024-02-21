@@ -1,30 +1,23 @@
-import * as React from "react"
-import { Text, TextInput, TouchableOpacity, View } from "react-native"
-import { useSignUp } from "@clerk/clerk-expo"
-import { styles } from "../components/Styles"
-import { log } from "../logger"
+import React, { useState } from "react";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { firebase } from "@react-native-firebase/auth";
+import { log } from "../logger";
+import { styles } from "../components/Styles";
 
-export default function SignUpScreen({ navigation }) {
-  const { isLoaded, signUp, setSession } = useSignUp()
-
-  const [code, setCode] = React.useState("")
+export default function VerifyCodeScreen({ navigation }) {
+  const [code, setCode] = useState("");
 
   const onPress = async () => {
-    if (!isLoaded) {
-      return
-    }
-
     try {
-      const completeSignUp = await signUp.attemptEmailAddressVerification({
-        code
-      })
+      // Verify the email address with Firebase using the code sent to user's email
+      await firebase.auth().applyActionCode(code);
 
-      await setSession(completeSignUp.createdSessionId)
-    } catch (err) {
-      log("Error:> " + err?.status || "")
-      log("Error:> " + err?.errors ? JSON.stringify(err.errors) : err)
+      // Navigate the user to home screen upon successful verification
+      navigation.navigate("HomeScreen");
+    } catch (error) {
+      log("Error verifying email:", error.message);
     }
-  }
+  };
 
   return (
     <View style={styles.loginView}>
@@ -34,12 +27,12 @@ export default function SignUpScreen({ navigation }) {
           style={styles.loginTextInput}
           placeholder="Code..."
           placeholderTextColor="#fff"
-          onChangeText={code => setCode(code)}
+          onChangeText={setCode}
         />
       </View>
       <TouchableOpacity style={styles.loginButton} onPress={onPress}>
         <Text style={styles.loginButtonText}>Verify Email</Text>
       </TouchableOpacity>
     </View>
-  )
+  );
 }

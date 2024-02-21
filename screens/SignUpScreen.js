@@ -1,49 +1,29 @@
-import * as React from "react";
+import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { useSignUp } from "@clerk/clerk-expo";
+import { firebase } from "@react-native-firebase/auth";
 import { log } from "../logger";
 import { styles } from "../components/Styles";
-import { OAuthButtons } from "../components/OAuth";
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
 
 export default function SignUpScreen({ navigation }) {
-  const { isLoaded, signUp } = useSignUp();
-  const [firstName, setFirstName] = React.useState("");
-  const [lastName, setLastName] = React.useState("");
-  const [emailAddress, setEmailAddress] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [emailAddress, setEmailAddress] = useState("");
+  const [password, setPassword] = useState("");
 
-  const onSignUpPress = async () => {
-    if (!isLoaded) {
-      return;
-    }
-
+  const signUpWithEmail = async () => {
     try {
-      await signUp.create({
-        firstName,
-        lastName,
-        emailAddress,
-        password,
-      });
-
-      // https://docs.clerk.dev/popular-guides/passwordless-authentication
-      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
-
+      await firebase
+        .auth()
+        .createUserWithEmailAndPassword(emailAddress, password);
       navigation.navigate("VerifyCode");
-    } catch (err) {
-      log("Error:> " + err?.status || "");
-      log("Error:> " + err?.errors ? JSON.stringify(err.errors) : err);
+    } catch (error) {
+      log("Error signing up:", error.message);
     }
   };
 
-  const onSignInPress = () => navigation.replace("SignIn");
-
   return (
     <View style={styles.loginView}>
-      <View style={styles.oauthView}>
-        <OAuthButtons />
-      </View>
-
       <View style={styles.loginInputView}>
         <View style={styles.iconContainer}>
           <Ionicons name="ios-person-outline" size={20} color="#fff" />
@@ -53,7 +33,7 @@ export default function SignUpScreen({ navigation }) {
           style={styles.loginTextInput}
           placeholder="First name..."
           placeholderTextColor="#fff"
-          onChangeText={(firstName) => setFirstName(firstName)}
+          onChangeText={setFirstName}
         />
       </View>
 
@@ -66,7 +46,7 @@ export default function SignUpScreen({ navigation }) {
           style={styles.loginTextInput}
           placeholder="Last name..."
           placeholderTextColor="#fff"
-          onChangeText={(lastName) => setLastName(lastName)}
+          onChangeText={setLastName}
         />
       </View>
 
@@ -80,7 +60,7 @@ export default function SignUpScreen({ navigation }) {
           style={styles.loginTextInput}
           placeholder="Email..."
           placeholderTextColor="#fff"
-          onChangeText={(email) => setEmailAddress(email)}
+          onChangeText={setEmailAddress}
         />
       </View>
 
@@ -94,20 +74,20 @@ export default function SignUpScreen({ navigation }) {
           placeholder="Password..."
           placeholderTextColor="#fff"
           secureTextEntry={true}
-          onChangeText={(password) => setPassword(password)}
+          onChangeText={setPassword}
         />
       </View>
 
-      <TouchableOpacity style={styles.loginButton} onPress={onSignUpPress}>
-        <Text style={styles.loginButtonText}>Sign up</Text>
+      <TouchableOpacity style={styles.loginButton} onPress={signUpWithEmail}>
+        <Text style={styles.loginButtonText}>Sign up with Email</Text>
       </TouchableOpacity>
 
       <View style={styles.loginFooter}>
-        <Text style={{ color: '#fff' }}>Have an account?</Text>
+        <Text style={{ color: "#fff" }}>Have an account?</Text>
 
         <TouchableOpacity
           style={styles.secondaryButton}
-          onPress={onSignInPress}
+          onPress={() => navigation.replace("SignIn")}
         >
           <Text style={styles.secondaryButtonText}>Sign in</Text>
         </TouchableOpacity>
