@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { firebase } from "@react-native-firebase/auth";
+import { auth } from "../firebaseConfig";
 import { log } from "../logger";
 import { styles } from "../components/Styles";
 import { Ionicons } from "@expo/vector-icons";
@@ -13,9 +13,7 @@ export default function SignUpScreen({ navigation }) {
 
   const signUpWithEmail = async () => {
     try {
-      await firebase
-        .auth()
-        .createUserWithEmailAndPassword(emailAddress, password);
+      await auth.createUserWithEmailAndPassword(emailAddress, password);
       navigation.navigate("VerifyCode");
     } catch (error) {
       log("Error signing up:", error.message);

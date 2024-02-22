@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { firebase } from "@react-native-firebase/auth";
+import { auth } from "../firebaseConfig";
 import { log } from "../logger";
 import { styles } from "../components/Styles";
 import { Ionicons } from "@expo/vector-icons";
@@ -11,7 +11,7 @@ export default function SignInScreen({ navigation }) {
 
   const signInWithEmail = async () => {
     try {
-      await firebase.auth().signInWithEmailAndPassword(emailAddress, password);
+      await auth.signInWithEmailAndPassword(emailAddress, password);
     } catch (error) {
       log("Error signing in:", error.message);
     }

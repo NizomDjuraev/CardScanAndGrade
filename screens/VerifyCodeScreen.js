@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { firebase } from "@react-native-firebase/auth";
+import { auth } from "../firebaseConfig";
 import { log } from "../logger";
 import { styles } from "../components/Styles";
 
@@ -10,7 +10,7 @@ export default function VerifyCodeScreen({ navigation }) {
   const onPress = async () => {
     try {
       // Verify the email address with Firebase using the code sent to user's email
-      await firebase.auth().applyActionCode(code);
+      await auth.applyActionCode(code);
 
       // Navigate the user to home screen upon successful verification
       navigation.navigate("HomeScreen");
