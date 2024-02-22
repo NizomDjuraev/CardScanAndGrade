@@ -1,75 +1,65 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Image, PanResponder, Dimensions, Button } from 'react-native';
+import { View, StyleSheet, Image, PanResponder, Dimensions } from 'react-native';
 
-const windowDimensions = Dimensions.get('window');
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+
 const imageWidth = 300;
 const imageHeight = 300;
-const imageX = (windowDimensions.width - imageWidth) / 2; // Center horizontally
-const imageY = (windowDimensions.height - imageHeight) / 2; // Center vertically
+const imageX = (windowWidth - imageWidth) / 2;
+const imageY = (windowHeight - imageHeight) / 2;
 
 const AdjustBordersScreen = () => {
-  const [margins, setMargins] = useState({
-    top: 0,
-    bottom: 0,
+  const [imageUri] = useState('https://via.placeholder.com/300');
+  // State to track margin line positions
+  const [positions, setPositions] = useState({
     left: 0,
-    right: 0,
+    top: 0,
+    right: imageWidth,
+    bottom: imageHeight,
   });
 
-  // Ensure margin adjustments do not allow the handlers to go off the photo
-  const updateMargin = (direction, change) => {
-    setMargins((currentMargins) => {
-      let newMargins = { ...currentMargins };
-      switch (direction) {
-        case 'left':
-          newMargins.left = Math.min(Math.max(0, newMargins.left + change), imageWidth - newMargins.right);
-          break;
-        case 'right':
-          newMargins.right = Math.min(Math.max(0, newMargins.right - change), imageWidth - newMargins.left);
-          break;
-        case 'top':
-          newMargins.top = Math.min(Math.max(0, newMargins.top + change), imageHeight - newMargins.bottom);
-          break;
-        case 'bottom':
-          newMargins.bottom = Math.min(Math.max(0, newMargins.bottom - change), imageHeight - newMargins.top);
-          break;
-      }
-      return newMargins;
-    });
-  };
-
-  // Handlers for pan responders
-  const panResponder = (direction) => PanResponder.create({
+  // Function to create pan responder for each margin line
+  const createPanResponder = (edge) => PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gestureState) => {
-      const change = direction === 'top' || direction === 'bottom' ? gestureState.dy : gestureState.dx;
-      updateMargin(direction, change);
+      setPositions((prevPositions) => {
+        const newPosition = { ...prevPositions };
+        switch (edge) {
+          case 'left':
+            newPosition.left = Math.min(Math.max(0, prevPositions.left + gestureState.dx), newPosition.right - 10);
+            break;
+          case 'top':
+            newPosition.top = Math.min(Math.max(0, prevPositions.top + gestureState.dy), newPosition.bottom - 10);
+            break;
+          case 'right':
+            newPosition.right = Math.max(Math.min(imageWidth, prevPositions.right + gestureState.dx), newPosition.left + 10);
+            break;
+          case 'bottom':
+            newPosition.bottom = Math.max(Math.min(imageHeight, prevPositions.bottom + gestureState.dy), newPosition.top + 10);
+            break;
+        }
+        return newPosition;
+      });
     },
   });
 
-  // Create pan responders for each direction
-  const leftPanResponder = panResponder('left').panHandlers;
-  const rightPanResponder = panResponder('right').panHandlers;
-  const topPanResponder = panResponder('top').panHandlers;
-  const bottomPanResponder = panResponder('bottom').panHandlers;
+  const panResponders = {
+    left: createPanResponder('left'),
+    top: createPanResponder('top'),
+    right: createPanResponder('right'),
+    bottom: createPanResponder('bottom'),
+  };
 
   return (
     <View style={styles.container}>
       <View style={[styles.imageContainer, { top: imageY, left: imageX }]}>
-        {/* Margin Lines */}
-        <View style={[styles.marginLine, { top: -margins.top - 1, left: -margins.left - 1, right: -margins.right - 1, height: 2 }]} />
-        <View style={[styles.marginLine, { left: -margins.left - 1, top: -margins.top - 1, bottom: -margins.bottom - 1, width: 2 }]} />
-        <View style={[styles.marginLine, { right: -margins.right - 1, top: -margins.top - 1, bottom: -margins.bottom - 1, width: 2 }]} />
-        <View style={[styles.marginLine, { bottom: -margins.bottom - 1, left: -margins.left - 1, right: -margins.right - 1, height: 2 }]} />
-
-        {/* Handlers for Adjusting Margins */}
-        <View {...topPanResponder} style={[styles.handler, { top: -20 - margins.top }]} />
-        <View {...leftPanResponder} style={[styles.handler, { left: -20 - margins.left }]} />
-        <View {...rightPanResponder} style={[styles.handler, { right: -20 - margins.right }]} />
-        <View {...bottomPanResponder} style={[styles.handler, { bottom: -20 - margins.bottom }]} />
-
-        <Image source={{ uri: 'https://via.placeholder.com/300' }} style={styles.image} />
+        <Image source={{ uri: imageUri }} style={styles.image} />
+        <View {...panResponders.left.panHandlers} style={[styles.draggableLine, styles.verticalLine, { left: positions.left }]} />
+        <View {...panResponders.top.panHandlers} style={[styles.draggableLine, styles.horizontalLine, { top: positions.top }]} />
+        <View {...panResponders.right.panHandlers} style={[styles.draggableLine, styles.verticalLine, { right: imageWidth - positions.right }]} />
+        <View {...panResponders.bottom.panHandlers} style={[styles.draggableLine, styles.horizontalLine, { bottom: imageHeight - positions.bottom }]} />
       </View>
-      <Button title="Submit Margins" onPress={() => console.log('Margins:', margins)} />
     </View>
   );
 };
@@ -85,25 +75,23 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: imageWidth,
     height: imageHeight,
-    alignItems: 'center',
-    justifyContent: 'center',
     overflow: 'hidden',
   },
   image: {
     width: '100%',
     height: '100%',
   },
-  handler: {
+  draggableLine: {
     position: 'absolute',
-    width: 40,
-    height: 40,
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: 'blue',
+    backgroundColor: 'rgba(255,0,0,0.5)', // Semi-transparent lines for visibility
   },
-  marginLine: {
-    position: 'absolute',
-    backgroundColor: 'red',
+  verticalLine: {
+    width: 2,
+    height: '100%',
+  },
+  horizontalLine: {
+    width: '100%',
+    height: 2,
   },
 });
 
