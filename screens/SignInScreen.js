@@ -1,19 +1,32 @@
-import React, { useState } from "react";
+import React from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { auth } from "../firebaseConfig";
+import { useSignIn } from "@clerk/clerk-expo";
 import { log } from "../logger";
+import { OAuthButtons } from "../components/OAuth";
 import { styles } from "../components/Styles";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function SignInScreen({ navigation }) {
-  const [emailAddress, setEmailAddress] = useState("");
-  const [password, setPassword] = useState("");
+  const { signIn, setSession, isLoaded } = useSignIn();
 
-  const signInWithEmail = async () => {
+  const [emailAddress, setEmailAddress] = React.useState("");
+  const [password, setPassword] = React.useState("");
+
+  const onSignInPress = async () => {
+    if (!isLoaded) {
+      return;
+    }
+
     try {
-      await auth.signInWithEmailAndPassword(emailAddress, password);
-    } catch (error) {
-      log("Error signing in:", error.message);
+      const completeSignIn = await signIn.create({
+        identifier: emailAddress,
+        password,
+      });
+
+      await setSession(completeSignIn.createdSessionId);
+    } catch (err) {
+      log("Error:> " + err?.status || "");
+      log("Error:> " + err?.errors ? JSON.stringify(err.errors) : err);
     }
   };
 
@@ -21,6 +34,10 @@ export default function SignInScreen({ navigation }) {
 
   return (
     <View style={styles.loginView}>
+      <View style={styles.oauthView}>
+        <OAuthButtons />
+      </View>
+
       <View style={styles.loginInputView}>
         <View style={styles.iconContainer}>
           <Ionicons name="ios-mail-outline" size={20} color="#fff" />
@@ -31,7 +48,7 @@ export default function SignInScreen({ navigation }) {
           style={styles.loginTextInput}
           placeholder="Email..."
           placeholderTextColor="#fff"
-          onChangeText={setEmailAddress}
+          onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
         />
       </View>
 
@@ -45,11 +62,11 @@ export default function SignInScreen({ navigation }) {
           placeholder="Password..."
           placeholderTextColor="#fff"
           secureTextEntry={true}
-          onChangeText={setPassword}
+          onChangeText={(password) => setPassword(password)}
         />
       </View>
 
-      <TouchableOpacity style={styles.loginButton} onPress={signInWithEmail}>
+      <TouchableOpacity style={styles.loginButton} onPress={onSignInPress}>
         <Text style={styles.loginButtonText}>Sign in</Text>
       </TouchableOpacity>
 

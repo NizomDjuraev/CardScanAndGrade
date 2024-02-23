@@ -3,7 +3,11 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import useCachedResources from "./hooks/useCachedResources";
 import Navigation from "./navigation";
-import { firebaseApp, auth } from "./firebaseConfig";
+import { ClerkProvider } from "@clerk/clerk-expo";
+import { tokenCache } from "./cache";
+
+// Your publishable Key goes here
+const publishableKey = "pk_test_Y29ycmVjdC1jb2QtMTEuY2xlcmsuYWNjb3VudHMuZGV2JA";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -12,10 +16,12 @@ export default function App() {
     return null;
   } else {
     return (
-      <SafeAreaProvider>
-        <Navigation />
-        <StatusBar />
-      </SafeAreaProvider>
+      <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+        <SafeAreaProvider>
+          <Navigation />
+          <StatusBar />
+        </SafeAreaProvider>
+      </ClerkProvider>
     );
   }
 }

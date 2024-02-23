@@ -1,38 +1,40 @@
-// import React from "react";
-// import { Text, TouchableOpacity } from "react-native";
-// import { firebase } from "@react-native-firebase/auth";
-// import { GoogleSignin } from "@react-native-google-signin/google-signin";
-// import { log } from "../logger";
-// import { styles } from "./Styles";
+import React from "react";
+import * as WebBrowser from "expo-web-browser";
+import { Text, TouchableOpacity } from "react-native";
+import { useOAuth } from "@clerk/clerk-expo";
+import { styles } from "./Styles";
+import { useWamUpBrowser } from "../hooks/useWarmUpBrowser";
 
-// GoogleSignin.configure({
-//   webClientId:
-//     "693229136898-ci6i2hv4i46691nf8ht7k5bnd6a2bpds.apps.googleusercontent.com",
-// });
+WebBrowser.maybeCompleteAuthSession();
 
-// export function OAuthButtons() {
-//   const signInWithGoogle = async () => {
-//     try {
-//       // Get the Google OAuth credential
-//       const { idToken } = await GoogleSignin.signIn();
+export function OAuthButtons() {
+  // Warm up the android browser to improve UX
+  // https://docs.expo.dev/guides/authentication/#improving-user-experience
+  useWamUpBrowser();
 
-//       // Create a Google credential with the token
-//       const googleCredential =
-//         firebase.auth.GoogleAuthProvider.credential(idToken);
+  const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
 
-//       // Sign in with the Google credential
-//       await firebase.auth().signInWithCredential(googleCredential);
-//     } catch (error) {
-//       log("Google sign-in error:", error.message);
-//     }
-//   };
+  const onPress = React.useCallback(async () => {
+    try {
+      const { createdSessionId, signIn, signUp, setActive } =
+        await startOAuthFlow();
 
-//   return (
-//     <TouchableOpacity
-//       style={{ ...styles.secondaryButton, marginBottom: 20 }}
-//       onPress={signInWithGoogle}
-//     >
-//       <Text style={styles.secondaryButtonText}>Continue with Google</Text>
-//     </TouchableOpacity>
-//   );
-// }
+      if (createdSessionId) {
+        setActive({ session: createdSessionId });
+      } else {
+        // Use signIn or signUp for next steps such as MFA
+      }
+    } catch (err) {
+      console.error("OAuth error", err);
+    }
+  }, []);
+
+  return (
+    <TouchableOpacity
+      style={{ ...styles.secondaryButton, marginBottom: 20 }}
+      onPress={onPress}
+    >
+      <Text style={styles.secondaryButtonText}>Continue with Google</Text>
+    </TouchableOpacity>
+  );
+}

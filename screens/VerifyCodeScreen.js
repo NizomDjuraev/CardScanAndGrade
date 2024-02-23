@@ -1,21 +1,28 @@
-import React, { useState } from "react";
+import * as React from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { auth } from "../firebaseConfig";
-import { log } from "../logger";
+import { useSignUp } from "@clerk/clerk-expo";
 import { styles } from "../components/Styles";
+import { log } from "../logger";
 
-export default function VerifyCodeScreen({ navigation }) {
-  const [code, setCode] = useState("");
+export default function SignUpScreen({ navigation }) {
+  const { isLoaded, signUp, setSession } = useSignUp();
+
+  const [code, setCode] = React.useState("");
 
   const onPress = async () => {
-    try {
-      // Verify the email address with Firebase using the code sent to user's email
-      await auth.applyActionCode(code);
+    if (!isLoaded) {
+      return;
+    }
 
-      // Navigate the user to home screen upon successful verification
-      navigation.navigate("HomeScreen");
-    } catch (error) {
-      log("Error verifying email:", error.message);
+    try {
+      const completeSignUp = await signUp.attemptEmailAddressVerification({
+        code,
+      });
+
+      await setSession(completeSignUp.createdSessionId);
+    } catch (err) {
+      log("Error:> " + err?.status || "");
+      log("Error:> " + err?.errors ? JSON.stringify(err.errors) : err);
     }
   };
 
@@ -27,7 +34,7 @@ export default function VerifyCodeScreen({ navigation }) {
           style={styles.loginTextInput}
           placeholder="Code..."
           placeholderTextColor="#fff"
-          onChangeText={setCode}
+          onChangeText={(code) => setCode(code)}
         />
       </View>
       <TouchableOpacity style={styles.loginButton} onPress={onPress}>

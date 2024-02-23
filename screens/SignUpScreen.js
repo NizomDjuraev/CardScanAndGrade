@@ -1,27 +1,49 @@
-import React, { useState } from "react";
+import * as React from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { auth } from "../firebaseConfig";
+import { useSignUp } from "@clerk/clerk-expo";
 import { log } from "../logger";
 import { styles } from "../components/Styles";
+import { OAuthButtons } from "../components/OAuth";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function SignUpScreen({ navigation }) {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [emailAddress, setEmailAddress] = useState("");
-  const [password, setPassword] = useState("");
+  const { isLoaded, signUp } = useSignUp();
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
+  const [emailAddress, setEmailAddress] = React.useState("");
+  const [password, setPassword] = React.useState("");
 
-  const signUpWithEmail = async () => {
+  const onSignUpPress = async () => {
+    if (!isLoaded) {
+      return;
+    }
+
     try {
-      await auth.createUserWithEmailAndPassword(emailAddress, password);
+      await signUp.create({
+        firstName,
+        lastName,
+        emailAddress,
+        password,
+      });
+
+      // https://docs.clerk.dev/popular-guides/passwordless-authentication
+      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+
       navigation.navigate("VerifyCode");
-    } catch (error) {
-      log("Error signing up:", error.message);
+    } catch (err) {
+      log("Error:> " + err?.status || "");
+      log("Error:> " + err?.errors ? JSON.stringify(err.errors) : err);
     }
   };
 
+  const onSignInPress = () => navigation.replace("SignIn");
+
   return (
     <View style={styles.loginView}>
+      <View style={styles.oauthView}>
+        <OAuthButtons />
+      </View>
+
       <View style={styles.loginInputView}>
         <View style={styles.iconContainer}>
           <Ionicons name="ios-person-outline" size={20} color="#fff" />
@@ -31,7 +53,7 @@ export default function SignUpScreen({ navigation }) {
           style={styles.loginTextInput}
           placeholder="First name..."
           placeholderTextColor="#fff"
-          onChangeText={setFirstName}
+          onChangeText={(firstName) => setFirstName(firstName)}
         />
       </View>
 
@@ -44,7 +66,7 @@ export default function SignUpScreen({ navigation }) {
           style={styles.loginTextInput}
           placeholder="Last name..."
           placeholderTextColor="#fff"
-          onChangeText={setLastName}
+          onChangeText={(lastName) => setLastName(lastName)}
         />
       </View>
 
@@ -58,7 +80,7 @@ export default function SignUpScreen({ navigation }) {
           style={styles.loginTextInput}
           placeholder="Email..."
           placeholderTextColor="#fff"
-          onChangeText={setEmailAddress}
+          onChangeText={(email) => setEmailAddress(email)}
         />
       </View>
 
@@ -72,12 +94,12 @@ export default function SignUpScreen({ navigation }) {
           placeholder="Password..."
           placeholderTextColor="#fff"
           secureTextEntry={true}
-          onChangeText={setPassword}
+          onChangeText={(password) => setPassword(password)}
         />
       </View>
 
-      <TouchableOpacity style={styles.loginButton} onPress={signUpWithEmail}>
-        <Text style={styles.loginButtonText}>Sign up with Email</Text>
+      <TouchableOpacity style={styles.loginButton} onPress={onSignUpPress}>
+        <Text style={styles.loginButtonText}>Sign up</Text>
       </TouchableOpacity>
 
       <View style={styles.loginFooter}>
@@ -85,7 +107,7 @@ export default function SignUpScreen({ navigation }) {
 
         <TouchableOpacity
           style={styles.secondaryButton}
-          onPress={() => navigation.replace("SignIn")}
+          onPress={onSignInPress}
         >
           <Text style={styles.secondaryButtonText}>Sign in</Text>
         </TouchableOpacity>
