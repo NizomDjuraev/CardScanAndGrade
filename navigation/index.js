@@ -1,11 +1,11 @@
-/**
- * If you are not familiar with React Navigation, refer to the "Fundamentals" guide:
- * https://reactnavigation.org/docs/getting-started
- *
- */
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { useAuth, useUser } from "@clerk/clerk-expo";
+import { log } from "../logger";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import * as React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import SignUpScreen from "../screens/SignUpScreen";
 import SignInScreen from "../screens/SignInScreen";
@@ -14,6 +14,7 @@ import MyProfileScreen from "../screens/MyProfileScreen";
 import HomeScreen from "../screens/HomeScreen";
 import CameraScreen from "../screens/CameraScreen";
 import SettingsScreen from "../screens/SettingsScreen";
+import ExportScreen from "../screens/ExportScreen";
 
 import LinkingConfiguration from "./LinkingConfiguration";
 import { ClerkLoaded, useUser } from "@clerk/clerk-expo";
@@ -23,6 +24,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
 export default function Navigation() {
   return (
@@ -31,8 +33,6 @@ export default function Navigation() {
     </NavigationContainer>
   );
 }
-
-const Stack = createNativeStackNavigator();
 
 function MainTabs() {
   const iconColor = "#1D9DB9";
@@ -80,8 +80,17 @@ function MainTabs() {
           ),
         }}
       />
-      <Tab.Screen
-        name="Settings"
+      <Tab.Screen 
+        name="Export" 
+        component={ExportScreen}
+        options={{
+          tabBarIcon: ({ color, size, focused }) => (
+            <AntDesign name="export" size={size} color={focused ? 'white' : iconColor} />
+          ),
+        }}
+      />
+      <Tab.Screen 
+        name="Settings" 
         component={SettingsScreen}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
