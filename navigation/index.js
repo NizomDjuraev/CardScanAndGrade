@@ -17,77 +17,92 @@ import SettingsScreen from "../screens/SettingsScreen";
 
 import LinkingConfiguration from "./LinkingConfiguration";
 import { ClerkLoaded, useUser } from "@clerk/clerk-expo";
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import { AntDesign } from '@expo/vector-icons';
-import { Ionicons } from '@expo/vector-icons';
+import { AntDesign } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
-
 
 export default function Navigation() {
   return (
     <NavigationContainer linking={LinkingConfiguration}>
       <RootNavigator />
     </NavigationContainer>
-  )
+  );
 }
 
 const Stack = createNativeStackNavigator();
 
-
 function MainTabs() {
-  const iconColor = '#1D9DB9';
+  const iconColor = "#1D9DB9";
 
   return (
-    <Tab.Navigator 
+    <Tab.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: '#272727',
+          backgroundColor: "#272727",
         },
         headerTitleStyle: {
-          color: '#1D9DB9'
+          color: "#1D9DB9",
         },
         tabBarStyle: {
-          backgroundColor: '#272727',
-        }, 
-        tabBarActiveTintColor: 'white',
+          backgroundColor: "#272727",
+        },
+        tabBarActiveTintColor: "white",
         tabBarInactiveTintColor: iconColor,
       }}
     >
-      <Tab.Screen 
-        name="My Collections" 
-        component={HomeScreen} 
+      <Tab.Screen
+        name="My Collections"
+        component={HomeScreen}
         options={{
-            tabBarIcon: ({ color, size, focused }) => (
-              <AntDesign name="home" size={size} color={focused ? 'white' : iconColor} />
-            ), headerShown: false,
+          tabBarIcon: ({ color, size, focused }) => (
+            <AntDesign
+              name="home"
+              size={size}
+              color={focused ? "white" : iconColor}
+            />
+          ),
+          headerShown: false,
         }}
       />
-      <Tab.Screen 
-        name="Camera" 
+      <Tab.Screen
+        name="Camera"
         component={CameraScreen}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
-            <AntDesign name="camerao" size={size} color={focused ? 'white' : iconColor} />
+            <AntDesign
+              name="camerao"
+              size={size}
+              color={focused ? "white" : iconColor}
+            />
           ),
         }}
       />
-      <Tab.Screen 
-        name="Settings" 
+      <Tab.Screen
+        name="Settings"
         component={SettingsScreen}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
-            <AntDesign name="setting" size={size} color={focused ? 'white' : iconColor} />
+            <AntDesign
+              name="setting"
+              size={size}
+              color={focused ? "white" : iconColor}
+            />
           ),
         }}
       />
-      <Tab.Screen 
-        name="Profile" 
+      <Tab.Screen
+        name="Profile"
         component={MyProfileScreen}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons name="person-outline" size={size} color={focused ? 'white' : iconColor} />
+            <Ionicons
+              name="person-outline"
+              size={size}
+              color={focused ? "white" : iconColor}
+            />
           ),
         }}
       />
@@ -101,15 +116,16 @@ const RootNavigator = () => {
   return (
     <ClerkLoaded>
       <Stack.Navigator
-        screenOptions={{ 
-          headerStyle: {backgroundColor: "#272727"}, headerTitleStyle: {color: "#fff"},
+        screenOptions={{
+          headerStyle: { backgroundColor: "#272727" },
+          headerTitleStyle: { color: "#fff" },
         }}
       >
         {isSignedIn ? (
           <Stack.Screen
             name="MainTabs"
             component={MainTabs}
-            options={{ headerShown: false }} 
+            options={{ headerShown: false }}
           />
         ) : (
           <>
@@ -132,5 +148,5 @@ const RootNavigator = () => {
         )}
       </Stack.Navigator>
     </ClerkLoaded>
-  )
-}
+  );
+};
