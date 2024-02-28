@@ -73,16 +73,16 @@ export default function AnnotateScreen() {
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={() => changeCircleColor('red')} style={[styles.button, { backgroundColor: 'red' }]}>
-          <Text style={styles.buttonText}>Tare</Text>
+          <Text style={styles.buttonText}>Category 1</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => changeCircleColor('green')} style={[styles.button, { backgroundColor: 'green' }]}>
-          <Text style={styles.buttonText}>Dent</Text>
+          <Text style={styles.buttonText}>Category 2</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => changeCircleColor('blue')} style={[styles.button, { backgroundColor: 'blue' }]}>
-          <Text style={styles.buttonText}>Misprint</Text>
+          <Text style={styles.buttonText}>Category 3</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => changeCircleColor('brown')} style={[styles.button, { backgroundColor: 'brown'}]}>
-          <Text style={styles.buttonText}>Dirt</Text>
+          <Text style={styles.buttonText}>Category 4</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   buttonContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     marginTop: 20,
   },
   button: {
