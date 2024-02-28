@@ -16,6 +16,10 @@ import CameraScreen from "../screens/CameraScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import ExportScreen from "../screens/ExportScreen";
 
+import AnnotateScreen from "../screens/AnnotateScreen";
+import AdjustBordersScreen from "../screens/AdjustBordersScreen";
+
+
 import LinkingConfiguration from "./LinkingConfiguration";
 import { ClerkLoaded, useUser } from "@clerk/clerk-expo";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -112,6 +116,24 @@ function MainTabs() {
               size={size}
               color={focused ? "white" : iconColor}
             />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Annotate"
+        component={AnnotateScreen}
+        options={{
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons name="alert" size={size} color={focused ? 'white' : iconColor} />
+          ),
+        }}
+      />      
+      <Tab.Screen
+        name="AdjustBorders"
+        component={AdjustBordersScreen}
+        options={{
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons name="crop" size={size} color={focused ? 'white' : iconColor} />
           ),
         }}
       />
