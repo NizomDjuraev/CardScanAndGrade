@@ -1,28 +1,19 @@
-import * as React from "react";
+import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { useSignUp } from "@clerk/clerk-expo";
 import { styles } from "../components/Styles";
-import { log } from "../logger";
+import { auth } from "../firebaseConfig";
 
-export default function SignUpScreen({ navigation }) {
-  const { isLoaded, signUp, setSession } = useSignUp();
-
-  const [code, setCode] = React.useState("");
+export default function VerifyCodeScreen({ navigation }) {
+  const [code, setCode] = useState("");
 
   const onPress = async () => {
-    if (!isLoaded) {
-      return;
-    }
-
     try {
-      const completeSignUp = await signUp.attemptEmailAddressVerification({
-        code,
-      });
-
-      await setSession(completeSignUp.createdSessionId);
-    } catch (err) {
-      log("Error:> " + err?.status || "");
-      log("Error:> " + err?.errors ? JSON.stringify(err.errors) : err);
+      await auth.applyActionCode(code);
+      // Email successfully verified, navigate to home screen
+      navigation.navigate("HomeScreen");
+    } catch (error) {
+      // Handle error
+      console.log("Error verifying email:", error.message);
     }
   };
 

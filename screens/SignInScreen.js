@@ -1,32 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { useSignIn } from "@clerk/clerk-expo";
-import { log } from "../logger";
-import { OAuthButtons } from "../components/OAuth";
 import { styles } from "../components/Styles";
 import { Ionicons } from "@expo/vector-icons";
+import { auth } from "../firebaseConfig";
 
 export default function SignInScreen({ navigation }) {
-  const { signIn, setSession, isLoaded } = useSignIn();
-
-  const [emailAddress, setEmailAddress] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [emailAddress, setEmailAddress] = useState("");
+  const [password, setPassword] = useState("");
 
   const onSignInPress = async () => {
-    if (!isLoaded) {
-      return;
-    }
-
     try {
-      const completeSignIn = await signIn.create({
-        identifier: emailAddress,
-        password,
-      });
-
-      await setSession(completeSignIn.createdSessionId);
-    } catch (err) {
-      log("Error:> " + err?.status || "");
-      log("Error:> " + err?.errors ? JSON.stringify(err.errors) : err);
+      await auth.signInWithEmailAndPassword(emailAddress, password);
+      // Sign in successful, navigate to home screen
+      navigation.navigate("HomeScreen");
+    } catch (error) {
+      // Handle error
+      console.log("Error signing in:", error.message);
     }
   };
 
@@ -34,10 +23,6 @@ export default function SignInScreen({ navigation }) {
 
   return (
     <View style={styles.loginView}>
-      <View style={styles.oauthView}>
-        <OAuthButtons />
-      </View>
-
       <View style={styles.loginInputView}>
         <View style={styles.iconContainer}>
           <Ionicons name="ios-mail-outline" size={20} color="#fff" />

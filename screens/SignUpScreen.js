@@ -1,38 +1,35 @@
 import * as React from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { useSignUp } from "@clerk/clerk-expo";
-import { log } from "../logger";
 import { styles } from "../components/Styles";
-import { OAuthButtons } from "../components/OAuth";
 import { Ionicons } from "@expo/vector-icons";
+import { auth } from "../firebaseConfig";
 
 export default function SignUpScreen({ navigation }) {
-  const { isLoaded, signUp } = useSignUp();
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [emailAddress, setEmailAddress] = React.useState("");
   const [password, setPassword] = React.useState("");
 
   const onSignUpPress = async () => {
-    if (!isLoaded) {
-      return;
-    }
-
     try {
-      await signUp.create({
-        firstName,
-        lastName,
+      // Create user with email and password
+      const userCredential = await auth.createUserWithEmailAndPassword(
         emailAddress,
-        password,
+        password
+      );
+
+      // Update profile with first and last name
+      await userCredential.user.updateProfile({
+        displayName: `${firstName} ${lastName}`,
       });
 
-      // https://docs.clerk.dev/popular-guides/passwordless-authentication
-      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+      // Send email verification
+      await userCredential.user.sendEmailVerification();
 
+      // Navigate to verification code screen
       navigation.navigate("VerifyCode");
-    } catch (err) {
-      log("Error:> " + err?.status || "");
-      log("Error:> " + err?.errors ? JSON.stringify(err.errors) : err);
+    } catch (error) {
+      console.log("Error signing up:", error.message);
     }
   };
 
@@ -40,10 +37,6 @@ export default function SignUpScreen({ navigation }) {
 
   return (
     <View style={styles.loginView}>
-      <View style={styles.oauthView}>
-        <OAuthButtons />
-      </View>
-
       <View style={styles.loginInputView}>
         <View style={styles.iconContainer}>
           <Ionicons name="ios-person-outline" size={20} color="#fff" />

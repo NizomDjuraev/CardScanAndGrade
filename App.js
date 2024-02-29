@@ -5,6 +5,7 @@ import useCachedResources from "./hooks/useCachedResources";
 import Navigation from "./navigation";
 import { ClerkProvider } from "@clerk/clerk-expo";
 import { tokenCache } from "./cache";
+import { firebaseApp } from "./firebaseConfig";
 
 // Your publishable Key goes here
 const publishableKey = "pk_test_Y29ycmVjdC1jb2QtMTEuY2xlcmsuYWNjb3VudHMuZGV2JA";
