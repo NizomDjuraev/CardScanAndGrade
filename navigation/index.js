@@ -1,8 +1,3 @@
-/**
- * If you are not familiar with React Navigation, refer to the "Fundamentals" guide:
- * https://reactnavigation.org/docs/getting-started
- *
- */
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
@@ -17,120 +12,121 @@ import SettingsScreen from "../screens/SettingsScreen";
 
 import LinkingConfiguration from "./LinkingConfiguration";
 import { ClerkLoaded, useUser } from "@clerk/clerk-expo";
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import { AntDesign } from '@expo/vector-icons';
-import { Ionicons } from '@expo/vector-icons';
+import { AntDesign } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
 
+const Stack = createNativeStackNavigator();
 
 export default function Navigation() {
   return (
     <NavigationContainer linking={LinkingConfiguration}>
-      <RootNavigator />
+      <ClerkLoaded>
+        <Stack.Navigator
+          screenOptions={{
+            headerStyle: { backgroundColor: "#272727" },
+            headerTitleStyle: { color: "#fff" },
+          }}
+        >
+          <Stack.Screen
+            name="SignUp"
+            component={SignUpScreen}
+            options={{ title: "Sign Up" }}
+          />
+          <Stack.Screen
+            name="SignIn"
+            component={SignInScreen}
+            options={{ title: "Sign In" }}
+          />
+          <Stack.Screen
+            name="VerifyCode"
+            component={VerifyCodeScreen}
+            options={{ title: "Verify Code" }}
+          />
+          <Stack.Screen
+            name="MainTabs"
+            component={MainTabs}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </ClerkLoaded>
     </NavigationContainer>
-  )
+  );
 }
 
-const Stack = createNativeStackNavigator();
-
-
 function MainTabs() {
-  const iconColor = '#1D9DB9';
-
   return (
-    <Tab.Navigator 
+    <Tab.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: '#272727',
+          backgroundColor: "#272727",
         },
         headerTitleStyle: {
-          color: '#1D9DB9'
+          color: "#1D9DB9",
         },
         tabBarStyle: {
-          backgroundColor: '#272727',
-        }, 
-        tabBarActiveTintColor: 'white',
-        tabBarInactiveTintColor: iconColor,
+          backgroundColor: "#272727",
+        },
+        tabBarActiveTintColor: "white",
+        tabBarInactiveTintColor: "#1D9DB9",
       }}
     >
-      <Tab.Screen 
-        name="My Collections" 
-        component={HomeScreen} 
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
         options={{
-            tabBarIcon: ({ color, size, focused }) => (
-              <AntDesign name="home" size={size} color={focused ? 'white' : iconColor} />
-            ), headerShown: false,
+          tabBarIcon: ({ color, size, focused }) => (
+            <AntDesign
+              name="home"
+              size={size}
+              color={focused ? "white" : "#1D9DB9"}
+            />
+          ),
+          headerShown: false,
         }}
       />
-      <Tab.Screen 
-        name="Camera" 
+      <Tab.Screen
+        name="Camera"
         component={CameraScreen}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
-            <AntDesign name="camerao" size={size} color={focused ? 'white' : iconColor} />
+            <AntDesign
+              name="camerao"
+              size={size}
+              color={focused ? "white" : "#1D9DB9"}
+            />
           ),
         }}
       />
-      <Tab.Screen 
-        name="Settings" 
+      <Tab.Screen
+        name="Settings"
         component={SettingsScreen}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
-            <AntDesign name="setting" size={size} color={focused ? 'white' : iconColor} />
+            <AntDesign
+              name="setting"
+              size={size}
+              color={focused ? "white" : "#1D9DB9"}
+            />
           ),
         }}
       />
-      <Tab.Screen 
-        name="Profile" 
+      <Tab.Screen
+        name="Profile"
         component={MyProfileScreen}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons name="person-outline" size={size} color={focused ? 'white' : iconColor} />
+            <Ionicons
+              name="person-outline"
+              size={size}
+              color={focused ? "white" : "#1D9DB9"}
+            />
           ),
         }}
       />
     </Tab.Navigator>
   );
-}
-
-const RootNavigator = () => {
-  const { isSignedIn } = useUser();
-
-  return (
-    <ClerkLoaded>
-      <Stack.Navigator
-        screenOptions={{ 
-          headerStyle: {backgroundColor: "#272727"}, headerTitleStyle: {color: "#fff"},
-        }}
-      >
-        {isSignedIn ? (
-          <Stack.Screen
-            name="MainTabs"
-            component={MainTabs}
-            options={{ headerShown: false }} 
-          />
-        ) : (
-          <>
-            <Stack.Screen
-              name="SignUp"
-              component={SignUpScreen}
-              options={{ title: "Sign Up" }}
-            />
-            <Stack.Screen
-              name="SignIn"
-              component={SignInScreen}
-              options={{ title: "Sign In" }}
-            />
-            <Stack.Screen
-              name="VerifyCode"
-              component={VerifyCodeScreen}
-              options={{ title: "Verify Code" }}
-            />
-          </>
-        )}
-      </Stack.Navigator>
-    </ClerkLoaded>
-  )
 }

@@ -1,36 +1,35 @@
-import React, { useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import React, { useEffect } from "react";
+import { Text, View } from "react-native";
 import { styles } from "../components/Styles";
 import { auth } from "../firebaseConfig";
 
 export default function VerifyCodeScreen({ navigation }) {
-  const [code, setCode] = useState("");
+  useEffect(() => {
+    // Check if the user's email is already verified
+    const isEmailVerified = auth.currentUser.emailVerified;
 
-  const onPress = async () => {
-    try {
-      await auth.applyActionCode(code);
-      // Email successfully verified, navigate to home screen
+    // If the email is already verified, navigate to the home screen
+    if (isEmailVerified) {
       navigation.navigate("HomeScreen");
-    } catch (error) {
-      // Handle error
-      console.log("Error verifying email:", error.message);
+    } else {
+      // Listen for changes in the user's authentication state
+      const unsubscribe = auth.onAuthStateChanged((user) => {
+        // If the user's email is verified, navigate to the home screen
+        if (user && user.emailVerified) {
+          navigation.navigate("HomeScreen");
+        }
+      });
+
+      // Clean up the listener when the component unmounts
+      return () => unsubscribe();
     }
-  };
+  }, []);
 
   return (
     <View style={styles.loginView}>
-      <View style={styles.loginInputView}>
-        <TextInput
-          value={code}
-          style={styles.loginTextInput}
-          placeholder="Code..."
-          placeholderTextColor="#fff"
-          onChangeText={(code) => setCode(code)}
-        />
-      </View>
-      <TouchableOpacity style={styles.loginButton} onPress={onPress}>
-        <Text style={styles.loginButtonText}>Verify Email</Text>
-      </TouchableOpacity>
+      <Text style={styles.loginTextInput}>
+        Please check your email to verify your account.
+      </Text>
     </View>
   );
 }

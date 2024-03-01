@@ -3,6 +3,7 @@ import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { styles } from "../components/Styles";
 import { Ionicons } from "@expo/vector-icons";
 import { auth } from "../firebaseConfig";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 export default function SignInScreen({ navigation }) {
   const [emailAddress, setEmailAddress] = useState("");
@@ -10,9 +11,9 @@ export default function SignInScreen({ navigation }) {
 
   const onSignInPress = async () => {
     try {
-      await auth.signInWithEmailAndPassword(emailAddress, password);
+      await signInWithEmailAndPassword(auth, emailAddress, password);
       // Sign in successful, navigate to home screen
-      navigation.navigate("HomeScreen");
+      navigation.navigate("MainTabs");
     } catch (error) {
       // Handle error
       console.log("Error signing in:", error.message);

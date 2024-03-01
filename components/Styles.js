@@ -97,8 +97,8 @@ export const styles = StyleSheet.create({
     borderColor: "#1D9DB9",
     borderStyle: "solid",
     borderWidth: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
 
   loginTextInput: {
@@ -106,7 +106,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 20,
     color: "#fff",
-    
   },
 
   iconContainer: {

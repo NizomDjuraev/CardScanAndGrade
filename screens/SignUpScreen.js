@@ -3,6 +3,11 @@ import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { styles } from "../components/Styles";
 import { Ionicons } from "@expo/vector-icons";
 import { auth } from "../firebaseConfig";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  sendEmailVerification,
+} from "firebase/auth";
 
 export default function SignUpScreen({ navigation }) {
   const [firstName, setFirstName] = React.useState("");
@@ -13,21 +18,25 @@ export default function SignUpScreen({ navigation }) {
   const onSignUpPress = async () => {
     try {
       // Create user with email and password
-      const userCredential = await auth.createUserWithEmailAndPassword(
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
         emailAddress,
         password
       );
 
+      // Extract user from userCredential
+      const user = userCredential.user;
+
       // Update profile with first and last name
-      await userCredential.user.updateProfile({
+      await updateProfile(user, {
         displayName: `${firstName} ${lastName}`,
       });
 
       // Send email verification
-      await userCredential.user.sendEmailVerification();
+      // await sendEmailVerification(user);
 
       // Navigate to verification code screen
-      navigation.navigate("VerifyCode");
+      navigation.navigate("MainTabs");
     } catch (error) {
       console.log("Error signing up:", error.message);
     }
