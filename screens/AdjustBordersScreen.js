@@ -100,6 +100,3 @@ const styles = StyleSheet.create({
 });
 
 export default AdjustBordersScreen;
-
-
-export default AdjustBordersScreen;
