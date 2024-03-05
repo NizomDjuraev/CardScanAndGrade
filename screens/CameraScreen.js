@@ -53,6 +53,7 @@ export default function CameraScreen() {
         { compress: 1, format: ImageManipulator.SaveFormat.PNG }
       );
       setCapturedPhoto(croppedPhoto.uri);
+      navigation.navigate('AdjustBordersScreen', { photoUri: croppedPhoto.uri });
     }
   };
   
