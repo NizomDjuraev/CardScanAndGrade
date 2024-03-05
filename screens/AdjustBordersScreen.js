@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Image, Text, PanResponder, Dimensions } from 'react-native';
+import { useRoute } from '@react-navigation/native'; // Import useRoute
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -10,11 +11,18 @@ const imageX = (windowWidth - imageWidth) / 2;
 const imageY = (windowHeight - imageHeight) / 2;
 
 const AdjustBordersScreen = () => {
-  const [imageUri] = useState('https://via.placeholder.com/300');
-  // Initialize margins so the draggable borders start at the edges of the image
+  const route = useRoute(); // Use the useRoute hook to access the current route
+  const [imageUri, setImageUri] = useState('');
+
+  useEffect(() => {
+    // Update the image URI state when the route params change
+    if (route.params && route.params.photoUri) {
+      setImageUri(route.params.photoUri);
+    }
+  }, [route.params]);
+
   const [margins, setMargins] = useState({ left: imageX, top: imageY, right: windowWidth - (imageX + imageWidth), bottom: windowHeight - (imageY + imageHeight) });
 
-  // Create pan responders for each edge
   const createPanResponder = (edge) => {
     return PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -35,7 +43,6 @@ const AdjustBordersScreen = () => {
     });
   };
 
-  // PanResponders for each border
   const panResponders = {
     left: createPanResponder('left'),
     top: createPanResponder('top'),
@@ -43,7 +50,6 @@ const AdjustBordersScreen = () => {
     bottom: createPanResponder('bottom'),
   };
 
-  // Calculate the centering score
   const centeringScore = {
     horizontal: ((margins.left - margins.right) / imageWidth) * 100,
     vertical: ((margins.top - margins.bottom) / imageHeight) * 100,
@@ -92,5 +98,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 });
+
+export default AdjustBordersScreen;
+
 
 export default AdjustBordersScreen;
