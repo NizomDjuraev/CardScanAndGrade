@@ -6,7 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 
 
-export default function CameraScreen() {
+export default function CameraScreen( {navigation} ) {
   const [hasPermission, setHasPermission] = useState(null);
   const [capturedPhoto, setCapturedPhoto] = useState(null);
   const cameraRef = useRef(null);
@@ -87,27 +87,34 @@ export default function CameraScreen() {
     return <Text>No access to camera</Text>;
   }
 
-  return (
+  const submitPhoto = () => {
+    navigation.navigate('NextScreen', { photoUri: capturedPhoto });
+  };
+
+return (
     <View style={styles.container}>
       {capturedPhoto ? (
         <View style={styles.previewContainer}>
           <Image source={{ uri: capturedPhoto }} style={styles.previewImage} />
-        <TouchableOpacity
-          style={[styles.corner, { top: corners.topLeft.y, left: corners.topLeft.x }]}
-          // {...topLeftResponder.panHandlers}
-        />
-        <TouchableOpacity
-          style={[styles.corner, { top: corners.topRight.y, right: corners.topRight.x }]}
-          // {...topRightResponder.panHandlers}
-        />
-        <TouchableOpacity
-          style={[styles.corner, { bottom: corners.bottomLeft.y, left: corners.bottomLeft.x }]}
-          // {...bottomLeftResponder.panHandlers}
-        />
-        <TouchableOpacity
-          style={[styles.corner, { bottom: corners.bottomRight.y, right: corners.bottomRight.x }]}
-          // {...bottomRightResponder.panHandlers}
-        />
+          <TouchableOpacity onPress={submitPhoto} style={styles.submitButton}>
+            <Text style={styles.submitButtonText}>Submit</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.corner, { top: corners.topLeft.y, left: corners.topLeft.x }]}
+            // {...topLeftResponder.panHandlers}
+          />
+          <TouchableOpacity
+            style={[styles.corner, { top: corners.topRight.y, right: corners.topRight.x }]}
+            // {...topRightResponder.panHandlers}
+          />
+          <TouchableOpacity
+            style={[styles.corner, { bottom: corners.bottomLeft.y, left: corners.bottomLeft.x }]}
+            // {...bottomLeftResponder.panHandlers}
+          />
+          <TouchableOpacity
+            style={[styles.corner, { bottom: corners.bottomRight.y, right: corners.bottomRight.x }]}
+            // {...bottomRightResponder.panHandlers}
+          />
           <TouchableOpacity onPress={retakePicture} style={styles.closeButton}>
             <Text style={styles.closeButtonText}>X</Text>
           </TouchableOpacity>
@@ -134,7 +141,7 @@ export default function CameraScreen() {
       )}
     </View>
   );
-}
+
 
 const styles = StyleSheet.create({
   container: {
