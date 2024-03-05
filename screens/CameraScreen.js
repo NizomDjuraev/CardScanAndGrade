@@ -5,6 +5,7 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 
+
 export default function CameraScreen( {navigation} ) {
   const [hasPermission, setHasPermission] = useState(null);
   const [capturedPhoto, setCapturedPhoto] = useState(null);
@@ -52,6 +53,7 @@ export default function CameraScreen( {navigation} ) {
         { compress: 1, format: ImageManipulator.SaveFormat.PNG }
       );
       setCapturedPhoto(croppedPhoto.uri);
+      navigation.navigate('AdjustBorders', { imageData: { uri: croppedPhoto.uri } });
     }
   };
   
@@ -64,7 +66,7 @@ export default function CameraScreen( {navigation} ) {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     
     if (permissionResult.granted === false) {
-      alert("This app doesn't have permission to access your camera roll");
+      alert("This app doesn have permission to access your camera roll");
       return;
     }
   
@@ -77,13 +79,6 @@ export default function CameraScreen( {navigation} ) {
     setCapturedPhoto(pickerResult.uri);
   };
 
-  const submitPhoto = () => {
-    if (capturedPhoto) {
-      navigation.navigate('MainTabs', { screen: 'AdjustBorders' });
-    } else {
-      console.warn('No photo has been captured');
-    }
-  };
 
   if (hasPermission === null) {
     return <View />;
@@ -92,7 +87,12 @@ export default function CameraScreen( {navigation} ) {
     return <Text>No access to camera</Text>;
   }
 
-  return (
+  const submitPhoto = () => {
+    navigation.navigate('MainTabs', { screen: 'AdjustBorders' });
+
+  };
+
+return (
     <View style={styles.container}>
       {capturedPhoto ? (
         <View style={styles.previewContainer}>
@@ -100,6 +100,22 @@ export default function CameraScreen( {navigation} ) {
           <TouchableOpacity onPress={submitPhoto} style={styles.submitButton}>
             <Text style={styles.submitButtonText}>Submit</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.corner, { top: corners.topLeft.y, left: corners.topLeft.x }]}
+            // {...topLeftResponder.panHandlers}
+          />
+          <TouchableOpacity
+            style={[styles.corner, { top: corners.topRight.y, right: corners.topRight.x }]}
+            // {...topRightResponder.panHandlers}
+          />
+          <TouchableOpacity
+            style={[styles.corner, { bottom: corners.bottomLeft.y, left: corners.bottomLeft.x }]}
+            // {...bottomLeftResponder.panHandlers}
+          />
+          <TouchableOpacity
+            style={[styles.corner, { bottom: corners.bottomRight.y, right: corners.bottomRight.x }]}
+            // {...bottomRightResponder.panHandlers}
+          />
           <TouchableOpacity onPress={retakePicture} style={styles.closeButton}>
             <Text style={styles.closeButtonText}>X</Text>
           </TouchableOpacity>
@@ -236,3 +252,5 @@ const styles = StyleSheet.create({
     zIndex: 1, // Ensure it's above other elements
   },
 });
+
+export default CameraScreen;
