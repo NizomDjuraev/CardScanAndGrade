@@ -16,8 +16,8 @@ const AdjustBordersScreen = () => {
 
   useEffect(() => {
     // Update the image URI state when the route params change
-    if (route.params && route.params.photoUri) {
-      setImageUri(route.params.photoUri);
+    if (route.params && route.params.imageData) {
+      setImageUri(route.params.imageData.uri);
     }
   }, [route.params]);
 
