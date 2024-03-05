@@ -252,5 +252,3 @@ const styles = StyleSheet.create({
     zIndex: 1, // Ensure it's above other elements
   },
 });
-
-export default CameraScreen;
