@@ -130,6 +130,32 @@ function MainTabs() {
           ),
         }}
       />
+      <Tab.Screen
+        name="Annotate"
+        component={AnnotateScreen}
+        options={{
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name="alert"
+              size={size}
+              color={focused ? "white" : "#1D9DB9"}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Adjust Borders"
+        component={AdjustBordersScreen}
+        options={{
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name="crop"
+              size={size}
+              color={focused ? "white" : "#1D9DB9"}
+            />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 }
