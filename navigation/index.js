@@ -14,10 +14,8 @@ import ExportScreen from "../screens/ExportScreen";
 import AnnotateScreen from "../screens/AnnotateScreen";
 import AdjustBordersScreen from "../screens/AdjustBordersScreen";
 
-
 import LinkingConfiguration from "./LinkingConfiguration";
 import { ClerkLoaded, useUser } from "@clerk/clerk-expo";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
