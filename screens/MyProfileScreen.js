@@ -1,14 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useAuth } from "@clerk/clerk-expo";
+import { useNavigation } from "@react-navigation/native";
+import { auth } from "../firebaseConfig";
 
-export default function SettingsScreen({ navigation }) {
-  const { signOut } = useAuth();
+export default function MyProfileScreenScreen() {
+  const navigation = useNavigation();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      setUser(currentUser);
+    }
+  }, []);
+
+  const getInitials = (displayName) => {
+    const names = displayName.split(" ");
+    const firstInitial = names[0] ? names[0][0].toUpperCase() : "";
+    const lastInitial = names[1] ? names[1][0].toUpperCase() : "";
+    return `${firstInitial}${lastInitial}`;
+  };
 
   const handleSignOutPress = async () => {
     try {
-      await signOut();
+      await auth.signOut();
+      navigation.replace("SignIn");
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -19,11 +36,13 @@ export default function SettingsScreen({ navigation }) {
       {/* Username Heading */}
       <View style={styles.userContainer}>
         <View style={styles.userInitials}>
-          <Text style={styles.initialsText}>WK</Text>
+          <Text style={styles.initialsText}>
+            {user ? getInitials(user.displayName) : ""}
+          </Text>
         </View>
         <View style={styles.userInfo}>
-          <Text style={styles.username}>username</Text>
-          <Text style={styles.email}>user@domain.com</Text>
+          <Text style={styles.username}>{user ? user.displayName : ""}</Text>
+          <Text style={styles.email}>{user ? user.email : ""}</Text>
         </View>
       </View>
 

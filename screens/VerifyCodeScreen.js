@@ -1,45 +1,35 @@
-import * as React from "react"
-import { Text, TextInput, TouchableOpacity, View } from "react-native"
-import { useSignUp } from "@clerk/clerk-expo"
-import { styles } from "../components/Styles"
-import { log } from "../logger"
+import React, { useEffect } from "react";
+import { Text, View } from "react-native";
+import { styles } from "../components/Styles";
+import { auth } from "../firebaseConfig";
 
-export default function SignUpScreen({ navigation }) {
-  const { isLoaded, signUp, setSession } = useSignUp()
+export default function VerifyCodeScreen({ navigation }) {
+  useEffect(() => {
+    // Check if the user's email is already verified
+    const isEmailVerified = auth.currentUser.emailVerified;
 
-  const [code, setCode] = React.useState("")
+    // If the email is already verified, navigate to the home screen
+    if (isEmailVerified) {
+      navigation.navigate("HomeScreen");
+    } else {
+      // Listen for changes in the user's authentication state
+      const unsubscribe = auth.onAuthStateChanged((user) => {
+        // If the user's email is verified, navigate to the home screen
+        if (user && user.emailVerified) {
+          navigation.navigate("HomeScreen");
+        }
+      });
 
-  const onPress = async () => {
-    if (!isLoaded) {
-      return
+      // Clean up the listener when the component unmounts
+      return () => unsubscribe();
     }
-
-    try {
-      const completeSignUp = await signUp.attemptEmailAddressVerification({
-        code
-      })
-
-      await setSession(completeSignUp.createdSessionId)
-    } catch (err) {
-      log("Error:> " + err?.status || "")
-      log("Error:> " + err?.errors ? JSON.stringify(err.errors) : err)
-    }
-  }
+  }, []);
 
   return (
     <View style={styles.loginView}>
-      <View style={styles.loginInputView}>
-        <TextInput
-          value={code}
-          style={styles.loginTextInput}
-          placeholder="Code..."
-          placeholderTextColor="#fff"
-          onChangeText={code => setCode(code)}
-        />
-      </View>
-      <TouchableOpacity style={styles.loginButton} onPress={onPress}>
-        <Text style={styles.loginButtonText}>Verify Email</Text>
-      </TouchableOpacity>
+      <Text style={styles.loginTextInput}>
+        Please check your email to verify your account.
+      </Text>
     </View>
-  )
+  );
 }

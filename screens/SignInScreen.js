@@ -1,43 +1,29 @@
-import React from "react"
-import { Text, TextInput, TouchableOpacity, View } from "react-native"
-import { useSignIn } from "@clerk/clerk-expo"
-import { log } from "../logger"
-import { OAuthButtons } from "../components/OAuth"
-import { styles } from "../components/Styles"
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from "react";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { styles } from "../components/Styles";
+import { Ionicons } from "@expo/vector-icons";
+import { auth } from "../firebaseConfig";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 export default function SignInScreen({ navigation }) {
-  const { signIn, setSession, isLoaded } = useSignIn()
-
-  const [emailAddress, setEmailAddress] = React.useState("")
-  const [password, setPassword] = React.useState("")
+  const [emailAddress, setEmailAddress] = useState("");
+  const [password, setPassword] = useState("");
 
   const onSignInPress = async () => {
-    if (!isLoaded) {
-      return
-    }
-
     try {
-      const completeSignIn = await signIn.create({
-        identifier: emailAddress,
-        password
-      })
-
-      await setSession(completeSignIn.createdSessionId)
-    } catch (err) {
-      log("Error:> " + err?.status || "")
-      log("Error:> " + err?.errors ? JSON.stringify(err.errors) : err)
+      await signInWithEmailAndPassword(auth, emailAddress, password);
+      // Sign in successful, navigate to home screen
+      navigation.navigate("MainTabs");
+    } catch (error) {
+      // Handle error
+      console.log("Error signing in:", error.message);
     }
-  }
+  };
 
-  const onSignUpPress = () => navigation.replace("SignUp")
+  const onSignUpPress = () => navigation.replace("SignUp");
 
   return (
     <View style={styles.loginView}>
-      <View style={styles.oauthView}>
-        <OAuthButtons />
-      </View>
-
       <View style={styles.loginInputView}>
         <View style={styles.iconContainer}>
           <Ionicons name="ios-mail-outline" size={20} color="#fff" />
@@ -48,7 +34,7 @@ export default function SignInScreen({ navigation }) {
           style={styles.loginTextInput}
           placeholder="Email..."
           placeholderTextColor="#fff"
-          onChangeText={emailAddress => setEmailAddress(emailAddress)}
+          onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
         />
       </View>
 
@@ -62,7 +48,7 @@ export default function SignInScreen({ navigation }) {
           placeholder="Password..."
           placeholderTextColor="#fff"
           secureTextEntry={true}
-          onChangeText={password => setPassword(password)}
+          onChangeText={(password) => setPassword(password)}
         />
       </View>
 
@@ -71,7 +57,7 @@ export default function SignInScreen({ navigation }) {
       </TouchableOpacity>
 
       <View style={styles.loginFooter}>
-        <Text style={{ color: '#fff' }}>Don't have an account?</Text>
+        <Text style={{ color: "#fff" }}>Don't have an account?</Text>
 
         <TouchableOpacity
           style={styles.secondaryButton}
@@ -81,6 +67,5 @@ export default function SignInScreen({ navigation }) {
         </TouchableOpacity>
       </View>
     </View>
-  )
+  );
 }
-
