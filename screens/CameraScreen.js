@@ -53,7 +53,7 @@ export default function CameraScreen( {navigation} ) {
         { compress: 1, format: ImageManipulator.SaveFormat.PNG }
       );
       setCapturedPhoto(croppedPhoto.uri);
-      navigation.navigate('AdjustBorders', { imageData: { uri: croppedPhoto.uri } });
+      navigation.navigate('Adjust Borders', { imageData: { uri: croppedPhoto.uri } });
     }
   };
   
@@ -88,7 +88,7 @@ export default function CameraScreen( {navigation} ) {
   }
 
   const submitPhoto = () => {
-    navigation.navigate('MainTabs', { screen: 'AdjustBorders' });
+    navigation.navigate('MainTabs', { screen: 'Adjust Borders' });
 
   };
 
