@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Image, Text, PanResponder, Dimensions } from 'react-native';
+import { View, StyleSheet, Image, Text, PanResponder, Dimensions, TouchableOpacity } from 'react-native';
 import { useRoute } from '@react-navigation/native'; // Import useRoute
 
 const windowWidth = Dimensions.get('window').width;
@@ -10,7 +10,7 @@ const imageHeight = 300;
 const imageX = (windowWidth - imageWidth) / 2;
 const imageY = (windowHeight - imageHeight) / 2;
 
-const AdjustBordersScreen = () => {
+const AdjustBordersScreen = ( { navigation }) => {
   const route = useRoute(); // Use the useRoute hook to access the current route
   const [imageUri, setImageUri] = useState('');
 
@@ -55,6 +55,10 @@ const AdjustBordersScreen = () => {
     vertical: ((margins.top - margins.bottom) / imageHeight) * 100,
   };
 
+  const nextButton = async () => {
+    navigation.navigate('Annotate', {imageData: { uri: imageUri} });
+  };
+
   return (
     <View style={styles.container}>
       <View style={[styles.imageContainer, { marginTop: imageY - margins.top, marginLeft: imageX - margins.left }]}>
@@ -66,6 +70,11 @@ const AdjustBordersScreen = () => {
       </View>
       <Text style={styles.centeringText}>Horizontal Centering: {centeringScore.horizontal.toFixed(2)}%</Text>
       <Text style={styles.centeringText}>Vertical Centering: {centeringScore.vertical.toFixed(2)}%</Text>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={nextButton} style={styles.next}>
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -97,6 +106,17 @@ const styles = StyleSheet.create({
     color: 'black',
     marginTop: 20,
   },
+  buttonContainer: {
+    marginTop: 20,
+  },
+  buttonText: {
+    color: 'black',
+    textAlign: 'center',
+    fontSize: 16,
+  },
+  next: {
+    padding: 10,
+  }
 });
 
 export default AdjustBordersScreen;

@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Image, StyleSheet, PanResponder, Text, TouchableOpacity } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
+import { useRoute } from '@react-navigation/native';
 
 export default function AnnotateScreen() {
-  const [imageUri] = useState('https://via.placeholder.com/300');
+  const route = useRoute();
+  const [imageUri, setImageUri] = useState('');
+  useEffect(() => {
+    if(route.params && route.params.imageData.uri){
+      setImageUri(route.params.imageData.uri);
+    }
+  }, [route.params]);
+  
   const [circles, setCircles] = useState([]);
   const [currentCircle, setCurrentCircle] = useState(null);
   const [circleColor, setCircleColor] = useState('black'); 
