@@ -8,8 +8,13 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
-export default function ScoreScreen() {
+export default function ScoreScreen({ route }) {
+  const navigation = useNavigation();
+
+  const { imageUri } = route.params; // Getting the image URI from navigation params
+
   const handleExitButtonClick = () => {
     // add exit button logic here
     console.log("exit button pressed");
@@ -23,7 +28,8 @@ export default function ScoreScreen() {
     console.log("toggle button pressed");
   };
   const handleShareButtonClick = () => {
-    // add share button logic here
+    // Navigate to Export screen and pass the image URI as a parameter
+    navigation.navigate("Export", { imageUri });
     console.log("share button pressed");
   };
   const handleAddToCollectionButtonClick = () => {
@@ -53,12 +59,7 @@ export default function ScoreScreen() {
 
         {/* container for image */}
         <View style={styles.cardImageContainer}>
-          <Image
-            style={styles.cardImage}
-            source={{
-              uri: "https://m.media-amazon.com/images/I/71-orZ7bqqL.jpg",
-            }}
-          />
+          <Image style={styles.cardImage} source={{ uri: imageUri }} />
         </View>
 
         {/* container for front and toggle buttons */}
