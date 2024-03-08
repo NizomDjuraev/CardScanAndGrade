@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Image, Text, PanResponder, Dimensions } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Image, Text, PanResponder, Dimensions, TouchableOpacity } from 'react-native';
+import { useRoute } from '@react-navigation/native'; // Import useRoute
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -9,12 +10,19 @@ const imageHeight = 300;
 const imageX = (windowWidth - imageWidth) / 2;
 const imageY = (windowHeight - imageHeight) / 2;
 
-const AdjustBordersScreen = () => {
-  const [imageUri] = useState('https://via.placeholder.com/300');
-  // Initialize margins so the draggable borders start at the edges of the image
+const AdjustBordersScreen = ( { navigation }) => {
+  const route = useRoute(); // Use the useRoute hook to access the current route
+  const [imageUri, setImageUri] = useState('');
+
+  useEffect(() => {
+    // Update the image URI state when the route params change
+    if (route.params && route.params.imageData) {
+      setImageUri(route.params.imageData.uri);
+    }
+  }, [route.params]);
+
   const [margins, setMargins] = useState({ left: imageX, top: imageY, right: windowWidth - (imageX + imageWidth), bottom: windowHeight - (imageY + imageHeight) });
 
-  // Create pan responders for each edge
   const createPanResponder = (edge) => {
     return PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -35,7 +43,6 @@ const AdjustBordersScreen = () => {
     });
   };
 
-  // PanResponders for each border
   const panResponders = {
     left: createPanResponder('left'),
     top: createPanResponder('top'),
@@ -43,10 +50,13 @@ const AdjustBordersScreen = () => {
     bottom: createPanResponder('bottom'),
   };
 
-  // Calculate the centering score
   const centeringScore = {
     horizontal: ((margins.left - margins.right) / imageWidth) * 100,
     vertical: ((margins.top - margins.bottom) / imageHeight) * 100,
+  };
+
+  const nextButton = async () => {
+    navigation.navigate('Annotate', {imageData: { uri: imageUri} });
   };
 
   return (
@@ -60,6 +70,11 @@ const AdjustBordersScreen = () => {
       </View>
       <Text style={styles.centeringText}>Horizontal Centering: {centeringScore.horizontal.toFixed(2)}%</Text>
       <Text style={styles.centeringText}>Vertical Centering: {centeringScore.vertical.toFixed(2)}%</Text>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={nextButton} style={styles.next}>
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -91,6 +106,17 @@ const styles = StyleSheet.create({
     color: 'black',
     marginTop: 20,
   },
+  buttonContainer: {
+    marginTop: 20,
+  },
+  buttonText: {
+    color: 'black',
+    textAlign: 'center',
+    fontSize: 16,
+  },
+  next: {
+    padding: 10,
+  }
 });
 
 export default AdjustBordersScreen;
