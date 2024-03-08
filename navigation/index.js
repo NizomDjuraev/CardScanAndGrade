@@ -168,6 +168,20 @@ function MainTabs() {
               color={focused ? "white" : "#1D9DB9"}
             />
           ),
+          headerShown: false,
+        }}
+      />
+      <Tab.Screen
+        name="Export"
+        component={ExportScreen}
+        options={{
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name="share"
+              size={size}
+              color={focused ? "white" : "#1D9DB9"}
+            />
+          ),
         }}
       />
     </Tab.Navigator>

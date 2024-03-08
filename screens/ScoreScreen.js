@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -8,12 +8,16 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 
-export default function ScoreScreen({ route }) {
-  const navigation = useNavigation();
-
-  const { imageUri } = route.params; // Getting the image URI from navigation params
+export default function ScoreScreen({ navigation }) {
+  const route = useRoute();
+  const [imageUri, setImageUri] = useState("");
+  useEffect(() => {
+    if (route.params && route.params.imageData.uri) {
+      setImageUri(route.params.imageData.uri);
+    }
+  }, [route.params]);
 
   const handleExitButtonClick = () => {
     // add exit button logic here
@@ -29,7 +33,7 @@ export default function ScoreScreen({ route }) {
   };
   const handleShareButtonClick = () => {
     // Navigate to Export screen and pass the image URI as a parameter
-    navigation.navigate("Export", { imageUri });
+    navigation.navigate("Export", { imageData: { uri: imageUri } });
     console.log("share button pressed");
   };
   const handleAddToCollectionButtonClick = () => {
