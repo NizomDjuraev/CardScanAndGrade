@@ -3,7 +3,7 @@ import { View, Image, StyleSheet, PanResponder, Text, TouchableOpacity } from 'r
 import Svg, { Circle } from 'react-native-svg';
 import { useRoute } from '@react-navigation/native';
 
-export default function AnnotateScreen() {
+export default function AnnotateScreen( { navigation }) {
   const route = useRoute();
   const [imageUri, setImageUri] = useState('');
   useEffect(() => {
@@ -57,6 +57,10 @@ export default function AnnotateScreen() {
     setCircleColor(color); 
   };
 
+  const nextButton = async () => {
+    navigation.navigate('Score', {imageData: { uri: imageUri} });
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
@@ -91,6 +95,9 @@ export default function AnnotateScreen() {
         </TouchableOpacity>
         <TouchableOpacity onPress={() => changeCircleColor('brown')} style={[styles.button, { backgroundColor: 'brown'}]}>
           <Text style={styles.buttonText}>Category 4</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={nextButton} style={styles.next}>
+          <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -131,4 +138,8 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
   },
+  next: {
+    padding: 10,
+    backgroundColor: 'black',
+  }
 });

@@ -19,6 +19,7 @@ import { ClerkLoaded, useUser } from "@clerk/clerk-expo";
 
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import ScoreScreen from "../screens/ScoreScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -150,6 +151,19 @@ function MainTabs() {
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
               name="crop"
+              size={size}
+              color={focused ? "white" : "#1D9DB9"}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Score"
+        component={ScoreScreen}
+        options={{
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name="square-outline"
               size={size}
               color={focused ? "white" : "#1D9DB9"}
             />
