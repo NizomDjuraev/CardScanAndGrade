@@ -1,9 +1,12 @@
 import React, { useRef } from "react";
 import { StyleSheet, View, Text, Image, TouchableOpacity, Share } from "react-native";
 import { captureRef } from "react-native-view-shot";
+import { useRoute } from "@react-navigation/native"; // Import useRoute
 
 export default function ExportScreen() {
   const cardRef = useRef();
+  const route = useRoute(); // Use the useRoute hook to access the route object
+  const imageUri = route.params?.imageData?.uri ?? "https://m.media-amazon.com/images/I/71-orZ7bqqL.jpg"; // Use the passed URI or fallback to a default
 
   const handleShare = async () => {
     try {
@@ -24,21 +27,21 @@ export default function ExportScreen() {
     <View style={styles.container}>
       <View style={styles.topBackground} ref={cardRef}>
         <View style={styles.cardContainer}>
-          {/* Front of the card */}
+          {/* Adjusted to dynamically use the passed image URI */}
           <View style={styles.cardSide}>
             <Image
               style={styles.cardImage}
               source={{
-                uri: "https://m.media-amazon.com/images/I/71-orZ7bqqL.jpg",
+                uri: imageUri, // Use the imageUri from the navigation parameter
               }}
             />
           </View>
-          {/* Back of the card */}
+          {/* Adjusted to dynamically use the passed image URI */}
           <View style={styles.cardSide}>
             <Image
               style={styles.cardImage}
               source={{
-                uri: "https://m.media-amazon.com/images/I/71-orZ7bqqL.jpg",
+                uri: imageUri, // Use the imageUri from the navigation parameter
               }}
             />
           </View>
