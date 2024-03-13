@@ -205,9 +205,11 @@ export default function ScoreScreen({ navigation }) {
         </View>
 
         {/* container for image */}
-        <View style={styles.cardImageContainer}>
-          <Image style={styles.cardImage} source={{ uri: imageUri }} />
-        </View>
+        {imageUri ? (
+          <View style={styles.cardImageContainer}>
+            <Image style={styles.cardImage} source={{ uri: imageUri }} />
+          </View>
+        ) : null}
 
         {/* container for front and toggle buttons */}
         <View style={styles.frontToggleContainer}>
