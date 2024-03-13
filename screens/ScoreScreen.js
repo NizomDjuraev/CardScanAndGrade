@@ -151,7 +151,6 @@ export default function ScoreScreen({ navigation }) {
           );
           const data = await response.json();
           setCardInfo(data);
-          console.log("Card information:", data);
           // Handle the received card information as needed
         } else {
           console.error("User not authenticated");

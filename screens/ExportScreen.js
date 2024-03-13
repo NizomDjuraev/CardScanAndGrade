@@ -1,12 +1,23 @@
 import React, { useRef } from "react";
-import { StyleSheet, View, Text, Image, TouchableOpacity, Share } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  Share,
+} from "react-native";
 import { captureRef } from "react-native-view-shot";
-import { useRoute } from "@react-navigation/native"; // Import useRoute
+import { useRoute, useNavigation } from "@react-navigation/native"; // Import useRoute and useNavigation
+import { Ionicons } from "@expo/vector-icons"; // Import Ionicons
 
 export default function ExportScreen() {
   const cardRef = useRef();
   const route = useRoute(); // Use the useRoute hook to access the route object
-  const imageUri = route.params?.imageData?.uri ?? "https://m.media-amazon.com/images/I/71-orZ7bqqL.jpg"; // Use the passed URI or fallback to a default
+  const navigation = useNavigation();
+  const imageUri =
+    route.params?.imageData?.uri ??
+    "https://m.media-amazon.com/images/I/71-orZ7bqqL.jpg"; // Use the passed URI or fallback to a default
 
   const handleShare = async () => {
     try {
@@ -21,6 +32,10 @@ export default function ExportScreen() {
     } catch (error) {
       console.error("Error sharing image: ", error);
     }
+  };
+
+  const handleBack = () => {
+    navigation.navigate("Score"); // Navigate back
   };
 
   return (
@@ -54,6 +69,10 @@ export default function ExportScreen() {
       {/* Share button */}
       <TouchableOpacity onPress={handleShare} style={styles.shareButton}>
         <Text style={styles.shareButtonText}>Share</Text>
+      </TouchableOpacity>
+      {/* Back button */}
+      <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+        <Ionicons name="arrow-back" size={24} color="#fff" />
       </TouchableOpacity>
     </View>
   );
@@ -116,11 +135,19 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
-    marginTop: 20
+    marginTop: 20,
   },
   shareButtonText: {
     color: "#fff",
     fontSize: 16,
     paddingHorizontal: 10,
+  },
+  backButton: {
+    position: "absolute",
+    bottom: 20, // Adjust as needed for bottom positioning
+    left: 20, // Adjust as needed for left positioning
+    backgroundColor: "#1D9DB9",
+    padding: 10,
+    borderRadius: 5,
   },
 });
