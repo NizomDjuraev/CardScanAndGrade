@@ -9,36 +9,180 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
+import { getAuth, getIdToken } from "firebase/auth";
 
 export default function ScoreScreen({ navigation }) {
   const route = useRoute();
   const [imageUri, setImageUri] = useState("");
+  const [presignedFrontUrl, setPresignedFrontUrl] = useState(""); // State to store presigned upload URL
+  const [objectFrontUrl, setObjectFrontUrl] = useState(""); // State to store the object URL
+  const [cardId, setCardId] = useState(null); // State to store the generated cardID
+  const [loading, setLoading] = useState(false); // State to track loading state
+  const [cardInfo, setCardInfo] = useState(null); // State to store card info
+
   useEffect(() => {
     if (route.params && route.params.imageData.uri) {
       setImageUri(route.params.imageData.uri);
     }
   }, [route.params]);
 
+  // UseEffect for uploading
+  useEffect(() => {
+    // Function to fetch presigned upload URL
+    async function fetchPresignedUrl() {
+      try {
+        setLoading(true); // Set loading state to true while fetching
+        const auth = getAuth(); // Get the auth instance
+        if (auth.currentUser) {
+          const idToken = await getIdToken(auth.currentUser); // Get ID token from current user
+          const response = await fetch(
+            "https://dauj6fcsil.execute-api.us-east-1.amazonaws.com/v1/uploadUrl",
+            {
+              headers: {
+                Authorization: `Bearer ${idToken}`, // Use ID token in Authorization header
+              },
+            }
+          );
+          const data = await response.json();
+          setPresignedFrontUrl(data.frontUrl);
+
+          // Upload front image
+          await fetch(data.frontUrl, {
+            method: "PUT",
+            body: imageUri,
+            headers: {
+              "Content-Type": "image/jpeg",
+            },
+          });
+          setObjectFrontUrl(data.frontUrl.split("?")[0]); // Extract object URL
+        } else {
+          console.error("User not authenticated");
+          // Handle case where user is not authenticated
+        }
+        setLoading(false); // Reset loading state after fetching and uploading
+      } catch (error) {
+        console.error(
+          "Error fetching/presigned URL or uploading image:",
+          error
+        );
+        setLoading(false); // Reset loading state after error
+      }
+    }
+
+    fetchPresignedUrl(); // Call the function to fetch presigned upload URL
+  }, []);
+
+  // UseEffect for submitting for grading
+  useEffect(() => {
+    async function submitCardForGrading() {
+      try {
+        setLoading(true);
+
+        const auth = getAuth();
+        if (auth.currentUser) {
+          const idToken = await getIdToken(auth.currentUser);
+
+          // Prepare the request body with the object URL(s)
+          const requestBody = {
+            frontUrl: objectFrontUrl,
+            // When we have a back image, include its URL in the request body as well
+            // backImageUrl: objectBackUrl,
+          };
+
+          // Make the POST request to submit the card for grading
+          const response = await fetch(
+            "https://dauj6fcsil.execute-api.us-east-1.amazonaws.com/v1/cards",
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${idToken}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(requestBody),
+            }
+          );
+
+          if (response.ok) {
+            const responseData = await response.json();
+            // Upon successful grading initiation, you'll receive the card ID
+            setCardId(responseData.cardId);
+            console.log(
+              "Card submitted for grading. Card ID:",
+              responseData.cardId
+            );
+          } else {
+            console.error(
+              "Failed to submit card for grading:",
+              response.status
+            );
+          }
+        } else {
+          console.error("User not authenticated");
+          // Handle case where user is not authenticated
+        }
+
+        setLoading(false); // Reset loading state after submitting
+      } catch (error) {
+        console.error("Error submitting card for grading:", error);
+        setLoading(false); // Reset loading state after error
+      }
+    }
+
+    if (objectFrontUrl) {
+      submitCardForGrading(); // Call the function to submit the card for grading once the object URL is available
+    }
+  }, [objectFrontUrl]); // Run this effect when objectFrontUrl changes
+
+  // UseEffect for information of a single card
+  useEffect(() => {
+    // Function to fetch card information
+    async function fetchCardInfo() {
+      try {
+        const auth = getAuth();
+        if (auth.currentUser) {
+          const idToken = await getIdToken(auth.currentUser);
+          const response = await fetch(
+            `https://dauj6fcsil.execute-api.us-east-1.amazonaws.com/v1/cards/${cardId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${idToken}`,
+              },
+            }
+          );
+          const data = await response.json();
+          setCardInfo(data);
+          console.log("Card information:", data);
+          // Handle the received card information as needed
+        } else {
+          console.error("User not authenticated");
+          // Handle case where user is not authenticated
+        }
+      } catch (error) {
+        console.error("Error fetching card information:", error);
+      }
+    }
+
+    if (cardId) {
+      fetchCardInfo();
+    }
+  }, [cardId]);
+
   const handleExitButtonClick = () => {
-    // add exit button logic here
-    console.log("exit button pressed");
+    navigation.navigate("Annotate");
   };
   const handleFrontButtonClick = () => {
     // add front button logic here
-    console.log("front button pressed");
   };
   const handleToggleButtonClick = () => {
     // add toggle button logic here
-    console.log("toggle button pressed");
   };
   const handleShareButtonClick = () => {
     // Navigate to Export screen and pass the image URI as a parameter
     navigation.navigate("Export", { imageData: { uri: imageUri } });
-    console.log("share button pressed");
   };
   const handleAddToCollectionButtonClick = () => {
     // add add to collection button logic here
-    console.log("add to collection button pressed");
+    navigation.navigate("Home");
   };
 
   return (
@@ -72,7 +216,7 @@ export default function ScoreScreen({ navigation }) {
             onPress={handleFrontButtonClick}
             style={styles.button}
           >
-            <Text style={styles.buttonText}>Front</Text>
+            <Text style={styles.buttonText}>Back</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handleToggleButtonClick}
@@ -87,26 +231,55 @@ export default function ScoreScreen({ navigation }) {
           <Text style={styles.informationText}>Information</Text>
 
           <View style={styles.informationBox}>
-            <Text style={styles.informationText}>Year</Text>
+            <Text style={styles.informationText}>
+              Year:{" "}
+              {cardInfo && cardInfo.card && cardInfo.card.year !== null
+                ? cardInfo.card.year
+                : "null"}
+            </Text>
           </View>
           <View style={styles.informationBox}>
-            <Text style={styles.informationText}>Brand</Text>
+            <Text style={styles.informationText}>
+              Brand:{" "}
+              {cardInfo && cardInfo.card && cardInfo.card.brand !== null
+                ? cardInfo.card.brand
+                : "null"}
+            </Text>
           </View>
           <View style={styles.informationBox}>
-            <Text style={styles.informationText}>Set</Text>
+            <Text style={styles.informationText}>
+              Set:{" "}
+              {cardInfo && cardInfo.card && cardInfo.card.set !== null
+                ? cardInfo.card.set
+                : "null"}
+            </Text>
           </View>
           <View style={styles.informationBox}>
-            <Text style={styles.informationText}>Number</Text>
+            <Text style={styles.informationText}>
+              Number:{" "}
+              {cardInfo && cardInfo.card && cardInfo.card.cardNumber !== null
+                ? cardInfo.card.cardNumber
+                : "null"}
+            </Text>
           </View>
           <View style={styles.informationBox}>
-            <Text style={styles.informationText}>Variation</Text>
+            <Text style={styles.informationText}>
+              Variation:{" "}
+              {cardInfo && cardInfo.card && cardInfo.card.variation !== null
+                ? cardInfo.card.variation
+                : "null"}
+            </Text>
           </View>
           <View style={styles.sideBySideBoxesContainer}>
             <View style={[styles.sideBySideBox, { flex: 0.7 }]}>
               <Text style={styles.sideBySideBoxText}>Edge</Text>
             </View>
             <View style={[styles.sideBySideBox, { flex: 0.3, marginLeft: 5 }]}>
-              <Text style={styles.sideBySideBoxText}>Score</Text>
+              <Text style={styles.sideBySideBoxText}>
+                {cardInfo && cardInfo.card && cardInfo.card.edgeScore !== null
+                  ? cardInfo.card.edgeScore
+                  : "null"}
+              </Text>
             </View>
           </View>
           <View style={styles.sideBySideBoxesContainer}>
@@ -114,7 +287,11 @@ export default function ScoreScreen({ navigation }) {
               <Text style={styles.sideBySideBoxText}>Border</Text>
             </View>
             <View style={[styles.sideBySideBox, { flex: 0.3, marginLeft: 5 }]}>
-              <Text style={styles.sideBySideBoxText}>Score</Text>
+              <Text style={styles.sideBySideBoxText}>
+                {cardInfo && cardInfo.card && cardInfo.card.borderScore !== null
+                  ? cardInfo.card.borderScore
+                  : "null"}
+              </Text>
             </View>
           </View>
           <View style={styles.sideBySideBoxesContainer}>
@@ -122,7 +299,13 @@ export default function ScoreScreen({ navigation }) {
               <Text style={styles.sideBySideBoxText}>Surface</Text>
             </View>
             <View style={[styles.sideBySideBox, { flex: 0.3, marginLeft: 5 }]}>
-              <Text style={styles.sideBySideBoxText}>Score</Text>
+              <Text style={styles.sideBySideBoxText}>
+                {cardInfo &&
+                cardInfo.card &&
+                cardInfo.card.surfaceScore !== null
+                  ? cardInfo.card.surfaceScore
+                  : "null"}
+              </Text>
             </View>
           </View>
           <View style={styles.sideBySideBoxesContainer}>
@@ -130,14 +313,24 @@ export default function ScoreScreen({ navigation }) {
               <Text style={styles.sideBySideBoxText}>Overall</Text>
             </View>
             <View style={[styles.sideBySideBox, { flex: 0.3, marginLeft: 5 }]}>
-              <Text style={styles.sideBySideBoxText}>Score</Text>
+              <Text style={styles.sideBySideBoxText}>
+                {cardInfo &&
+                cardInfo.card &&
+                cardInfo.card.overallScore !== null
+                  ? cardInfo.card.overallScore
+                  : "null"}
+              </Text>
             </View>
           </View>
 
           {/* More Details */}
           <Text style={styles.moreDetailsText}>More Details</Text>
           <View style={styles.moreDetailsBox}>
-            <Text style={styles.informationText}>Details</Text>
+            <Text style={styles.informationText}>
+              {cardInfo && cardInfo.card && cardInfo.card.details !== null
+                ? cardInfo.card.details
+                : "null"}
+            </Text>
           </View>
         </ScrollView>
 
