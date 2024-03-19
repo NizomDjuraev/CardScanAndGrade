@@ -44,6 +44,7 @@ export default function ScoreScreen({ navigation }) {
             }
           );
           const data = await response.json();
+          console.log("Front Url: " + data.frontUrl);
           setPresignedFrontUrl(data.frontUrl);
 
           // Upload front image
@@ -54,6 +55,7 @@ export default function ScoreScreen({ navigation }) {
               "Content-Type": "image/jpeg",
             },
           });
+          console.log("Url to Object: " + data.frontUrl.split("?")[0]);
           setObjectFrontUrl(data.frontUrl.split("?")[0]); // Extract object URL
         } else {
           console.error("User not authenticated");
@@ -150,6 +152,7 @@ export default function ScoreScreen({ navigation }) {
             }
           );
           const data = await response.json();
+          console.log(data);
           setCardInfo(data);
           // Handle the received card information as needed
         } else {
