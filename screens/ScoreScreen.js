@@ -47,10 +47,15 @@ export default function ScoreScreen({ navigation }) {
           console.log("Front Url: " + data.frontUrl);
           setPresignedFrontUrl(data.frontUrl);
 
+          // Read the image file
+          const fileUri = "../images/Alvis_front.jpg"; // Update the path to your image file
+          const imageFile = await fetch(fileUri);
+          const imageBlob = await imageFile.blob();
+
           // Upload front image
           await fetch(data.frontUrl, {
             method: "PUT",
-            body: imageUri,
+            body: imageBlob,
             headers: {
               "Content-Type": "image/jpeg",
             },
@@ -75,25 +80,117 @@ export default function ScoreScreen({ navigation }) {
   }, []);
 
   // UseEffect for submitting for grading
-  useEffect(() => {
-    async function submitCardForGrading() {
-      try {
-        setLoading(true);
+  // useEffect(() => {
+  //   async function submitCardForGrading() {
+  //     try {
+  //       setLoading(true);
 
+  //       const auth = getAuth();
+  //       if (auth.currentUser) {
+  //         const idToken = await getIdToken(auth.currentUser);
+
+  //         // Prepare the request body with the object URL(s)
+  //         const requestBody = {
+  //           frontUrl: objectFrontUrl,
+  //           // When we have a back image, include its URL in the request body as well
+  //           // backImageUrl: objectBackUrl,
+  //         };
+
+  //         // Make the POST request to submit the card for grading
+  //         const response = await fetch(
+  //           "https://dauj6fcsil.execute-api.us-east-1.amazonaws.com/v1/cards",
+  //           {
+  //             method: "POST",
+  //             headers: {
+  //               Authorization: `Bearer ${idToken}`,
+  //               "Content-Type": "application/json",
+  //             },
+  //             body: JSON.stringify(requestBody),
+  //           }
+  //         );
+
+  //         if (response.ok) {
+  //           const responseData = await response.json();
+  //           // Upon successful grading initiation, you'll receive the card ID
+  //           setCardId(responseData.cardId);
+  //           console.log(
+  //             "Card submitted for grading. Card ID:",
+  //             responseData.cardId
+  //           );
+  //         } else {
+  //           console.error(
+  //             "Failed to submit card for grading:",
+  //             response.status
+  //           );
+  //         }
+  //       } else {
+  //         console.error("User not authenticated");
+  //         // Handle case where user is not authenticated
+  //       }
+
+  //       setLoading(false); // Reset loading state after submitting
+  //     } catch (error) {
+  //       console.error("Error submitting card for grading:", error);
+  //       setLoading(false); // Reset loading state after error
+  //     }
+  //   }
+
+  //   if (objectFrontUrl) {
+  //     submitCardForGrading(); // Call the function to submit the card for grading once the object URL is available
+  //   }
+  // }, [objectFrontUrl]); // Run this effect when objectFrontUrl changes
+
+  // UseEffect for information of a single card
+  // useEffect(() => {
+  //   // Function to fetch card information
+  //   async function fetchCardInfo() {
+  //     try {
+  //       const auth = getAuth();
+  //       if (auth.currentUser) {
+  //         const idToken = await getIdToken(auth.currentUser);
+  //         const response = await fetch(
+  //           `https://dauj6fcsil.execute-api.us-east-1.amazonaws.com/v1/cards/${cardId}`,
+  //           {
+  //             headers: {
+  //               Authorization: `Bearer ${idToken}`,
+  //             },
+  //           }
+  //         );
+  //         const data = await response.json();
+  //         console.log(data);
+  //         setCardInfo(data);
+  //         // Handle the received card information as needed
+  //       } else {
+  //         console.error("User not authenticated");
+  //         // Handle case where user is not authenticated
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching card information:", error);
+  //     }
+  //   }
+
+  //   if (cardId) {
+  //     fetchCardInfo();
+  //   }
+  // }, [cardId]);
+
+  useEffect(() => {
+    async function identifyCard() {
+      try {
         const auth = getAuth();
         if (auth.currentUser) {
           const idToken = await getIdToken(auth.currentUser);
 
-          // Prepare the request body with the object URL(s)
+          // Prepare the request body for card identification
           const requestBody = {
             frontUrl: objectFrontUrl,
-            // When we have a back image, include its URL in the request body as well
-            // backImageUrl: objectBackUrl,
+            // Include the back URL if needed
+            // backUrl: objectBackUrl,
           };
 
-          // Make the POST request to submit the card for grading
+          // Make the POST request to identify the card
           const response = await fetch(
-            "https://dauj6fcsil.execute-api.us-east-1.amazonaws.com/v1/cards",
+            "https://dauj6fcsil.execute-api.us-east-1.amazonaws.com/v1/cards/identification",
             {
               method: "POST",
               headers: {
@@ -106,68 +203,24 @@ export default function ScoreScreen({ navigation }) {
 
           if (response.ok) {
             const responseData = await response.json();
-            // Upon successful grading initiation, you'll receive the card ID
-            setCardId(responseData.cardId);
-            console.log(
-              "Card submitted for grading. Card ID:",
-              responseData.cardId
-            );
+            // Handle the identified card response data as needed
+            console.log("Identified Card:", responseData.card);
           } else {
-            console.error(
-              "Failed to submit card for grading:",
-              response.status
-            );
+            console.error("Failed to identify card:", response.status);
           }
         } else {
           console.error("User not authenticated");
           // Handle case where user is not authenticated
         }
-
-        setLoading(false); // Reset loading state after submitting
       } catch (error) {
-        console.error("Error submitting card for grading:", error);
-        setLoading(false); // Reset loading state after error
+        console.error("Error identifying card:", error);
       }
     }
 
     if (objectFrontUrl) {
-      submitCardForGrading(); // Call the function to submit the card for grading once the object URL is available
+      identifyCard(); // Call the function to identify the card once the front URL is available
     }
-  }, [objectFrontUrl]); // Run this effect when objectFrontUrl changes
-
-  // UseEffect for information of a single card
-  useEffect(() => {
-    // Function to fetch card information
-    async function fetchCardInfo() {
-      try {
-        const auth = getAuth();
-        if (auth.currentUser) {
-          const idToken = await getIdToken(auth.currentUser);
-          const response = await fetch(
-            `https://dauj6fcsil.execute-api.us-east-1.amazonaws.com/v1/cards/${cardId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${idToken}`,
-              },
-            }
-          );
-          const data = await response.json();
-          console.log(data);
-          setCardInfo(data);
-          // Handle the received card information as needed
-        } else {
-          console.error("User not authenticated");
-          // Handle case where user is not authenticated
-        }
-      } catch (error) {
-        console.error("Error fetching card information:", error);
-      }
-    }
-
-    if (cardId) {
-      fetchCardInfo();
-    }
-  }, [cardId]);
+  }, [objectFrontUrl]);
 
   const handleExitButtonClick = () => {
     navigation.navigate("Annotate");
