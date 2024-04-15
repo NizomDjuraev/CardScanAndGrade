@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   border: {
     position: "absolute",
     backgroundColor: "blue",
-    padding: 13,
+    padding: 11,
   },
   centeringText: {
     fontSize: 16,
