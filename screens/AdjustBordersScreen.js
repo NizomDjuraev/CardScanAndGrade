@@ -89,14 +89,14 @@ const AdjustBordersScreen = ({ navigation }) => {
             {...panResponders.left.panHandlers}
             style={[
               styles.border,
-              { left: margins.left - imageX, top: 0, bottom: 0, width: 10 },
+              { left: margins.left - imageX, top: 0, bottom: 0, width: 2 },
             ]}
           />
           <View
             {...panResponders.top.panHandlers}
             style={[
               styles.border,
-              { top: margins.top - imageY, left: 0, right: 0, height: 10},
+              { top: margins.top - imageY, left: 0, right: 0, height: 2},
             ]}
           />
           <View
@@ -107,7 +107,7 @@ const AdjustBordersScreen = ({ navigation }) => {
                 right: windowWidth - margins.right - imageWidth - imageX,
                 top: 0,
                 bottom: 0,
-                width: 10,
+                width: 2,
               },
             ]}
           />
@@ -119,7 +119,7 @@ const AdjustBordersScreen = ({ navigation }) => {
                 bottom: windowHeight - margins.bottom - imageHeight - imageY,
                 left: 0,
                 right: 0,
-                height: 10,
+                height: 2,
               },
             ]}
           />
@@ -161,6 +161,7 @@ const styles = StyleSheet.create({
   border: {
     position: "absolute",
     backgroundColor: "blue",
+    padding: 13,
   },
   centeringText: {
     fontSize: 16,
