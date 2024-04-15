@@ -161,6 +161,8 @@ const styles = StyleSheet.create({
   border: {
     position: "absolute",
     backgroundColor: "blue",
+    padding: 10, // Increase padding for a larger touch area
+    margin: -10, // Adjust margin to keep visual border size the same
   },
   centeringText: {
     fontSize: 16,
