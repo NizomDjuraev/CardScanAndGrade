@@ -20,6 +20,7 @@ import { ClerkLoaded, useUser } from "@clerk/clerk-expo";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import ScoreScreen from "../screens/ScoreScreen";
+import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -49,6 +50,11 @@ export default function Navigation() {
             name="VerifyCode"
             component={VerifyCodeScreen}
             options={{ title: "Verify Code" }}
+          />
+          <Stack.Screen
+            name="ForgotPasswordScreen"
+            component={ForgotPasswordScreen}
+            options={{ title: "Forgot Password" }}
           />
           <Stack.Screen
             name="MainTabs"

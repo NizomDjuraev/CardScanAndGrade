@@ -36,7 +36,7 @@ export default function SignUpScreen({ navigation }) {
       // await sendEmailVerification(user);
 
       // Navigate to verification code screen
-      navigation.navigate("MainTabs");
+      navigation.replace("MainTabs");
     } catch (error) {
       console.log("Error signing up:", error.message);
     }

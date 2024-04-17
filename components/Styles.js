@@ -136,4 +136,14 @@ export const styles = StyleSheet.create({
     justifyContent: "flex-start",
     paddingTop: 40,
   },
+
+  forgotPasswordLink: {
+    alignSelf: "center",
+    marginTop: 30,
+  },
+
+  forgotPasswordText: {
+    color: "#fff",
+    textDecorationLine: "underline",
+  },
 });

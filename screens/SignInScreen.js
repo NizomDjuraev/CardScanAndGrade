@@ -13,7 +13,7 @@ export default function SignInScreen({ navigation }) {
     try {
       await signInWithEmailAndPassword(auth, emailAddress, password);
       // Sign in successful, navigate to home screen
-      navigation.navigate("MainTabs");
+      navigation.replace("MainTabs");
     } catch (error) {
       // Handle error
       console.log("Error signing in:", error.message);
@@ -21,6 +21,8 @@ export default function SignInScreen({ navigation }) {
   };
 
   const onSignUpPress = () => navigation.replace("SignUp");
+  const onForgotPasswordPress = () =>
+    navigation.navigate("ForgotPasswordScreen");
 
   return (
     <View style={styles.loginView}>
@@ -54,6 +56,13 @@ export default function SignInScreen({ navigation }) {
 
       <TouchableOpacity style={styles.loginButton} onPress={onSignInPress}>
         <Text style={styles.loginButtonText}>Sign in</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.forgotPasswordLink}
+        onPress={onForgotPasswordPress}
+      >
+        <Text style={styles.forgotPasswordText}>Forgot password?</Text>
       </TouchableOpacity>
 
       <View style={styles.loginFooter}>
