@@ -13,8 +13,8 @@ import { useRoute } from "@react-navigation/native"; // Import useRoute
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const imageWidth = 250;
-const imageHeight = 250;
+const imageWidth = 275;
+const imageHeight = 275;
 const imageX = (windowWidth - imageWidth) / 2;
 const imageY = (windowHeight - imageHeight) / 2;
 
@@ -41,13 +41,33 @@ const AdjustBordersScreen = ({ navigation }) => {
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (event, gestureState) => {
         setMargins((prev) => {
-          let change = gestureState.dx; // Default to horizontal movement
-          if (edge === "top" || edge === "bottom") {
-            change = gestureState.dy; // Adjust for vertical movement
+          let newMargins = {...prev};
+          
+          if (edge === "left") {
+            // Calculate the change for the left margin
+            const maxLeftMargin = windowWidth - newMargins.right - imageWidth;
+            let change = gestureState.dx;
+            // Moving left border to the right (positive dx) decreases the left margin
+            newMargins.left = Math.min(Math.max(0, newMargins.left - change), maxLeftMargin);
+          } else if (edge === "right") {
+            // Calculate the change for the right margin
+            const maxRightMargin = windowWidth - newMargins.left - imageWidth;
+            let change = gestureState.dx;
+            // Moving right border to the left (positive dx) increases the right margin
+            newMargins.right = Math.min(Math.max(0, newMargins.right + change), maxRightMargin);
+          } else if (edge === "top") {
+            // Handle the top margin similarly, considering the bottom margin and imageHeight
+            let change = gestureState.dy;
+            // Moving top border downwards (positive dy) decreases the top margin
+            newMargins.top = Math.min(Math.max(0, newMargins.top - change), windowHeight - newMargins.bottom - imageHeight);
+          } else if (edge === "bottom") {
+            // Handle the bottom margin similarly, considering the top margin and imageHeight
+            let change = gestureState.dy;
+            // Moving bottom border upwards (positive dy) increases the bottom margin
+            newMargins.bottom = Math.min(Math.max(0, newMargins.bottom + change), windowHeight - newMargins.top - imageHeight);
           }
-
-          const newMargin = Math.max(0, prev[edge] + change); // Prevent negative margins
-          return { ...prev, [edge]: newMargin };
+      
+          return newMargins;
         });
       },
       onPanResponderRelease: () => {
