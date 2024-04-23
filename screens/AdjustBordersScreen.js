@@ -45,24 +45,8 @@ const AdjustBordersScreen = ({ navigation }) => {
           if (edge === "top" || edge === "bottom") {
             change = gestureState.dy; // Adjust for vertical movement
           }
-  
-          let newMargin;
-          if (edge === "left" || edge === "right") {
-            newMargin = Math.max(0, prev[edge] + change);
-            if (edge === "left") {
-              newMargin = Math.min(newMargin, windowWidth - prev.right - imageWidth);
-            } else if (edge === "right") {
-              newMargin = Math.min(newMargin, windowWidth - prev.left - imageWidth);
-            }
-          } else if (edge === "top" || edge === "bottom") {
-            newMargin = Math.max(0, prev[edge] + change);
-            if (edge === "top") {
-              newMargin = Math.min(newMargin, windowHeight - prev.bottom - imageHeight);
-            } else if (edge === "bottom") {
-              newMargin = Math.min(newMargin, windowHeight - prev.top - imageHeight);
-            }
-          }
-          
+
+          const newMargin = Math.max(0, prev[edge] + change); // Prevent negative margins
           return { ...prev, [edge]: newMargin };
         });
       },
