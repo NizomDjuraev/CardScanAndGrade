@@ -48,16 +48,21 @@ const AdjustBordersScreen = ({ navigation }) => {
             let change = gestureState.dx;
             newMargins.left = Math.min(Math.max(0, newMargins.left + change), windowWidth - newMargins.right);
           } else if (edge === "right") {
+          // Calculate the change for the right margin
+            const maxRightMargin = windowWidth - newMargins.left - imageWidth;
             let change = gestureState.dx;
-            newMargins.right = Math.min(Math.max(0, newMargins.right - change), windowWidth - newMargins.left);
+            // Moving right border to the left (positive dx) increases the right margin
+            newMargins.right = Math.min(Math.max(0, newMargins.right + change), maxRightMargin);
           } else if (edge === "top") {
             // Moving top border downwards (positive dy) increases the top margin
             let change = gestureState.dy;
             newMargins.top = Math.min(Math.max(0, newMargins.top + change), windowHeight - newMargins.bottom);
           } else if (edge === "bottom") {
+      // Handle the bottom margin similarly, considering the top margin and imageHeight
             let change = gestureState.dy;
-            newMargins.bottom = Math.min(Math.max(0, newMargins.bottom - change), windowHeight - newMargins.top);
-          }
+            // Moving bottom border upwards (positive dy) increases the bottom margin
+            newMargins.bottom = Math.min(Math.max(0, newMargins.bottom + change), windowHeight - newMargins.top - imageHeight);
+            }
           
           return newMargins;
         });
