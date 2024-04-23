@@ -44,32 +44,25 @@ const AdjustBordersScreen = ({ navigation }) => {
           let newMargins = {...prev};
           
           if (edge === "left") {
-            // Calculate the change for the left margin
-            const maxLeftMargin = windowWidth - newMargins.right - imageWidth;
+            // Moving left border to the right (positive dx) increases the left margin
             let change = gestureState.dx;
-            // Moving left border to the right (positive dx) decreases the left margin
-            newMargins.left = Math.min(Math.max(0, newMargins.left - change), maxLeftMargin);
+            newMargins.left = Math.min(Math.max(0, newMargins.left + change), windowWidth - newMargins.right);
           } else if (edge === "right") {
-            // Calculate the change for the right margin
-            const maxRightMargin = windowWidth - newMargins.left - imageWidth;
             let change = gestureState.dx;
-            // Moving right border to the left (positive dx) increases the right margin
-            newMargins.right = Math.min(Math.max(0, newMargins.right + change), maxRightMargin);
+            newMargins.right = Math.min(Math.max(0, newMargins.right - change), windowWidth - newMargins.left);
           } else if (edge === "top") {
-            // Handle the top margin similarly, considering the bottom margin and imageHeight
+            // Moving top border downwards (positive dy) increases the top margin
             let change = gestureState.dy;
-            // Moving top border downwards (positive dy) decreases the top margin
-            newMargins.top = Math.min(Math.max(0, newMargins.top - change), windowHeight - newMargins.bottom - imageHeight);
+            newMargins.top = Math.min(Math.max(0, newMargins.top + change), windowHeight - newMargins.bottom);
           } else if (edge === "bottom") {
-            // Handle the bottom margin similarly, considering the top margin and imageHeight
             let change = gestureState.dy;
-            // Moving bottom border upwards (positive dy) increases the bottom margin
-            newMargins.bottom = Math.min(Math.max(0, newMargins.bottom + change), windowHeight - newMargins.top - imageHeight);
+            newMargins.bottom = Math.min(Math.max(0, newMargins.bottom - change), windowHeight - newMargins.top);
           }
-      
+          
           return newMargins;
         });
       },
+
       onPanResponderRelease: () => {
         // No action needed on release as per current requirements
       },
