@@ -13,8 +13,8 @@ import { useRoute } from "@react-navigation/native"; // Import useRoute
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const imageWidth = 400;
-const imageHeight = 400;
+const imageWidth = 380;
+const imageHeight = 380;
 const imageX = (windowWidth - imageWidth) / 2;
 const imageY = (windowHeight - imageHeight) / 2;
 
