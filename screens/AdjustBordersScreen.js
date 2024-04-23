@@ -13,8 +13,8 @@ import { useRoute } from "@react-navigation/native"; // Import useRoute
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const imageWidth = 380;
-const imageHeight = 380;
+const imageWidth = 360;
+const imageHeight = 360;
 const imageX = (windowWidth - imageWidth) / 2;
 const imageY = (windowHeight - imageHeight) / 2;
 
@@ -41,13 +41,21 @@ const AdjustBordersScreen = ({ navigation }) => {
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (event, gestureState) => {
         setMargins((prev) => {
-          let change = gestureState.dx; // Default to horizontal movement
-          if (edge === "top" || edge === "bottom") {
-            change = gestureState.dy; // Adjust for vertical movement
+          let change;
+          if (edge === "left" || edge === "right") {
+            change = gestureState.dx;
+            if (edge === "left") {
+              // For left border, subtract the change to decrease the margin
+              return { ...prev, [edge]: Math.max(0, prev[edge] - change) };
+            } else {
+              // For right border, add the change to increase the margin
+              return { ...prev, [edge]: Math.max(0, prev[edge] + change) };
+            }
+          } else {
+            // For top and bottom borders
+            change = gestureState.dy;
+            return { ...prev, [edge]: Math.max(0, prev[edge] + change) };
           }
-
-          const newMargin = Math.max(0, prev[edge] + change); // Prevent negative margins
-          return { ...prev, [edge]: newMargin };
         });
       },
       onPanResponderRelease: () => {
