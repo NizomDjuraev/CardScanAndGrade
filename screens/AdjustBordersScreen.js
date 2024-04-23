@@ -14,7 +14,7 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const imageWidth = windowWidth * 0.8; // 80% of window width
-const imageHeight = windowHeight * 0.8;
+const imageHeight = windowWidth * 0.8;
 const imageX = (windowWidth - imageWidth) / 2;
 const imageY = (windowHeight - imageHeight) / 2;
 
