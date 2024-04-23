@@ -13,8 +13,8 @@ import { useRoute } from "@react-navigation/native"; // Import useRoute
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const imageWidth = 300;
-const imageHeight = 300;
+const imageWidth = 350;
+const imageHeight = 350;
 const imageX = (windowWidth - imageWidth) / 2;
 const imageY = (windowHeight - imageHeight) / 2;
 
@@ -45,8 +45,24 @@ const AdjustBordersScreen = ({ navigation }) => {
           if (edge === "top" || edge === "bottom") {
             change = gestureState.dy; // Adjust for vertical movement
           }
-
-          const newMargin = Math.max(0, prev[edge] + change); // Prevent negative margins
+  
+          let newMargin;
+          if (edge === "left" || edge === "right") {
+            newMargin = Math.max(0, prev[edge] + change);
+            if (edge === "left") {
+              newMargin = Math.min(newMargin, windowWidth - prev.right - imageWidth);
+            } else if (edge === "right") {
+              newMargin = Math.min(newMargin, windowWidth - prev.left - imageWidth);
+            }
+          } else if (edge === "top" || edge === "bottom") {
+            newMargin = Math.max(0, prev[edge] + change);
+            if (edge === "top") {
+              newMargin = Math.min(newMargin, windowHeight - prev.bottom - imageHeight);
+            } else if (edge === "bottom") {
+              newMargin = Math.min(newMargin, windowHeight - prev.top - imageHeight);
+            }
+          }
+          
           return { ...prev, [edge]: newMargin };
         });
       },
