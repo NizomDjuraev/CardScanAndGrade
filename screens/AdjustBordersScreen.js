@@ -13,8 +13,8 @@ import { useRoute } from "@react-navigation/native"; // Import useRoute
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const imageWidth = 360;
-const imageHeight = 360;
+const imageWidth = 300;
+const imageHeight = 300;
 const imageX = (windowWidth - imageWidth) / 2;
 const imageY = (windowHeight - imageHeight) / 2;
 
@@ -41,21 +41,13 @@ const AdjustBordersScreen = ({ navigation }) => {
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (event, gestureState) => {
         setMargins((prev) => {
-          let change;
-          if (edge === "left" || edge === "right") {
-            change = gestureState.dx;
-            if (edge === "left") {
-              // For left border, subtract the change to decrease the margin
-              return { ...prev, [edge]: Math.max(0, prev[edge] - change) };
-            } else {
-              // For right border, add the change to increase the margin
-              return { ...prev, [edge]: Math.max(0, prev[edge] + change) };
-            }
-          } else {
-            // For top and bottom borders
-            change = gestureState.dy;
-            return { ...prev, [edge]: Math.max(0, prev[edge] + change) };
+          let change = gestureState.dx; // Default to horizontal movement
+          if (edge === "top" || edge === "bottom") {
+            change = gestureState.dy; // Adjust for vertical movement
           }
+
+          const newMargin = Math.max(0, prev[edge] + change); // Prevent negative margins
+          return { ...prev, [edge]: newMargin };
         });
       },
       onPanResponderRelease: () => {
@@ -104,7 +96,7 @@ const AdjustBordersScreen = ({ navigation }) => {
             {...panResponders.top.panHandlers}
             style={[
               styles.border,
-              { top: margins.top - imageY, left: 0, right: 0, height: 2},
+              { top: margins.top - imageY, left: 0, right: 0, height: 2 },
             ]}
           />
           <View
@@ -169,7 +161,6 @@ const styles = StyleSheet.create({
   border: {
     position: "absolute",
     backgroundColor: "blue",
-    padding: 5,
   },
   centeringText: {
     fontSize: 16,
