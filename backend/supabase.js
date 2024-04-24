@@ -1,40 +1,43 @@
 import "react-native-url-polyfill/auto"
-import { createClient } from "@supabase/supabase-js"
 
-
-const supabaseUrl = 'https://zrjswhazqjmxcwqlxsnj.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpyanN3aGF6cWpteGN3cWx4c25qIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTg3Njc2MzUsImV4cCI6MjAxNDM0MzYzNX0.8L-faWju0jWXWMD3VXKpOMqHmWet2mU59AeLwCXqfVg';
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const API_URL = 'https://igny4fore0.execute-api.us-east-1.amazonaws.com/test';
+// https://igny4fore0.execute-api.us-east-1.amazonaws.com/test/collections?userId=5
 
 export async function createCollection(userId, firstName, lastName, collectionName) {
-    const { data, error } = await supabase
-      .from('usercollections')
-      .insert([
-        {
-          userid: userId,
-          firstname: firstName,
-          lastname: lastName,
-          collection: collectionName
-        }
-      ]);
-    if (error) {
-      console.error('Error creating collection:', error);
+  const response = await fetch(`${API_URL}/collections`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+          userId,
+          firstName,
+          lastName,
+          collectionName
+      })
+  });
+
+  if (!response.ok) {
+      console.error('Error creating collection:', response.statusText);
       return null;
-    }
-    return data;
   }
 
-  export async function getCollections(userid) {
-    const { data, error } = await supabase
-      .from('usercollections')
-      .select('*')
-      .eq('userid', userid);
-  
-    if (error) {
-      console.error('Error fetching collections:', error);
+  return await response.json();
+}
+
+
+export async function getCollections(userId) {
+  const response = await fetch(`${API_URL}/collections?userId=${encodeURIComponent(userId)}`, {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json'
+      }
+  });
+
+  if (!response.ok) {
+      console.error('Error fetching collections:', response.statusText);
       return null;
-    }
-    // console.log(data);
-    return data;
   }
+
+  return await response.json();
+}
