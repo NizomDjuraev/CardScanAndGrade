@@ -14,6 +14,7 @@ export default function AnnotateScreen({ navigation }) {
   const route = useRoute();
   const [imageUri, setImageUri] = useState("");
   useEffect(() => {
+    console.log("Received image uri:", route.params.imageData.uri);
     if (route.params && route.params.imageData.uri) {
       setImageUri(route.params.imageData.uri);
     }
