@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect,useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,13 +9,21 @@ import {
   Modal,
   FlatList,
 } from "react-native";
-import { createCollection } from "../backend/supabase";
+import { createCollection } from "../backend/server";
 import { useCollections } from "../hooks/useCollections";
-import { useUser } from "@clerk/clerk-expo";
+// import { useUser } from "@clerk/clerk-expo";
+import { auth } from "../firebaseConfig";
 
 export default function HomeScreen() {
-  const { user } = useUser();
-  const { collections, loading, reloadCollections } = useCollections(user?.id);
+  const [user, setUser ] = useState(null);
+
+  useEffect(() => {
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      setUser(currentUser);
+    }
+  }, []);
+  const { collections, loading, reloadCollections } = useCollections(user?.email);
 
   const [collectionName, setCollectionName] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -30,9 +38,9 @@ export default function HomeScreen() {
   const onCreateCollectionPress = async () => {
     if (collectionName && user) {
       await createCollection(
-        user.id,
-        user.firstName,
-        user.lastName,
+        user.email,
+        user.displayName.split(" ")[0],
+        user.displayName.split(" ")[1] || "",
         collectionName
       );
       setCollectionName("");
