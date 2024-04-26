@@ -1,14 +1,8 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Image,
-  StyleSheet,
-  PanResponder,
-  Text,
-  TouchableOpacity,
-} from "react-native";
-import Svg, { Circle } from "react-native-svg";
-import { useRoute } from "@react-navigation/native";
+import React, { useEffect, useState } from 'react';
+import { View, Image, StyleSheet, PanResponder, Text, TouchableOpacity } from 'react-native';
+import Svg, { Circle } from 'react-native-svg';
+import { useRoute } from '@react-navigation/native';
+import RNPickerSelect from "react-native-picker-select";
 
 export default function AnnotateScreen({ navigation }) {
   const route = useRoute();
@@ -21,8 +15,8 @@ export default function AnnotateScreen({ navigation }) {
 
   const [circles, setCircles] = useState([]);
   const [currentCircle, setCurrentCircle] = useState(null);
-  const [circleColor, setCircleColor] = useState("black");
-  const [buttonPressed, setButtonPressed] = useState(false);
+  const [circleColor, setCircleColor] = useState("black"); 
+  const [buttonPressed, setButtonPressed] = useState(false); 
 
   const handlePanResponderMove = (event, gesture) => {
     if (currentCircle) {
@@ -64,9 +58,15 @@ export default function AnnotateScreen({ navigation }) {
     setCircleColor(color);
   };
 
+  const undoButton = () => {
+    const undoneCircles = [...circles];
+    undoneCircles.pop();
+    setCircles(undoneCircles);
+  }
+
   const nextButton = async () => {
-    navigation.navigate("Score", { imageData: { uri: imageUri } });
-  };
+    navigation.navigate("Score", { imageData: { uri: imageUri } })
+  }
 
   return (
     <View style={styles.container}>
@@ -78,48 +78,55 @@ export default function AnnotateScreen({ navigation }) {
             resizeMode="contain"
           />
 
-          <Svg height="100%" width="100%" style={styles.svgContainer}>
-            {circles.map((circle) => (
-              <Circle
-                key={circle.id}
-                cx={circle.cx - 40}
-                cy={circle.cy - 80}
-                r={circle.r - 20}
-                fill="transparent"
-                stroke={circle.color}
-                strokeWidth={2}
-              />
-            ))}
-          </Svg>
+        <Svg height="100%" width="100%" style={styles.svgContainer}>
+          {circles.map((circle) => (
+            <Circle
+              key={circle.id}
+              cx={circle.cx - 60}
+              cy={circle.cy - 130}
+              r={circle.r - 20}
+              fill='transparent'
+              stroke={circle.color}
+              strokeWidth={2}
+            />
+          ))}
+        </Svg>
 
           <View style={styles.gestureContainer} {...panResponder.panHandlers} />
         </View>
       ) : null}
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          onPress={() => changeCircleColor("red")}
-          style={[styles.button, { backgroundColor: "red" }]}
-        >
-          <Text style={styles.buttonText}>Category 1</Text>
+        <RNPickerSelect
+        onValueChange={(value) => changeCircleColor(value)}
+        items={[
+          { label: "Category 1", value: "red" },
+          { label: "Category 2", value: "green" },
+          { label: "Category 3", value: "blue" },
+          { label: "Category 4", value: "brown" },
+          ]}
+          style={{
+            inputAndroid: {
+              height: 50,
+              width: 200,
+              backgroundColor: "white",
+              paddingHorizontal: 10,
+              borderRadius: 4,
+            },
+            inputIOS: {
+              height: 50,
+              width: 200,
+              backgroundColor: "white",
+              paddingHorizontal: 10,
+              borderRadius: 4,
+            },
+          }}
+        />
+        <TouchableOpacity onPress={undoButton} style={styles.button}>
+          <Text style={styles.buttonText}>undo</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => changeCircleColor("green")}
-          style={[styles.button, { backgroundColor: "green" }]}
-        >
-          <Text style={styles.buttonText}>Category 2</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => changeCircleColor("blue")}
-          style={[styles.button, { backgroundColor: "blue" }]}
-        >
-          <Text style={styles.buttonText}>Category 3</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => changeCircleColor("brown")}
-          style={[styles.button, { backgroundColor: "brown" }]}
-        >
-          <Text style={styles.buttonText}>Category 4</Text>
+        <TouchableOpacity onPress={nextButton} style={styles.button}>
+          <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={nextButton} style={styles.next}>
           <Text style={styles.buttonText}>Next</Text>
@@ -138,7 +145,8 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: 300,
     height: 300,
-    position: "center",
+    position: 'center',
+    backgroundColor: "white",
   },
   image: {
     width: "100%",
@@ -146,17 +154,18 @@ const styles = StyleSheet.create({
   },
   svgContainer: {
     ...StyleSheet.absoluteFillObject,
+    overflow: "hidden",
   },
   gestureContainer: {
     ...StyleSheet.absoluteFillObject,
   },
   buttonContainer: {
-    flexDirection: "column",
+    flexDirection: 'row',
     marginTop: 20,
   },
   button: {
     padding: 10,
-    borderRadius: 5,
+    backgroundColor: "black",
     marginRight: 10,
   },
   buttonText: {
