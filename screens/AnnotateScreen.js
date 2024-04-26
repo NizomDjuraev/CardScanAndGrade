@@ -8,11 +8,11 @@ export default function AnnotateScreen({ navigation }) {
   const route = useRoute();
   const [imageUri, setImageUri] = useState("");
   useEffect(() => {
-    if(route.params && route.params.imageData.uri){
+    if (route.params && route.params.imageData.uri) {
       setImageUri(route.params.imageData.uri);
     }
   }, [route.params]);
-  
+
   const [circles, setCircles] = useState([]);
   const [currentCircle, setCurrentCircle] = useState(null);
   const [circleColor, setCircleColor] = useState("black"); 
@@ -22,7 +22,7 @@ export default function AnnotateScreen({ navigation }) {
     if (currentCircle) {
       const radius = Math.sqrt(
         Math.pow(gesture.moveX - currentCircle.startX, 2) +
-        Math.pow(gesture.moveY - currentCircle.startY, 2)
+          Math.pow(gesture.moveY - currentCircle.startY, 2)
       );
       const updatedCircles = circles.map((circle) =>
         circle.id === currentCircle.id ? { ...circle, r: radius } : circle
@@ -42,7 +42,7 @@ export default function AnnotateScreen({ navigation }) {
         cx: gesture.x0,
         cy: gesture.y0,
         r: gesture.dx / 2,
-        color: buttonPressed ? circleColor : 'transparent', 
+        color: buttonPressed ? circleColor : "transparent",
       };
       setCurrentCircle(newCircle);
       setCircles([...circles, newCircle]);
@@ -55,7 +55,7 @@ export default function AnnotateScreen({ navigation }) {
 
   const changeCircleColor = (color) => {
     setButtonPressed(true);
-    setCircleColor(color); 
+    setCircleColor(color);
   };
 
   const undoButton = () => {
@@ -70,8 +70,13 @@ export default function AnnotateScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
+      {imageUri ? (
+        <View style={styles.imageContainer}>
+          <Image
+            source={{ uri: imageUri }}
+            style={styles.image}
+            resizeMode="contain"
+          />
 
         <Svg height="100%" width="100%" style={styles.svgContainer}>
           {circles.map((circle) => (
@@ -87,8 +92,9 @@ export default function AnnotateScreen({ navigation }) {
           ))}
         </Svg>
 
-        <View style={styles.gestureContainer} {...panResponder.panHandlers} />
-      </View>
+          <View style={styles.gestureContainer} {...panResponder.panHandlers} />
+        </View>
+      ) : null}
 
       <View style={styles.buttonContainer}>
         <RNPickerSelect
@@ -122,6 +128,9 @@ export default function AnnotateScreen({ navigation }) {
         <TouchableOpacity onPress={nextButton} style={styles.button}>
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
+        <TouchableOpacity onPress={nextButton} style={styles.next}>
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -131,7 +140,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 50,
-    alignItems: 'center',
+    alignItems: "center",
   },
   imageContainer: {
     width: 300,
@@ -140,8 +149,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   image: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   svgContainer: {
     ...StyleSheet.absoluteFillObject,
@@ -160,7 +169,11 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   buttonText: {
-    color: 'white',
-    textAlign: 'center',
+    color: "white",
+    textAlign: "center",
+  },
+  next: {
+    padding: 10,
+    backgroundColor: "black",
   },
 });

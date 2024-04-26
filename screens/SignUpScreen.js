@@ -1,38 +1,44 @@
 import * as React from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { useSignUp } from "@clerk/clerk-expo";
-import { log } from "../logger";
 import { styles } from "../components/Styles";
-import { OAuthButtons } from "../components/OAuth";
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
+import { auth } from "../firebaseConfig";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  sendEmailVerification,
+} from "firebase/auth";
 
 export default function SignUpScreen({ navigation }) {
-  const { isLoaded, signUp } = useSignUp();
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [emailAddress, setEmailAddress] = React.useState("");
   const [password, setPassword] = React.useState("");
 
   const onSignUpPress = async () => {
-    if (!isLoaded) {
-      return;
-    }
-
     try {
-      await signUp.create({
-        firstName,
-        lastName,
+      // Create user with email and password
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
         emailAddress,
-        password,
+        password
+      );
+
+      // Extract user from userCredential
+      const user = userCredential.user;
+
+      // Update profile with first and last name
+      await updateProfile(user, {
+        displayName: `${firstName} ${lastName}`,
       });
 
-      // https://docs.clerk.dev/popular-guides/passwordless-authentication
-      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+      // Send email verification
+      // await sendEmailVerification(user);
 
-      navigation.navigate("VerifyCode");
-    } catch (err) {
-      log("Error:> " + err?.status || "");
-      log("Error:> " + err?.errors ? JSON.stringify(err.errors) : err);
+      // Navigate to verification code screen
+      navigation.replace("MainTabs");
+    } catch (error) {
+      console.log("Error signing up:", error.message);
     }
   };
 
@@ -40,10 +46,6 @@ export default function SignUpScreen({ navigation }) {
 
   return (
     <View style={styles.loginView}>
-      <View style={styles.oauthView}>
-        <OAuthButtons />
-      </View>
-
       <View style={styles.loginInputView}>
         <View style={styles.iconContainer}>
           <Ionicons name="ios-person-outline" size={20} color="#fff" />
@@ -103,7 +105,7 @@ export default function SignUpScreen({ navigation }) {
       </TouchableOpacity>
 
       <View style={styles.loginFooter}>
-        <Text style={{ color: '#fff' }}>Have an account?</Text>
+        <Text style={{ color: "#fff" }}>Have an account?</Text>
 
         <TouchableOpacity
           style={styles.secondaryButton}
