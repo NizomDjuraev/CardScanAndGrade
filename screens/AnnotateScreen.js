@@ -128,9 +128,6 @@ export default function AnnotateScreen({ navigation }) {
         <TouchableOpacity onPress={nextButton} style={styles.button}>
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={nextButton} style={styles.next}>
-          <Text style={styles.buttonText}>Next</Text>
-        </TouchableOpacity>
       </View>
     </View>
   );
