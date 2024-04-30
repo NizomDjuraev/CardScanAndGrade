@@ -35,18 +35,15 @@ export default function AnnotateScreen({ navigation }) {
     onStartShouldSetPanResponder: () => true,
     onMoveShouldSetPanResponder: () => true,
     onPanResponderGrant: (event, gesture) => {
-      const { width, height } = Dimensions.get('window');
-      const imageWidth = 300;
-      const imageHeight = 450;
-      const scaleX = imageWidth / width;
-      const scaleY = imageHeight / height;
+      const touchX = event.nativeEvent.locationX;
+      const touchY = event.nativeEvent.locationY;
       const newCircle = {
         id: Date.now(),
-        startX: gesture.x0,
-        startY: gesture.y0,
-        cx: gesture.x0 * scaleX,
-        cy: gesture.y0 * scaleY,
-        r: (gesture.dx / 2),
+        startX: touchX,
+        startY: touchY,
+        cx: touchX,
+        cy: touchY,
+        r: gesture.dx / 2,
         color: buttonPressed ? circleColor : "transparent",
       };
       setCurrentCircle(newCircle);
@@ -89,7 +86,7 @@ export default function AnnotateScreen({ navigation }) {
               key={circle.id}
               cx={circle.cx}
               cy={circle.cy}
-              r={circle.r}
+              r={circle.r / 5}
               fill='transparent'
               stroke={circle.color}
               strokeWidth={2}
