@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Image, StyleSheet, PanResponder, Text, TouchableOpacity } from 'react-native';
+import { View, Image, StyleSheet, PanResponder, Text, TouchableOpacity, Dimensions } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { useRoute } from '@react-navigation/native';
 import RNPickerSelect from "react-native-picker-select";
@@ -35,13 +35,18 @@ export default function AnnotateScreen({ navigation }) {
     onStartShouldSetPanResponder: () => true,
     onMoveShouldSetPanResponder: () => true,
     onPanResponderGrant: (event, gesture) => {
+      const { width, height } = Dimensions.get('window');
+      const imageWidth = 300;
+      const imageHeight = 450;
+      const scaleX = imageWidth / width;
+      const scaleY = imageHeight / height;
       const newCircle = {
         id: Date.now(),
         startX: gesture.x0,
         startY: gesture.y0,
-        cx: gesture.x0,
-        cy: gesture.y0,
-        r: gesture.dx / 2,
+        cx: gesture.x0 * scaleX,
+        cy: gesture.y0 * scaleY,
+        r: (gesture.dx / 2),
         color: buttonPressed ? circleColor : "transparent",
       };
       setCurrentCircle(newCircle);
@@ -82,9 +87,9 @@ export default function AnnotateScreen({ navigation }) {
           {circles.map((circle) => (
             <Circle
               key={circle.id}
-              cx={circle.cx - 60}
-              cy={circle.cy - 130}
-              r={circle.r - 20}
+              cx={circle.cx}
+              cy={circle.cy}
+              r={circle.r}
               fill='transparent'
               stroke={circle.color}
               strokeWidth={2}
