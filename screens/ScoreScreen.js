@@ -172,11 +172,14 @@ export default function ScoreScreen({ navigation }) {
   const handleExitButtonClick = () => {
     navigation.navigate("Annotate");
   };
-  const handleFrontButtonClick = () => {
+  const handleFlipButtonClick = () => {
     // add front button logic here
   };
   const handleToggleButtonClick = () => {
     // add toggle button logic here
+  };
+  const handleEditButtonClick = () => {
+    // add edit button logic here
   };
   const handleShareButtonClick = () => {
     // Navigate to Export screen and pass the image URI as a parameter
@@ -217,16 +220,22 @@ export default function ScoreScreen({ navigation }) {
         {/* container for front and toggle buttons */}
         <View style={styles.frontToggleContainer}>
           <TouchableOpacity
-            onPress={handleFrontButtonClick}
+            onPress={handleFlipButtonClick}
             style={styles.button}
           >
-            <Text style={styles.buttonText}>Back</Text>
+            <Text style={styles.buttonText}>Flip</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handleToggleButtonClick}
             style={styles.button}
           >
             <Text style={styles.buttonText}>Toggle</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleEditButtonClick}
+            style={styles.button}
+          >
+            <Text style={styles.buttonText}>Edit</Text>
           </TouchableOpacity>
         </View>
 
