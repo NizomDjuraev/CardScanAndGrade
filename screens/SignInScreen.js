@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 import { styles } from "../components/Styles";
 import { Ionicons } from "@expo/vector-icons";
 import { auth } from "../firebaseConfig";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 export default function SignInScreen({ navigation }) {
   const [emailAddress, setEmailAddress] = useState("");
@@ -11,9 +11,21 @@ export default function SignInScreen({ navigation }) {
 
   const onSignInPress = async () => {
     try {
+      // Sign in to trigger emailVerified to update
       await signInWithEmailAndPassword(auth, emailAddress, password);
-      // Sign in successful, navigate to home screen
-      navigation.replace("MainTabs");
+      // Check if the user's email is verified before signing in
+      const user = auth.currentUser;
+      if (user && user.emailVerified) {
+        // Sign in successful and verified, navigate to home screen
+        navigation.replace("MainTabs");
+      } else {
+        // If email is not verified, show alert and return
+        Alert.alert(
+          "Email Verification Required",
+          "Please verify your email before signing in."
+        );
+        return;
+      }
     } catch (error) {
       // Handle error
       console.log("Error signing in:", error.message);
