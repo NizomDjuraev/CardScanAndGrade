@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 import { styles } from "../components/Styles";
 import { Ionicons } from "@expo/vector-icons";
 import { auth } from "../firebaseConfig";
@@ -33,10 +33,16 @@ export default function SignUpScreen({ navigation }) {
       });
 
       // Send email verification
-      // await sendEmailVerification(user);
+      await sendEmailVerification(user);
 
-      // Navigate to verification code screen
-      navigation.replace("MainTabs");
+      navigation.replace("SignIn");
+
+      // Show alert after navigating to sign-in screen
+      Alert.alert(
+        "Email Verification",
+        "A verification email has been sent. Please verify your email then sign in.",
+        [{ text: "OK", onPress: () => console.log("OK Pressed") }]
+      );
     } catch (error) {
       console.log("Error signing up:", error.message);
     }
