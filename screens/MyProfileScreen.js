@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Text, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { auth } from "../firebaseConfig";
+import {
+  deleteUser,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+} from "firebase/auth";
 
 export default function MyProfileScreenScreen() {
   const navigation = useNavigation();
@@ -28,6 +33,73 @@ export default function MyProfileScreenScreen() {
       navigation.replace("SignIn");
     } catch (error) {
       console.error("Error signing out:", error);
+    }
+  };
+
+  const promptForCredentials = async () => {
+    return new Promise((resolve) => {
+      Alert.prompt(
+        "Reauthenticate",
+        "Please enter your password to continue:",
+        [
+          {
+            text: "Cancel",
+            onPress: () => resolve(null),
+            style: "cancel",
+          },
+          {
+            text: "OK",
+            onPress: (password) => resolve(password),
+          },
+        ],
+        "secure-text"
+      );
+    });
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      // Prompt the user to re-enter their password for reauthentication
+      const password = await promptForCredentials();
+
+      if (!password) {
+        // User canceled reauthentication, do nothing
+        return;
+      }
+
+      const user = auth.currentUser;
+
+      // Reauthenticate the user with their password
+      const credential = EmailAuthProvider.credential(user.email, password);
+      await reauthenticateWithCredential(user, credential);
+
+      // If reauthentication is successful, proceed with account deletion
+      await deleteUser(user);
+
+      // Show success message
+      Alert.alert(
+        "Success",
+        "Your account has been successfully deleted.",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              // Navigate back to the sign-up screen
+              navigation.replace("SignUp");
+            },
+          },
+        ],
+        { cancelable: false }
+      );
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      // Handle errors
+      if (error.code === "auth/wrong-password") {
+        // Incorrect password entered, show an error message
+        Alert.alert("Error", "Incorrect password. Please try again.");
+      } else {
+        // Handle other errors if needed
+      }
     }
   };
 
@@ -170,6 +242,16 @@ export default function MyProfileScreenScreen() {
         />
         <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>
+
+      {/* Delete account button */}
+      <TouchableOpacity
+        style={[styles.settingItem, styles.deleteButton]}
+        onPress={handleDeleteAccount}
+      >
+        <Text style={[styles.settingText, { color: "#ffffff" }]}>
+          Delete Account
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -181,6 +263,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     backgroundColor: "#959595",
+    width: "100%",
   },
   settingItem: {
     flexDirection: "row",
@@ -244,5 +327,16 @@ const styles = StyleSheet.create({
     width: "30%",
     marginBottom: 10,
     marginTop: 10,
+  },
+  deleteButton: {
+    backgroundColor: "#8E0909",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: "auto",
+    marginBottom: 20,
+    alignSelf: "center",
   },
 });
