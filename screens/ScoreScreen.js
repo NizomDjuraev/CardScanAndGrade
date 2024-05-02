@@ -7,10 +7,15 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  Alert,
+  Modal,
+  FlatList
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { getAuth, getIdToken } from "firebase/auth";
+import RNPickerSelect from "react-native-picker-select";
+import { useCollections } from '../hooks/useCollections';
 
 export default function ScoreScreen({ navigation }) {
   const route = useRoute();
@@ -21,6 +26,13 @@ export default function ScoreScreen({ navigation }) {
   const [loading, setLoading] = useState(false); // State to track loading state
   const [cardInfo, setCardInfo] = useState(null); // State to store card info
   const [editMode, setEditMode] = useState(false); // State to store edit mode status
+
+  //Populating the drop down for adding to collections
+  const { collections, loadingCollections } = useCollections();
+  const [selectedCollection, setSelectedCollection] = useState();
+
+  //Used a modal to make it less cluttered
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     if (route.params && route.params.imageData.uri) {
@@ -191,10 +203,20 @@ export default function ScoreScreen({ navigation }) {
     // Navigate to Export screen and pass the image URI as a parameter
     navigation.navigate("Export", { imageData: { uri: imageUri } });
   };
+
+  //ADD TO COLLECTION LOGIC
   const handleAddToCollectionButtonClick = () => {
-    // add add to collection button logic here
-    navigation.navigate("Home");
+    setModalVisible(true);
   };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    Alert.alert(
+      "Added to Collection"
+    )
+    //TODO Implement add card to collections table after modal is closed when API scans card properly
+  };
+
 
   return (
     <View style={styles.container}>
@@ -522,14 +544,61 @@ export default function ScoreScreen({ navigation }) {
           >
             <Text style={styles.shareCollectionButtonsText}>Share</Text>
           </TouchableOpacity>
+
+          {/*add to collection button and modal*/}
           <TouchableOpacity
-            onPress={handleAddToCollectionButtonClick}
-            style={styles.shareCollectionButtons}
+          onPress={handleAddToCollectionButtonClick}
+          style={styles.shareCollectionButtons}
+        >
+          <Text style={styles.shareCollectionButtonsText}>Add to Collection</Text>
+        </TouchableOpacity>
+        
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={handleCloseModal}
           >
-            <Text style={styles.shareCollectionButtonsText}>
-              Add to Collection
-            </Text>
-          </TouchableOpacity>
+            <View style={modalStyles.centeredView}>
+              <View style={modalStyles.modalView}>
+                <TouchableOpacity
+                  onPress={handleCloseModal}
+                  style={modalStyles.closeButton}
+                >
+                <Text style={modalStyles.closeButtonText}>X</Text>
+                </TouchableOpacity>
+                <Text style={modalStyles.modalText}>Select a Collection</Text>
+                {loading ? (
+                  <Text>Loading...</Text>
+                ) : (
+                  <RNPickerSelect
+                    onValueChange={(value) => setSelectedCollection(value)}
+                    items={collections.map((collection) => ({
+                      label: collection.collection,
+                      value: collection.id
+                    }))}
+                    placeholder={{ label: "Select a collection", value: null }}
+                    style={{
+                      inputIOS: modalStyles.pickerContainer,
+                      iconContainer: {
+                          top: 10,
+                          right: 12,
+                      },
+                    }}
+                  />
+                )}
+                <TouchableOpacity
+                  style={[modalStyles.button, modalStyles.buttonClose]}
+                  onPress={() => {
+                    handleCloseModal();
+                    console.log('Item added to:', selectedCollection);
+                  }}
+                >
+                  <Text style={modalStyles.textStyle}>Confirm</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
         </View>
       </View>
     </View>
@@ -718,3 +787,64 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+const modalStyles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    width: '80%'
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    padding: 10,
+    backgroundColor: 'white', 
+  },
+  closeButtonText: {
+    color: 'black',
+    fontSize: 16,
+  },
+  button: {
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: "black",
+    padding: 12,
+    marginTop: 30,
+    width: '100%',
+    backgroundColor: "#1D9DB9",
+  },
+  buttonClose: {
+    backgroundColor: "#1D9DB9",
+  },
+  textStyle: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  modalText: {
+    marginBottom: 30,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: "center",
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    width: '100%'
+  },
+});
+

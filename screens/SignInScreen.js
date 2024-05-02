@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { auth } from "../firebaseConfig";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 
+
 export default function SignInScreen({ navigation }) {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");

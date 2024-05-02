@@ -8,6 +8,8 @@ import {
   updateProfile,
   sendEmailVerification,
 } from "firebase/auth";
+import { createCollection } from "../backend/server";
+
 
 export default function SignUpScreen({ navigation }) {
   const [firstName, setFirstName] = React.useState("");
@@ -43,6 +45,15 @@ export default function SignUpScreen({ navigation }) {
         "A verification email has been sent. Please verify your email then sign in.",
         [{ text: "OK", onPress: () => console.log("OK Pressed") }]
       );
+
+      //Create Default Collection if new user signs up with valid email and password
+      await createCollection(
+        user.email,
+        user.displayName.split(" ")[0],
+        user.displayName.split(" ")[1] || "",
+        "Default Collection"
+      )
+
     } catch (error) {
       console.log("Error signing up:", error.message);
     }
