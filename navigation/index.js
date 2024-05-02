@@ -100,7 +100,7 @@ function MainTabs() {
       />
       <Tab.Screen
         name="Camera"
-        component={CameraScreen}
+        component={CameraStack}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <AntDesign
@@ -137,20 +137,31 @@ function MainTabs() {
           ),
         }}
       />
-      <Tab.Screen
-        name="Annotate"
-        component={AnnotateScreen}
-        options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name="alert"
+    </Tab.Navigator>
+  );
+}
+
+function CameraStack() {
+  return (
+    <Stack.Navigator
+          screenOptions={{
+            headerStyle: { backgroundColor: "#272727" },
+            headerTitleStyle: { color: "#fff" },
+          }}
+    >
+      <Stack.Screen name="Camera"
+            component={CameraScreen}
+            options={{
+            tabBarIcon: ({ color, size, focused }) => (
+            <AntDesign
+              name="camerao"
               size={size}
               color={focused ? "white" : "#1D9DB9"}
             />
           ),
         }}
       />
-      <Tab.Screen
+      <Stack.Screen
         name="Adjust Borders"
         component={AdjustBordersScreen}
         options={{
@@ -163,7 +174,20 @@ function MainTabs() {
           ),
         }}
       />
-      <Tab.Screen
+      <Stack.Screen
+        name="Annotate"
+        component={AnnotateScreen}
+        options={{
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name="alert"
+              size={size}
+              color={focused ? "white" : "#1D9DB9"}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
         name="Score"
         component={ScoreScreen}
         options={{
@@ -177,7 +201,7 @@ function MainTabs() {
           headerShown: false,
         }}
       />
-      <Tab.Screen
+      <Stack.Screen
         name="Export"
         component={ExportScreen}
         options={{
@@ -190,6 +214,6 @@ function MainTabs() {
           ),
         }}
       />
-    </Tab.Navigator>
-  );
+    </Stack.Navigator>
+  )
 }
