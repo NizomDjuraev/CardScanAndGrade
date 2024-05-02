@@ -6,6 +6,7 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  TextInput,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
@@ -19,6 +20,7 @@ export default function ScoreScreen({ navigation }) {
   const [cardId, setCardId] = useState(null); // State to store the generated cardID
   const [loading, setLoading] = useState(false); // State to track loading state
   const [cardInfo, setCardInfo] = useState(null); // State to store card info
+  const [editMode, setEditMode] = useState(false); // State to store edit mode status
 
   useEffect(() => {
     if (route.params && route.params.imageData.uri) {
@@ -179,7 +181,11 @@ export default function ScoreScreen({ navigation }) {
     // add toggle button logic here
   };
   const handleEditButtonClick = () => {
-    // add edit button logic here
+    if (editMode) {
+      setEditMode(false);
+    } else {
+      setEditMode(true);
+    }
   };
   const handleShareButtonClick = () => {
     // Navigate to Export screen and pass the image URI as a parameter
@@ -233,9 +239,13 @@ export default function ScoreScreen({ navigation }) {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handleEditButtonClick}
-            style={styles.button}
+            style={editMode ? styles.editModeButton : styles.button}
           >
-            <Text style={styles.buttonText}>Edit</Text>
+            <Text
+              style={editMode ? styles.editModeButtonText : styles.buttonText}
+            >
+              Edit
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -243,96 +253,253 @@ export default function ScoreScreen({ navigation }) {
         <ScrollView style={styles.scrollableInformation}>
           <Text style={styles.informationText}>Information</Text>
 
-          <View style={styles.informationBox}>
-            <Text style={styles.informationText}>
-              Year:{" "}
-              {cardInfo && cardInfo.card && cardInfo.card.year !== null
-                ? cardInfo.card.year
-                : "null"}
-            </Text>
-          </View>
-          <View style={styles.informationBox}>
-            <Text style={styles.informationText}>
-              Brand:{" "}
-              {cardInfo && cardInfo.card && cardInfo.card.brand !== null
-                ? cardInfo.card.brand
-                : "null"}
-            </Text>
-          </View>
-          <View style={styles.informationBox}>
-            <Text style={styles.informationText}>
-              Set:{" "}
-              {cardInfo && cardInfo.card && cardInfo.card.set !== null
-                ? cardInfo.card.set
-                : "null"}
-            </Text>
-          </View>
-          <View style={styles.informationBox}>
-            <Text style={styles.informationText}>
-              Number:{" "}
-              {cardInfo && cardInfo.card && cardInfo.card.cardNumber !== null
-                ? cardInfo.card.cardNumber
-                : "null"}
-            </Text>
-          </View>
-          <View style={styles.informationBox}>
-            <Text style={styles.informationText}>
-              Variation:{" "}
-              {cardInfo && cardInfo.card && cardInfo.card.variation !== null
-                ? cardInfo.card.variation
-                : "null"}
-            </Text>
+          <View style={styles.sideBySideBoxesContainer}>
+            <View style={[styles.sideBySideBox, { flex: 0.4 }]}>
+              <Text style={styles.sideBySideBoxText}>Year</Text>
+            </View>
+
+            <View style={[styles.sideBySideBox, { flex: 0.6, marginLeft: 5 }]}>
+              {editMode ? ( // Conditionally render TextInput or Text
+                <TextInput
+                  style={styles.inputText}
+                  value={
+                    cardInfo && cardInfo.card && cardInfo.card.year !== null
+                      ? cardInfo.card.year.toString()
+                      : ""
+                  }
+                  onChangeText={(text) =>
+                    setCardInfo({
+                      ...cardInfo,
+                      card: { ...cardInfo.card, year: text },
+                    })
+                  }
+                />
+              ) : (
+                <Text style={styles.sideBySideBoxText}>
+                  {cardInfo && cardInfo.card && cardInfo.card.year !== null
+                    ? cardInfo.card.year
+                    : "null"}
+                </Text>
+              )}
+            </View>
           </View>
           <View style={styles.sideBySideBoxesContainer}>
-            <View style={[styles.sideBySideBox, { flex: 0.7 }]}>
+            <View style={[styles.sideBySideBox, { flex: 0.4 }]}>
+              <Text style={styles.sideBySideBoxText}>Brand</Text>
+            </View>
+            <View style={[styles.sideBySideBox, { flex: 0.6, marginLeft: 5 }]}>
+              {editMode ? ( // Conditionally render TextInput or Text
+                <TextInput
+                  style={styles.inputText}
+                  value={
+                    cardInfo && cardInfo.card && cardInfo.card.brand !== null
+                      ? cardInfo.card.brand.toString()
+                      : ""
+                  }
+                  onChangeText={(text) =>
+                    setCardInfo({
+                      ...cardInfo,
+                      card: { ...cardInfo.card, brand: text },
+                    })
+                  }
+                />
+              ) : (
+                <Text style={styles.sideBySideBoxText}>
+                  {cardInfo && cardInfo.card && cardInfo.card.brand !== null
+                    ? cardInfo.card.brand
+                    : "null"}
+                </Text>
+              )}
+            </View>
+          </View>
+          <View style={styles.sideBySideBoxesContainer}>
+            <View style={[styles.sideBySideBox, { flex: 0.4 }]}>
+              <Text style={styles.sideBySideBoxText}>Set</Text>
+            </View>
+            <View style={[styles.sideBySideBox, { flex: 0.6, marginLeft: 5 }]}>
+              {editMode ? ( // Conditionally render TextInput or Text
+                <TextInput
+                  style={styles.inputText}
+                  value={
+                    cardInfo && cardInfo.card && cardInfo.card.set !== null
+                      ? cardInfo.card.set.toString()
+                      : ""
+                  }
+                  onChangeText={(text) =>
+                    setCardInfo({
+                      ...cardInfo,
+                      card: { ...cardInfo.card, set: text },
+                    })
+                  }
+                />
+              ) : (
+                <Text style={styles.sideBySideBoxText}>
+                  {cardInfo && cardInfo.card && cardInfo.card.set !== null
+                    ? cardInfo.card.set
+                    : "null"}
+                </Text>
+              )}
+            </View>
+          </View>
+          <View style={styles.sideBySideBoxesContainer}>
+            <View style={[styles.sideBySideBox, { flex: 0.4 }]}>
+              <Text style={styles.sideBySideBoxText}>Number</Text>
+            </View>
+            <View style={[styles.sideBySideBox, { flex: 0.6, marginLeft: 5 }]}>
+              {editMode ? ( // Conditionally render TextInput or Text
+                <TextInput
+                  style={styles.inputText}
+                  value={
+                    cardInfo &&
+                    cardInfo.card &&
+                    cardInfo.card.cardNumber !== null
+                      ? cardInfo.card.cardNumber.toString()
+                      : ""
+                  }
+                  onChangeText={(text) =>
+                    setCardInfo({
+                      ...cardInfo,
+                      card: { ...cardInfo.card, cardNumber: text },
+                    })
+                  }
+                />
+              ) : (
+                <Text style={styles.sideBySideBoxText}>
+                  {cardInfo &&
+                  cardInfo.card &&
+                  cardInfo.card.cardNumber !== null
+                    ? cardInfo.card.cardNumber
+                    : "null"}
+                </Text>
+              )}
+            </View>
+          </View>
+          <View style={styles.sideBySideBoxesContainer}>
+            <View style={[styles.sideBySideBox, { flex: 0.4 }]}>
+              <Text style={styles.sideBySideBoxText}>Variation</Text>
+            </View>
+            <View style={[styles.sideBySideBox, { flex: 0.6, marginLeft: 5 }]}>
+              {editMode ? ( // Conditionally render TextInput or Text
+                <TextInput
+                  style={styles.inputText}
+                  value={
+                    cardInfo &&
+                    cardInfo.card &&
+                    cardInfo.card.variation !== null
+                      ? cardInfo.card.variation.toString()
+                      : ""
+                  }
+                  onChangeText={(text) =>
+                    setCardInfo({
+                      ...cardInfo,
+                      card: { ...cardInfo.card, variation: text },
+                    })
+                  }
+                />
+              ) : (
+                <Text style={styles.sideBySideBoxText}>
+                  {cardInfo && cardInfo.card && cardInfo.card.variation !== null
+                    ? cardInfo.card.variation
+                    : "null"}
+                </Text>
+              )}
+            </View>
+          </View>
+          <View style={styles.sideBySideBoxesContainer}>
+            <View style={[styles.sideBySideBox, { flex: 0.4 }]}>
               <Text style={styles.sideBySideBoxText}>Edge</Text>
             </View>
-            <View style={[styles.sideBySideBox, { flex: 0.3, marginLeft: 5 }]}>
-              <Text style={styles.sideBySideBoxText}>
-                {cardInfo && cardInfo.card && cardInfo.card.edgeScore !== null
-                  ? cardInfo.card.edgeScore
-                  : "null"}
-              </Text>
+            <View style={[styles.sideBySideBox, { flex: 0.6, marginLeft: 5 }]}>
+              {editMode ? ( // Conditionally render TextInput or Text
+                <TextInput
+                  style={styles.inputText}
+                  value={
+                    cardInfo &&
+                    cardInfo.card &&
+                    cardInfo.card.edgeScore !== null
+                      ? cardInfo.card.edgeScore.toString()
+                      : ""
+                  }
+                  onChangeText={(text) =>
+                    setCardInfo({
+                      ...cardInfo,
+                      card: { ...cardInfo.card, edgeScore: text },
+                    })
+                  }
+                />
+              ) : (
+                <Text style={styles.sideBySideBoxText}>
+                  {cardInfo && cardInfo.card && cardInfo.card.edgeScore !== null
+                    ? cardInfo.card.edgeScore
+                    : "null"}
+                </Text>
+              )}
             </View>
           </View>
           <View style={styles.sideBySideBoxesContainer}>
-            <View style={[styles.sideBySideBox, { flex: 0.7 }]}>
-              <Text style={styles.sideBySideBoxText}>Border</Text>
+            <View style={[styles.sideBySideBox, { flex: 0.4 }]}>
+              <Text style={styles.sideBySideBoxText}>Corner</Text>
             </View>
-            <View style={[styles.sideBySideBox, { flex: 0.3, marginLeft: 5 }]}>
-              <Text style={styles.sideBySideBoxText}>
-                {cardInfo && cardInfo.card && cardInfo.card.borderScore !== null
-                  ? cardInfo.card.borderScore
-                  : "null"}
-              </Text>
+            <View style={[styles.sideBySideBox, { flex: 0.6, marginLeft: 5 }]}>
+              {editMode ? ( // Conditionally render TextInput or Text
+                <TextInput
+                  style={styles.inputText}
+                  value={
+                    cardInfo &&
+                    cardInfo.card &&
+                    cardInfo.card.cornerScore !== null
+                      ? cardInfo.card.cornerScore.toString()
+                      : ""
+                  }
+                  onChangeText={(text) =>
+                    setCardInfo({
+                      ...cardInfo,
+                      card: { ...cardInfo.card, cornerScore: text },
+                    })
+                  }
+                />
+              ) : (
+                <Text style={styles.sideBySideBoxText}>
+                  {cardInfo &&
+                  cardInfo.card &&
+                  cardInfo.card.cornerScore !== null
+                    ? cardInfo.card.cornerScore
+                    : "null"}
+                </Text>
+              )}
             </View>
           </View>
           <View style={styles.sideBySideBoxesContainer}>
-            <View style={[styles.sideBySideBox, { flex: 0.7 }]}>
-              <Text style={styles.sideBySideBoxText}>Surface</Text>
+            <View style={[styles.sideBySideBox, { flex: 0.4 }]}>
+              <Text style={styles.sideBySideBoxText}>Center</Text>
             </View>
-            <View style={[styles.sideBySideBox, { flex: 0.3, marginLeft: 5 }]}>
-              <Text style={styles.sideBySideBoxText}>
-                {cardInfo &&
-                cardInfo.card &&
-                cardInfo.card.surfaceScore !== null
-                  ? cardInfo.card.surfaceScore
-                  : "null"}
-              </Text>
-            </View>
-          </View>
-          <View style={styles.sideBySideBoxesContainer}>
-            <View style={[styles.sideBySideBox, { flex: 0.7 }]}>
-              <Text style={styles.sideBySideBoxText}>Overall</Text>
-            </View>
-            <View style={[styles.sideBySideBox, { flex: 0.3, marginLeft: 5 }]}>
-              <Text style={styles.sideBySideBoxText}>
-                {cardInfo &&
-                cardInfo.card &&
-                cardInfo.card.overallScore !== null
-                  ? cardInfo.card.overallScore
-                  : "null"}
-              </Text>
+            <View style={[styles.sideBySideBox, { flex: 0.6, marginLeft: 5 }]}>
+              {editMode ? ( // Conditionally render TextInput or Text
+                <TextInput
+                  style={styles.inputText}
+                  value={
+                    cardInfo &&
+                    cardInfo.card &&
+                    cardInfo.card.frontCenteringScore !== null
+                      ? cardInfo.card.frontCenteringScore.toString()
+                      : ""
+                  }
+                  onChangeText={(text) =>
+                    setCardInfo({
+                      ...cardInfo,
+                      card: { ...cardInfo.card, frontCenteringScore: text },
+                    })
+                  }
+                />
+              ) : (
+                <Text style={styles.sideBySideBoxText}>
+                  {cardInfo &&
+                  cardInfo.card &&
+                  cardInfo.card.frontCenteringScore !== null
+                    ? cardInfo.card.frontCenteringScore
+                    : "null"}
+                </Text>
+              )}
             </View>
           </View>
 
@@ -526,6 +693,28 @@ const styles = StyleSheet.create({
   },
   shareCollectionButtonsText: {
     color: "black",
+    fontSize: 16,
+  },
+  editModeButton: {
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#8E0909",
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: "black",
+    height: "70%",
+    width: "30%",
+  },
+  editModeButtonText: {
+    color: "white",
+    fontSize: 16,
+  },
+  inputText: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 5,
+    borderRadius: 5,
     fontSize: 16,
   },
 });
