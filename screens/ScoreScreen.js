@@ -211,9 +211,7 @@ export default function ScoreScreen({ navigation }) {
 
   const handleCloseModal = () => {
     setModalVisible(false);
-    Alert.alert(
-      "Added to Collection"
-    )
+    
     //TODO Implement add card to collections table after modal is closed when API scans card properly
   };
 
@@ -591,6 +589,9 @@ export default function ScoreScreen({ navigation }) {
                   style={[modalStyles.button, modalStyles.buttonClose]}
                   onPress={() => {
                     handleCloseModal();
+                    Alert.alert(
+                      "Added to Collection"
+                    )
                     console.log('Item added to:', selectedCollection);
                   }}
                 >
