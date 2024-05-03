@@ -145,74 +145,30 @@ function CameraStack() {
   return (
     <Stack.Navigator
           screenOptions={{
-            headerStyle: { backgroundColor: "#272727" },
-            headerTitleStyle: { color: "#fff" },
+            headerShown: false
           }}
     >
       <Stack.Screen name="Camera"
-            component={CameraScreen}
-            options={{
-            tabBarIcon: ({ color, size, focused }) => (
-            <AntDesign
-              name="camerao"
-              size={size}
-              color={focused ? "white" : "#1D9DB9"}
-            />
-          ),
-        }}
+        component={CameraScreen}
       />
       <Stack.Screen
         name="Adjust Borders"
         component={AdjustBordersScreen}
-        options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name="crop"
-              size={size}
-              color={focused ? "white" : "#1D9DB9"}
-            />
-          ),
-        }}
       />
       <Stack.Screen
         name="Annotate"
         component={AnnotateScreen}
-        options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name="alert"
-              size={size}
-              color={focused ? "white" : "#1D9DB9"}
-            />
-          ),
-        }}
       />
       <Stack.Screen
         name="Score"
         component={ScoreScreen}
         options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name="square-outline"
-              size={size}
-              color={focused ? "white" : "#1D9DB9"}
-            />
-          ),
           headerShown: false,
         }}
       />
       <Stack.Screen
         name="Export"
         component={ExportScreen}
-        options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name="share"
-              size={size}
-              color={focused ? "white" : "#1D9DB9"}
-            />
-          ),
-        }}
       />
     </Stack.Navigator>
   )
