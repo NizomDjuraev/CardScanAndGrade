@@ -1,136 +1,256 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
   Image,
   Text,
-  PanResponder,
   Dimensions,
   TouchableOpacity,
-} from "react-native";
-import { useRoute } from "@react-navigation/native"; // Import useRoute
+  PanResponder,
+} from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import * as ImageManipulator from 'expo-image-manipulator';
 
-const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
 
-const imageWidth = 300;
-const imageHeight = 300;
-const imageX = (windowWidth - imageWidth) / 2;
-const imageY = (windowHeight - imageHeight) / 2;
+
+const imageWidth = 281;
+const imageHeight = 500;
 
 const AdjustBordersScreen = ({ navigation }) => {
-  const route = useRoute(); // Use the useRoute hook to access the current route
+  const route = useRoute();
   const [imageUri, setImageUri] = useState("");
 
   useEffect(() => {
-    // Update the image URI state when the route params change
     if (route.params && route.params.imageData) {
       setImageUri(route.params.imageData.uri);
     }
   }, [route.params]);
 
-  const [margins, setMargins] = useState({
-    left: imageX,
-    top: imageY,
-    right: windowWidth - (imageX + imageWidth),
-    bottom: windowHeight - (imageY + imageHeight),
-  });
-
-  const createPanResponder = (edge) => {
-    return PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: (event, gestureState) => {
-        setMargins((prev) => {
-          let change = gestureState.dx; // Default to horizontal movement
-          if (edge === "top" || edge === "bottom") {
-            change = gestureState.dy; // Adjust for vertical movement
-          }
-
-          const newMargin = Math.max(0, prev[edge] + change); // Prevent negative margins
-          return { ...prev, [edge]: newMargin };
-        });
-      },
-      onPanResponderRelease: () => {
-        // No action needed on release as per current requirements
-      },
-    });
-  };
-
-  const panResponders = {
-    left: createPanResponder("left"),
-    top: createPanResponder("top"),
-    right: createPanResponder("right"),
-    bottom: createPanResponder("bottom"),
-  };
-
-  const centeringScore = {
-    horizontal: ((margins.left - margins.right) / imageWidth) * 100,
-    vertical: ((margins.top - margins.bottom) / imageHeight) * 100,
-  };
-
   const nextButton = async () => {
     navigation.navigate("Annotate", { imageData: { uri: imageUri } });
   };
 
+  const [squareDimensions, setSquareDimensions] = useState({
+    width: 100,
+    height: 100,
+    top: 50,
+    left: 50,
+
+    
+  });
+
+  const [secondSquareDimensions, setSecondSquareDimensions] = useState({
+    width: 80,
+    height: 80,
+    top: 150,
+    left: 150,
+  });
+
+  const panResponderLeft = PanResponder.create({
+    onStartShouldSetPanResponder: (_, gestureState) => {
+      const { left, top, width, height } = squareDimensions;
+      const { x0, y0 } = gestureState;
+      return (
+        x0 >= left && x0 <= left + 20 &&
+        y0 >= top && y0 <= top + height
+      );
+    },
+    onMoveShouldSetPanResponder: (_, gestureState) => {
+      const { dx, dy } = gestureState;
+      return Math.abs(dx) > Math.abs(dy) && dx < 0;
+    },
+    onPanResponderMove: (evt, gestureState) => {
+      const { dx } = gestureState;
+      const newWidth = Math.max(50, squareDimensions.width - dx);
+      setSquareDimensions(prevDimensions => ({
+        ...prevDimensions,
+        width: newWidth,
+        left: prevDimensions.left + dx
+      }));
+    }
+  });
+
+  const panResponderRight = PanResponder.create({
+    onStartShouldSetPanResponder: (_, gestureState) => {
+      const { left, top, width, height } = squareDimensions;
+      const { x0, y0 } = gestureState;
+      return (
+        x0 >= left + width - 20 && x0 <= left + width &&
+        y0 >= top && y0 <= top + height
+      );
+    },
+    onMoveShouldSetPanResponder: (_, gestureState) => {
+      const { dx, dy } = gestureState;
+      return Math.abs(dx) > Math.abs(dy) && dx > 0;
+    },
+    onPanResponderMove: (evt, gestureState) => {
+      const { dx } = gestureState;
+      const newWidth = Math.max(50, squareDimensions.width + dx);
+      setSquareDimensions(prevDimensions => ({
+        ...prevDimensions,
+        width: newWidth,
+      }));
+    }
+  });
+
+  const panResponderTop = PanResponder.create({
+    onStartShouldSetPanResponder: (_, gestureState) => {
+      const { left, top, width, height } = squareDimensions;
+      const { x0, y0 } = gestureState;
+      return (
+        x0 >= left && x0 <= left + width &&
+        y0 >= top && y0 <= top + 20
+      );
+    },
+    onMoveShouldSetPanResponder: (_, gestureState) => {
+      const { dx, dy } = gestureState;
+      return Math.abs(dy) > Math.abs(dx) && dy < 0;
+    },
+    onPanResponderMove: (evt, gestureState) => {
+      const { dy } = gestureState;
+      const newHeight = Math.max(50, squareDimensions.height - dy);
+      setSquareDimensions(prevDimensions => ({
+        ...prevDimensions,
+        height: newHeight,
+        top: prevDimensions.top + dy
+      }));
+    }
+  });
+
+  const panResponderBottom = PanResponder.create({
+    onStartShouldSetPanResponder: (_, gestureState) => {
+      const { left, top, width, height } = squareDimensions;
+      const { x0, y0 } = gestureState;
+      return (
+        x0 >= left && x0 <= left + width &&
+        y0 >= top + height - 20 && y0 <= top + height
+      );
+    },
+    onMoveShouldSetPanResponder: (_, gestureState) => {
+      const { dx, dy } = gestureState;
+      return Math.abs(dy) > Math.abs(dx) && dy > 0;
+    },
+    onPanResponderMove: (evt, gestureState) => {
+      const { dy } = gestureState;
+      const newHeight = Math.max(50, squareDimensions.height + dy);
+      setSquareDimensions(prevDimensions => ({
+        ...prevDimensions,
+        height: newHeight,
+      }));
+    }
+  });
+
+  const edgeResponderLeft = PanResponder.create({
+    onStartShouldSetPanResponder: (_, gestureState) => {
+      const { left, top, width, height } = secondSquareDimensions;
+      const { x0, y0 } = gestureState;
+      return (
+        x0 >= left && x0 <= left + 20 &&
+        y0 >= top && y0 <= top + height
+      );
+    },
+    onMoveShouldSetPanResponder: (_, gestureState) => {
+      const { dx, dy } = gestureState;
+      return Math.abs(dx) > Math.abs(dy) && dx < 0;
+    },
+    onPanResponderMove: (evt, gestureState) => {
+      const { dx } = gestureState;
+      const newWidth = Math.max(50, secondSquareDimensions.width - dx);
+      setSecondSquareDimensions(prevDimensions => ({
+        ...prevDimensions,
+        width: newWidth,
+        left: prevDimensions.left + dx
+      }));
+    }
+  });
+
+  const edgeResponderRight = PanResponder.create({
+    onStartShouldSetPanResponder: (_, gestureState) => {
+      const { left, top, width, height } = secondSquareDimensions;
+      const { x0, y0 } = gestureState;
+      return (
+        x0 >= left + width - 20 && x0 <= left + width &&
+        y0 >= top && y0 <= top + height
+      );
+    },
+    onMoveShouldSetPanResponder: (_, gestureState) => {
+      const { dx, dy } = gestureState;
+      return Math.abs(dx) > Math.abs(dy) && dx > 0;
+    },
+    onPanResponderMove: (evt, gestureState) => {
+      const { dx } = gestureState;
+      const newWidth = Math.max(50, secondSquareDimensions.width + dx);
+      setSecondSquareDimensions(prevDimensions => ({
+        ...prevDimensions,
+        width: newWidth,
+      }));
+    }
+  });
+
+  const edgeResponderTop = PanResponder.create({
+    onStartShouldSetPanResponder: (_, gestureState) => {
+      const { left, top, width, height } = secondSquareDimensions;
+      const { x0, y0 } = gestureState;
+      return (
+        x0 >= left && x0 <= left + width &&
+        y0 >= top && y0 <= top + 20
+      );
+    },
+    onMoveShouldSetPanResponder: (_, gestureState) => {
+      const { dx, dy } = gestureState;
+      return Math.abs(dy) > Math.abs(dx) && dy < 0;
+    },
+    onPanResponderMove: (evt, gestureState) => {
+      const { dy } = gestureState;
+      const newHeight = Math.max(50, secondSquareDimensions.height - dy);
+      setSecondSquareDimensions(prevDimensions => ({
+        ...prevDimensions,
+        height: newHeight,
+        top: prevDimensions.top + dy
+      }));
+    }
+  });
+
+  const edgeResponderBottom = PanResponder.create({
+    onStartShouldSetPanResponder: (_, gestureState) => {
+      const { left, top, width, height } = secondSquareDimensions;
+      const { x0, y0 } = gestureState;
+      return (
+        x0 >= left && x0 <= left + width &&
+        y0 >= top + height - 20 && y0 <= top + height
+      );
+    },
+    onMoveShouldSetPanResponder: (_, gestureState) => {
+      const { dx, dy } = gestureState;
+      return Math.abs(dy) > Math.abs(dx) && dy > 0;
+    },
+    onPanResponderMove: (evt, gestureState) => {
+      const { dy } = gestureState;
+      const newHeight = Math.max(50, secondSquareDimensions.height + dy);
+      setSecondSquareDimensions(prevDimensions => ({
+        ...prevDimensions,
+        height: newHeight,
+      }));
+    }
+  });
+
   return (
     <View style={styles.container}>
       {imageUri ? (
-        <View
-          style={[
-            styles.imageContainer,
-            {
-              marginTop: imageY - margins.top,
-              marginLeft: imageX - margins.left,
-            },
-          ]}
-        >
+        <View style={styles.imageContainer}>
           <Image source={{ uri: imageUri }} style={styles.image} />
-          <View
-            {...panResponders.left.panHandlers}
-            style={[
-              styles.border,
-              { left: margins.left - imageX, top: 0, bottom: 0, width: 2 },
-            ]}
-          />
-          <View
-            {...panResponders.top.panHandlers}
-            style={[
-              styles.border,
-              { top: margins.top - imageY, left: 0, right: 0, height: 2 },
-            ]}
-          />
-          <View
-            {...panResponders.right.panHandlers}
-            style={[
-              styles.border,
-              {
-                right: windowWidth - margins.right - imageWidth - imageX,
-                top: 0,
-                bottom: 0,
-                width: 2,
-              },
-            ]}
-          />
-          <View
-            {...panResponders.bottom.panHandlers}
-            style={[
-              styles.border,
-              {
-                bottom: windowHeight - margins.bottom - imageHeight - imageY,
-                left: 0,
-                right: 0,
-                height: 2,
-              },
-            ]}
-          />
+          <View {...panResponderLeft.panHandlers} style={[styles.resizableSquare, styles.leftResizer, { height: squareDimensions.height, top: squareDimensions.top, left: squareDimensions.left }]} />
+          <View {...panResponderRight.panHandlers} style={[styles.resizableSquare, styles.rightResizer, { height: squareDimensions.height, top: squareDimensions.top+10, left: squareDimensions.left + squareDimensions.width }]} />
+          <View {...panResponderTop.panHandlers} style={[styles.resizableSquare, styles.topResizer, { width: squareDimensions.width, top: squareDimensions.top, left: squareDimensions.left+10}]} />
+          <View {...panResponderBottom.panHandlers} style={[styles.resizableSquare, styles.bottomResizer, { width: squareDimensions.width, top: squareDimensions.top + squareDimensions.height, left: squareDimensions.left }]} />
+
+          <View {...edgeResponderLeft.panHandlers} style={[styles.resizableEdges, styles.leftEdge, { height: secondSquareDimensions.height, top: secondSquareDimensions.top, left: secondSquareDimensions.left  }]} />
+          <View {...edgeResponderRight.panHandlers} style={[styles.resizableEdges, styles.rightEdge, { height: secondSquareDimensions.height, top: secondSquareDimensions.top+10, left: secondSquareDimensions.left + secondSquareDimensions.width }]} />
+          <View {...edgeResponderTop.panHandlers} style={[styles.resizableEdges, styles.topEdge, { width: secondSquareDimensions.width, top: secondSquareDimensions.top , left: secondSquareDimensions.left+10 }]} />
+          <View {...edgeResponderBottom.panHandlers} style={[styles.resizableEdges, styles.bottomEdge, { width: secondSquareDimensions.width, top: secondSquareDimensions.top + secondSquareDimensions.height, left: secondSquareDimensions.left }]} />
         </View>
       ) : null}
-      <Text style={styles.centeringText}>
-        Horizontal Centering: {centeringScore.horizontal.toFixed(2)}%
-      </Text>
-      <Text style={styles.centeringText}>
-        Vertical Centering: {centeringScore.vertical.toFixed(2)}%
-      </Text>
+     
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={nextButton} style={styles.next}>
           <Text style={styles.buttonText}>Next</Text>
@@ -143,40 +263,65 @@ const AdjustBordersScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
   },
   imageContainer: {
     width: imageWidth,
     height: imageHeight,
-    position: "relative",
+    position: 'relative',
     borderWidth: 1,
-    borderColor: "grey",
+    borderColor: 'black',
   },
   image: {
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
   },
-  border: {
-    position: "absolute",
-    backgroundColor: "blue",
+  resizableSquare: {
+    position: 'absolute',
+    backgroundColor: 'rgba(0, 0, 0, 1)',
+    zIndex: 1000,
   },
-  centeringText: {
-    fontSize: 16,
-    color: "black",
-    marginTop: 20,
+  leftResizer: {
+    width: 10,
   },
-  buttonContainer: {
+  rightResizer: {
+    width: 10,
+  },
+  topResizer: {
+    height: 10,
+  },
+  bottomResizer: {
+    height: 10,
+  },
+
+  resizableEdges: {
+    position: 'absolute',
+    backgroundColor: 'rgba(255,255,255, 0.5)',
+    zIndex: 1000,
+  },
+  leftEdge: {
+    width: 10,
+  },
+  rightEdge: {
+    width: 10,
+  },
+  topEdge: {
+    height: 10,
+  },
+  bottomEdge: {
+    height: 10,
+  },
+
+  next: {
+    padding: 10,
     marginTop: 20,
   },
   buttonText: {
-    color: "black",
-    textAlign: "center",
+    color: 'black',
     fontSize: 16,
-  },
-  next: {
-    padding: 10,
+    textAlign: 'center',
   },
 });
 
