@@ -148,7 +148,7 @@ function CameraStack() {
             headerShown: false
           }}
     >
-      <Stack.Screen name="Camera"
+      <Stack.Screen name="CameraStack"
         component={CameraScreen}
       />
       <Stack.Screen
