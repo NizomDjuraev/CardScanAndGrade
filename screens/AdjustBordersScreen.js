@@ -26,6 +26,10 @@ const AdjustBordersScreen = ({ navigation }) => {
     }
   }, [route.params]);
 
+  const nextButton = async () => {
+    navigation.navigate("Annotate", { imageData: { uri: imageUri } });
+  };
+
   const [squareDimensions, setSquareDimensions] = useState({
     width: 100,
     height: 100,
@@ -230,35 +234,6 @@ const AdjustBordersScreen = ({ navigation }) => {
     }
   });
 
-  const cropImage = async () => {
-    console.log("Cropping with:", squareDimensions);
-    
-    // Ensuring the dimensions are updated before cropping
-    const { left, top, width, height } = squareDimensions;
-  
-    try {
-      const manipResult = await ImageManipulator.manipulateAsync(
-        imageUri,
-        [{
-          crop: {
-            originX: left,
-            originY: top,
-            width: width,
-            height: height,
-          },
-        }],
-        { compress: 1, format: ImageManipulator.SaveFormat.PNG }
-      );
-  
-      console.log("Cropped image uri to pass:", manipResult.uri);
-      const croppedImageUri = { uri: manipResult.uri };
-      navigation.navigate('Annotate', { imageData: croppedImageUri });
-    } catch (error) {
-      console.error("Image manipulation error:", error);
-    }
-  };
-  
-
   return (
     <View style={styles.container}>
       {imageUri ? (
@@ -270,14 +245,17 @@ const AdjustBordersScreen = ({ navigation }) => {
           <View {...panResponderBottom.panHandlers} style={[styles.resizableSquare, styles.bottomResizer, { width: squareDimensions.width, top: squareDimensions.top + squareDimensions.height, left: squareDimensions.left }]} />
 
           <View {...edgeResponderLeft.panHandlers} style={[styles.resizableEdges, styles.leftEdge, { height: secondSquareDimensions.height, top: secondSquareDimensions.top, left: secondSquareDimensions.left  }]} />
-          <View {...edgeResponderRight.panHandlers} style={[styles.resizableEdges, styles.rightEdge, { height: secondSquareDimensions.height, top: secondSquareDimensions.top+5, left: secondSquareDimensions.left + secondSquareDimensions.width }]} />
-          <View {...edgeResponderTop.panHandlers} style={[styles.resizableEdges, styles.topEdge, { width: secondSquareDimensions.width, top: secondSquareDimensions.top , left: secondSquareDimensions.left+5 }]} />
+          <View {...edgeResponderRight.panHandlers} style={[styles.resizableEdges, styles.rightEdge, { height: secondSquareDimensions.height, top: secondSquareDimensions.top+10, left: secondSquareDimensions.left + secondSquareDimensions.width }]} />
+          <View {...edgeResponderTop.panHandlers} style={[styles.resizableEdges, styles.topEdge, { width: secondSquareDimensions.width, top: secondSquareDimensions.top , left: secondSquareDimensions.left+10 }]} />
           <View {...edgeResponderBottom.panHandlers} style={[styles.resizableEdges, styles.bottomEdge, { width: secondSquareDimensions.width, top: secondSquareDimensions.top + secondSquareDimensions.height, left: secondSquareDimensions.left }]} />
         </View>
       ) : null}
-      <TouchableOpacity onPress={cropImage} style={styles.next}>
-        <Text style={styles.buttonText}>Next</Text>
-      </TouchableOpacity>
+     
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={nextButton} style={styles.next}>
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -324,16 +302,16 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   leftEdge: {
-    width: 5,
+    width: 10,
   },
   rightEdge: {
-    width: 5,
+    width: 10,
   },
   topEdge: {
-    height: 5,
+    height: 10,
   },
   bottomEdge: {
-    height: 5,
+    height: 10,
   },
 
   next: {
