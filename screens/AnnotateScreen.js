@@ -102,10 +102,18 @@ export default function AnnotateScreen({ navigation }) {
         <RNPickerSelect
         onValueChange={(value) => changeCircleColor(value)}
         items={[
-          { label: "Category 1", value: "red" },
-          { label: "Category 2", value: "green" },
-          { label: "Category 3", value: "blue" },
-          { label: "Category 4", value: "brown" },
+          { label: "Crease Red", value: "red" },
+          { label: "Dent Green", value: "green" },
+          { label: "Focus Blue", value: "blue" },
+          { label: "Gum Brown", value: "brown" },
+          { label: "Hole Black", value: "black"},
+          { label: "Mark Yellow", value: "yellow"},
+          { label: "Paper Loss Purple", value: "purple"},
+          { label: "Scratch Pink", value: "pink"},
+          { label: "Stain Orange", value: "orange"},
+          { label: "Tear Gray", value: "gray"},
+          { label: "Wax Teal", value: "teal"},
+          { label: "Other Cyan", value: "cyan"}
           ]}
           style={{
             inputAndroid: {
