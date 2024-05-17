@@ -14,6 +14,3 @@ Once the metro bundler has finished you can:
 1. Scan the QR code after installing the Expo mobile application to view it on your phone
 2. Press a to open in an Android emulator
 3. Press r to reload the app
-
-Github to gitlab sync
-wyatt test pipeline
