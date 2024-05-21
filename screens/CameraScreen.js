@@ -7,15 +7,15 @@ import {
   Image,
   PanResponder,
 } from "react-native";
-import { Camera } from "expo-camera";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import * as ImageManipulator from "expo-image-manipulator";
 
 export default function CameraScreen({ navigation }) {
-  const [hasPermission, setHasPermission] = useState(null);
   const [capturedPhoto, setCapturedPhoto] = useState(null);
   const cameraRef = useRef(null);
+  const [permission, requestPermission] = useCameraPermissions();
   const [corners, setCorners] = useState({
     topLeft: { x: 40, y: 110 },
     topRight: { x: 40, y: 110 },
@@ -41,13 +41,6 @@ export default function CameraScreen({ navigation }) {
     const topRightResponder = createPanResponder("topRight");
     const bottomLeftResponder = createPanResponder("bottomLeft");
     const bottomRightResponder = createPanResponder("bottomRight");
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
-    })();
   }, []);
 
   const takePicture = async () => {
@@ -102,11 +95,23 @@ export default function CameraScreen({ navigation }) {
     }
   };
 
-  if (hasPermission === null) {
+  if (!permission) {
+    // Camera permissions are still loading.
     return <View />;
   }
-  if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+
+  if (!permission.granted) {
+    // Camera permissions are not granted yet.
+    return (
+      <View style={styles.container}>
+        <Text style={{ textAlign: "center" }}>
+          We need your permission to show the camera
+        </Text>
+        <TouchableOpacity onPress={requestPermission}>
+          <Text>Grant permission</Text>
+        </TouchableOpacity>
+      </View>
+    );
   }
 
   const submitPhoto = () => {
@@ -154,7 +159,7 @@ export default function CameraScreen({ navigation }) {
           </TouchableOpacity>
         </View>
       ) : (
-        <Camera style={styles.camera} ref={cameraRef}>
+        <CameraView style={styles.camera} ref={cameraRef}>
           <View style={styles.overlay} />
           <View style={styles.rectangleContainer}>
             <View style={styles.tab}>
@@ -177,7 +182,7 @@ export default function CameraScreen({ navigation }) {
               <Ionicons name="arrow-forward" size={24} color="white" />
             </TouchableOpacity>
           </View>
-        </Camera>
+        </CameraView>
       )}
     </View>
   );

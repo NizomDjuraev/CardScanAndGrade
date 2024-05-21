@@ -9,13 +9,12 @@ import {
   TextInput,
   Alert,
   Modal,
-  FlatList
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { getAuth, getIdToken } from "firebase/auth";
 import RNPickerSelect from "react-native-picker-select";
-import { useCollections } from '../hooks/useCollections';
+import { useCollections } from "../hooks/useCollections";
 
 export default function ScoreScreen({ navigation }) {
   const route = useRoute();
@@ -211,10 +210,9 @@ export default function ScoreScreen({ navigation }) {
 
   const handleCloseModal = () => {
     setModalVisible(false);
-    
+
     //TODO Implement add card to collections table after modal is closed when API scans card properly
   };
-
 
   return (
     <View style={styles.container}>
@@ -545,13 +543,15 @@ export default function ScoreScreen({ navigation }) {
 
           {/*add to collection button and modal*/}
           <TouchableOpacity
-          onPress={handleAddToCollectionButtonClick}
-          style={styles.shareCollectionButtons}
-        >
-          <Text style={styles.shareCollectionButtonsText}>Add to Collection</Text>
-        </TouchableOpacity>
-        
-        <Modal
+            onPress={handleAddToCollectionButtonClick}
+            style={styles.shareCollectionButtons}
+          >
+            <Text style={styles.shareCollectionButtonsText}>
+              Add to Collection
+            </Text>
+          </TouchableOpacity>
+
+          <Modal
             animationType="slide"
             transparent={true}
             visible={modalVisible}
@@ -563,7 +563,7 @@ export default function ScoreScreen({ navigation }) {
                   onPress={handleCloseModal}
                   style={modalStyles.closeButton}
                 >
-                <Text style={modalStyles.closeButtonText}>X</Text>
+                  <Text style={modalStyles.closeButtonText}>X</Text>
                 </TouchableOpacity>
                 <Text style={modalStyles.modalText}>Select a Collection</Text>
                 {loading ? (
@@ -573,14 +573,14 @@ export default function ScoreScreen({ navigation }) {
                     onValueChange={(value) => setSelectedCollection(value)}
                     items={collections.map((collection) => ({
                       label: collection.collection,
-                      value: collection.id
+                      value: collection.id,
                     }))}
                     placeholder={{ label: "Select a collection", value: null }}
                     style={{
                       inputIOS: modalStyles.pickerContainer,
                       iconContainer: {
-                          top: 10,
-                          right: 12,
+                        top: 10,
+                        right: 12,
                       },
                     }}
                   />
@@ -589,10 +589,8 @@ export default function ScoreScreen({ navigation }) {
                   style={[modalStyles.button, modalStyles.buttonClose]}
                   onPress={() => {
                     handleCloseModal();
-                    Alert.alert(
-                      "Added to Collection"
-                    )
-                    console.log('Item added to:', selectedCollection);
+                    Alert.alert("Added to Collection");
+                    console.log("Item added to:", selectedCollection);
                   }}
                 >
                   <Text style={modalStyles.textStyle}>Confirm</Text>
@@ -794,7 +792,7 @@ const modalStyles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalView: {
     margin: 20,
@@ -802,17 +800,17 @@ const modalStyles = StyleSheet.create({
     borderRadius: 20,
     padding: 35,
     alignItems: "center",
-    width: '80%'
+    width: "80%",
   },
   closeButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 10,
     left: 10,
     padding: 10,
-    backgroundColor: 'white', 
+    backgroundColor: "white",
   },
   closeButtonText: {
-    color: 'black',
+    color: "black",
     fontSize: 16,
   },
   button: {
@@ -821,7 +819,7 @@ const modalStyles = StyleSheet.create({
     borderColor: "black",
     padding: 12,
     marginTop: 30,
-    width: '100%',
+    width: "100%",
     backgroundColor: "#1D9DB9",
   },
   buttonClose: {
@@ -831,12 +829,12 @@ const modalStyles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
-    textAlign: "center"
+    textAlign: "center",
   },
   modalText: {
     marginBottom: 30,
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     textAlign: "center",
   },
   pickerContainer: {
@@ -845,7 +843,6 @@ const modalStyles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 10,
     marginBottom: 10,
-    width: '100%'
+    width: "100%",
   },
 });
-
