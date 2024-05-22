@@ -296,7 +296,7 @@ export default function ScoreScreen({ navigation }) {
                 <Text style={styles.sideBySideBoxText}>
                   {cardInfo && cardInfo.card && cardInfo.card.year !== null
                     ? cardInfo.card.year
-                    : "null"}
+                    : ""}
                 </Text>
               )}
             </View>
@@ -325,7 +325,7 @@ export default function ScoreScreen({ navigation }) {
                 <Text style={styles.sideBySideBoxText}>
                   {cardInfo && cardInfo.card && cardInfo.card.brand !== null
                     ? cardInfo.card.brand
-                    : "null"}
+                    : ""}
                 </Text>
               )}
             </View>
@@ -354,7 +354,7 @@ export default function ScoreScreen({ navigation }) {
                 <Text style={styles.sideBySideBoxText}>
                   {cardInfo && cardInfo.card && cardInfo.card.set !== null
                     ? cardInfo.card.set
-                    : "null"}
+                    : ""}
                 </Text>
               )}
             </View>
@@ -387,7 +387,7 @@ export default function ScoreScreen({ navigation }) {
                   cardInfo.card &&
                   cardInfo.card.cardNumber !== null
                     ? cardInfo.card.cardNumber
-                    : "null"}
+                    : ""}
                 </Text>
               )}
             </View>
@@ -418,7 +418,7 @@ export default function ScoreScreen({ navigation }) {
                 <Text style={styles.sideBySideBoxText}>
                   {cardInfo && cardInfo.card && cardInfo.card.variation !== null
                     ? cardInfo.card.variation
-                    : "null"}
+                    : ""}
                 </Text>
               )}
             </View>
@@ -449,7 +449,7 @@ export default function ScoreScreen({ navigation }) {
                 <Text style={styles.sideBySideBoxText}>
                   {cardInfo && cardInfo.card && cardInfo.card.edgeScore !== null
                     ? cardInfo.card.edgeScore
-                    : "null"}
+                    : ""}
                 </Text>
               )}
             </View>
@@ -482,7 +482,7 @@ export default function ScoreScreen({ navigation }) {
                   cardInfo.card &&
                   cardInfo.card.cornerScore !== null
                     ? cardInfo.card.cornerScore
-                    : "null"}
+                    : ""}
                 </Text>
               )}
             </View>
@@ -515,7 +515,7 @@ export default function ScoreScreen({ navigation }) {
                   cardInfo.card &&
                   cardInfo.card.frontCenteringScore !== null
                     ? cardInfo.card.frontCenteringScore
-                    : "null"}
+                    : ""}
                 </Text>
               )}
             </View>
@@ -527,7 +527,7 @@ export default function ScoreScreen({ navigation }) {
             <Text style={styles.informationText}>
               {cardInfo && cardInfo.card && cardInfo.card.details !== null
                 ? cardInfo.card.details
-                : "null"}
+                : ""}
             </Text>
           </View>
         </ScrollView>

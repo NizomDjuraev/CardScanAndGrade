@@ -5,7 +5,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { auth } from "../firebaseConfig";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 
-
 export default function SignInScreen({ navigation }) {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
@@ -41,7 +40,7 @@ export default function SignInScreen({ navigation }) {
     <View style={styles.loginView}>
       <View style={styles.loginInputView}>
         <View style={styles.iconContainer}>
-          <Ionicons name="ios-mail-outline" size={20} color="#fff" />
+          <Ionicons name="mail-outline" size={20} color="#fff" />
         </View>
         <TextInput
           autoCapitalize="none"

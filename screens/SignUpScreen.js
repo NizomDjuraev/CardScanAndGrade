@@ -10,7 +10,6 @@ import {
 } from "firebase/auth";
 import { createCollection } from "../backend/server";
 
-
 export default function SignUpScreen({ navigation }) {
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
@@ -52,8 +51,7 @@ export default function SignUpScreen({ navigation }) {
         user.displayName.split(" ")[0],
         user.displayName.split(" ")[1] || "",
         "Default Collection"
-      )
-
+      );
     } catch (error) {
       console.log("Error signing up:", error.message);
     }
@@ -65,7 +63,7 @@ export default function SignUpScreen({ navigation }) {
     <View style={styles.loginView}>
       <View style={styles.loginInputView}>
         <View style={styles.iconContainer}>
-          <Ionicons name="ios-person-outline" size={20} color="#fff" />
+          <Ionicons name="person-outline" size={20} color="#fff" />
         </View>
         <TextInput
           value={firstName}
@@ -78,7 +76,7 @@ export default function SignUpScreen({ navigation }) {
 
       <View style={styles.loginInputView}>
         <View style={styles.iconContainer}>
-          <Ionicons name="ios-person-outline" size={20} color="#fff" />
+          <Ionicons name="person-outline" size={20} color="#fff" />
         </View>
         <TextInput
           value={lastName}
@@ -91,7 +89,7 @@ export default function SignUpScreen({ navigation }) {
 
       <View style={styles.loginInputView}>
         <View style={styles.iconContainer}>
-          <Ionicons name="ios-mail-outline" size={20} color="#fff" />
+          <Ionicons name="mail-outline" size={20} color="#fff" />
         </View>
         <TextInput
           autoCapitalize="none"
