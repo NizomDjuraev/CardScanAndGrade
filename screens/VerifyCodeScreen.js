@@ -3,8 +3,18 @@ import { Text, View } from "react-native";
 import { styles } from "../components/Styles";
 import { auth } from "../firebaseConfig";
 
+/**
+* VerifyCodeScreen component that checks if the user's email is verified and navigates to the Home screen if verified.
+* @function VerifyCodeScreen
+* @param {Object} navigation - Navigation prop for screen transitions.
+* @returns {Object} The Verify Code screen component.
+*/
 export default function VerifyCodeScreen({ navigation }) {
   useEffect(() => {
+    /**
+    * Checks if the user's email is verified. If verified, navigates to the Home screen. Otherwise, listens for changes in the user's authentication state.
+    * @function useEffect
+    */
     // Check if the user's email is already verified
     const isEmailVerified = auth.currentUser.emailVerified;
 

@@ -26,6 +26,12 @@ const Tab = createBottomTabNavigator();
 
 const Stack = createNativeStackNavigator();
 
+/**
+* Navigation component sets up the app's navigation using React Navigation.
+* It includes a stack navigator for authentication and main application screens.
+* @function Navigation
+* @returns {Object} The navigation component.
+*/
 export default function Navigation() {
   return (
     <NavigationContainer linking={LinkingConfiguration}>
@@ -67,6 +73,12 @@ export default function Navigation() {
   );
 }
 
+/**
+* MainTabs component defines the main tab navigation interface.
+* It includes tabs for Home, Camera, Settings, and Profile screens with custom icons and styling.
+* @function MainTabs
+* @returns {Object} The main tab navigation component.
+*/
 function MainTabs() {
   return (
     <Tab.Navigator
@@ -141,6 +153,12 @@ function MainTabs() {
   );
 }
 
+/**
+* CameraStack component sets up a stack navigator for camera-related screens.
+* It includes screens for Camera, Adjust Borders, Annotate, Score, and Export.
+* @function CameraStack
+* @returns {Object} The camera stack navigation component.
+*/
 function CameraStack() {
   return (
     <Stack.Navigator

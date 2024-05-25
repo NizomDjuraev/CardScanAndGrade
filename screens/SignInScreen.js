@@ -5,10 +5,22 @@ import { Ionicons } from "@expo/vector-icons";
 import { auth } from "../firebaseConfig";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 
+/**
+* SignInScreen component for user authentication. It provides fields for email and password, and manages the sign-in process.
+* @function SignInScreen
+* @param {Object} navigation - Navigation prop for screen transitions.
+* @returns {Object} The Sign In screen component.
+*/
 export default function SignInScreen({ navigation }) {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
 
+  /**
+  * Handles the sign-in process. Checks if the user's email is verified before signing in.
+  * @async
+  * @function onSignInPress
+  * @returns {Promise<void>} A promise that resolves when the sign-in process is complete.
+  */
   const onSignInPress = async () => {
     try {
       // Sign in to trigger emailVerified to update
@@ -32,7 +44,16 @@ export default function SignInScreen({ navigation }) {
     }
   };
 
+  /**
+  * Navigates to the SignUp screen.
+  * @function onSignUpPress
+  */
   const onSignUpPress = () => navigation.replace("SignUp");
+  
+  /**
+  * Navigates to the ForgotPasswordScreen.
+  * @function onForgotPasswordPress
+  */
   const onForgotPasswordPress = () =>
     navigation.navigate("ForgotPasswordScreen");
 

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: screens/SignInScreen.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: screens/SignInScreen.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState } from "react";
+import { Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
+import { styles } from "../components/Styles";
+import { Ionicons } from "@expo/vector-icons";
+import { auth } from "../firebaseConfig";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+
+/**
+* SignInScreen component for user authentication. It provides fields for email and password, and manages the sign-in process.
+* @function SignInScreen
+* @param {Object} navigation - Navigation prop for screen transitions.
+* @returns {Object} The Sign In screen component.
+*/
+export default function SignInScreen({ navigation }) {
+  const [emailAddress, setEmailAddress] = useState("");
+  const [password, setPassword] = useState("");
+
+  /**
+  * Handles the sign-in process. Checks if the user's email is verified before signing in.
+  * @async
+  * @function onSignInPress
+  * @returns {Promise&lt;void>} A promise that resolves when the sign-in process is complete.
+  */
+  const onSignInPress = async () => {
+    try {
+      // Sign in to trigger emailVerified to update
+      await signInWithEmailAndPassword(auth, emailAddress, password);
+      // Check if the user's email is verified before signing in
+      const user = auth.currentUser;
+      if (user &amp;&amp; user.emailVerified) {
+        // Sign in successful and verified, navigate to home screen
+        navigation.replace("MainTabs");
+      } else {
+        // If email is not verified, show alert and return
+        Alert.alert(
+          "Email Verification Required",
+          "Please verify your email before signing in."
+        );
+        return;
+      }
+    } catch (error) {
+      // Handle error
+      console.log("Error signing in:", error.message);
+    }
+  };
+
+  /**
+  * Navigates to the SignUp screen.
+  * @function onSignUpPress
+  */
+  const onSignUpPress = () => navigation.replace("SignUp");
+  
+  /**
+  * Navigates to the ForgotPasswordScreen.
+  * @function onForgotPasswordPress
+  */
+  const onForgotPasswordPress = () =>
+    navigation.navigate("ForgotPasswordScreen");
+
+  return (
+    &lt;View style={styles.loginView}>
+      &lt;View style={styles.loginInputView}>
+        &lt;View style={styles.iconContainer}>
+          &lt;Ionicons name="mail-outline" size={20} color="#fff" />
+        &lt;/View>
+        &lt;TextInput
+          autoCapitalize="none"
+          value={emailAddress}
+          style={styles.loginTextInput}
+          placeholder="Email..."
+          placeholderTextColor="#fff"
+          onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
+        />
+      &lt;/View>
+
+      &lt;View style={styles.loginInputView}>
+        &lt;View style={styles.iconContainer}>
+          &lt;Ionicons name="lock-closed-outline" size={20} color="#fff" />
+        &lt;/View>
+        &lt;TextInput
+          value={password}
+          style={styles.loginTextInput}
+          placeholder="Password..."
+          placeholderTextColor="#fff"
+          secureTextEntry={true}
+          onChangeText={(password) => setPassword(password)}
+        />
+      &lt;/View>
+
+      &lt;TouchableOpacity style={styles.loginButton} onPress={onSignInPress}>
+        &lt;Text style={styles.loginButtonText}>Sign in&lt;/Text>
+      &lt;/TouchableOpacity>
+
+      &lt;TouchableOpacity
+        style={styles.forgotPasswordLink}
+        onPress={onForgotPasswordPress}
+      >
+        &lt;Text style={styles.forgotPasswordText}>Forgot password?&lt;/Text>
+      &lt;/TouchableOpacity>
+
+      &lt;View style={styles.loginFooter}>
+        &lt;Text style={{ color: "#fff" }}>Don't have an account?&lt;/Text>
+
+        &lt;TouchableOpacity
+          style={styles.secondaryButton}
+          onPress={onSignUpPress}
+        >
+          &lt;Text style={styles.secondaryButtonText}>Sign up&lt;/Text>
+        &lt;/TouchableOpacity>
+      &lt;/View>
+    &lt;/View>
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AdjustBordersScreen">AdjustBordersScreen</a></li><li><a href="global.html#AnnotateScreen">AnnotateScreen</a></li><li><a href="global.html#CameraScreen">CameraScreen</a></li><li><a href="global.html#CameraStack">CameraStack</a></li><li><a href="global.html#ExportScreen">ExportScreen</a></li><li><a href="global.html#ForgotPasswordScreen">ForgotPasswordScreen</a></li><li><a href="global.html#HomeScreen">HomeScreen</a></li><li><a href="global.html#MainTabs">MainTabs</a></li><li><a href="global.html#MyProfileScreen">MyProfileScreen</a></li><li><a href="global.html#Navigation">Navigation</a></li><li><a href="global.html#OAuthButtons">OAuthButtons</a></li><li><a href="global.html#ScoreScreen">ScoreScreen</a></li><li><a href="global.html#SettingsScreen">SettingsScreen</a></li><li><a href="global.html#SignInScreen">SignInScreen</a></li><li><a href="global.html#SignUpScreen">SignUpScreen</a></li><li><a href="global.html#VerifyCodeScreen">VerifyCodeScreen</a></li><li><a href="global.html#changeCircleColor">changeCircleColor</a></li><li><a href="global.html#createCollection">createCollection</a></li><li><a href="global.html#edgeResponderBottom">edgeResponderBottom</a></li><li><a href="global.html#edgeResponderLeft">edgeResponderLeft</a></li><li><a href="global.html#edgeResponderRight">edgeResponderRight</a></li><li><a href="global.html#edgeResponderTop">edgeResponderTop</a></li><li><a href="global.html#fetchCardInfo">fetchCardInfo</a></li><li><a href="global.html#fetchPresignedUrl">fetchPresignedUrl</a></li><li><a href="global.html#filteredCollections">filteredCollections</a></li><li><a href="global.html#getCollections">getCollections</a></li><li><a href="global.html#getInitials">getInitials</a></li><li><a href="global.html#handleAddToCollectionButtonClick">handleAddToCollectionButtonClick</a></li><li><a href="global.html#handleBack">handleBack</a></li><li><a href="global.html#handleCloseModal">handleCloseModal</a></li><li><a href="global.html#handleDeleteAccount">handleDeleteAccount</a></li><li><a href="global.html#handleEditButtonClick">handleEditButtonClick</a></li><li><a href="global.html#handleExitButtonClick">handleExitButtonClick</a></li><li><a href="global.html#handlePanResponderMove">handlePanResponderMove</a></li><li><a href="global.html#handleResetPassword">handleResetPassword</a></li><li><a href="global.html#handleShare">handleShare</a></li><li><a href="global.html#handleShareButtonClick">handleShareButtonClick</a></li><li><a href="global.html#handleSignOutPress">handleSignOutPress</a></li><li><a href="global.html#loadResourcesAndDataAsync">loadResourcesAndDataAsync</a></li><li><a href="global.html#nextButton">nextButton</a></li><li><a href="global.html#onCreateCollectionPress">onCreateCollectionPress</a></li><li><a href="global.html#onForgotPasswordPress">onForgotPasswordPress</a></li><li><a href="global.html#onPress">onPress</a></li><li><a href="global.html#onSignInPress">onSignInPress</a></li><li><a href="global.html#onSignUpPress">onSignUpPress</a></li><li><a href="global.html#openCameraRoll">openCameraRoll</a></li><li><a href="global.html#panResponderBottom">panResponderBottom</a></li><li><a href="global.html#panResponderLeft">panResponderLeft</a></li><li><a href="global.html#panResponderRight">panResponderRight</a></li><li><a href="global.html#panResponderTop">panResponderTop</a></li><li><a href="global.html#promptForCredentials">promptForCredentials</a></li><li><a href="global.html#reloadCollections">reloadCollections</a></li><li><a href="global.html#retakePicture">retakePicture</a></li><li><a href="global.html#submitCardForGrading">submitCardForGrading</a></li><li><a href="global.html#submitPhoto">submitPhoto</a></li><li><a href="global.html#takePicture">takePicture</a></li><li><a href="global.html#undoButton">undoButton</a></li><li><a href="global.html#updateSearchQuery">updateSearchQuery</a></li><li><a href="global.html#useCachedResources">useCachedResources</a></li><li><a href="global.html#useCollections">useCollections</a></li><li><a href="global.html#useEffect">useEffect</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sat May 25 2024 16:17:20 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

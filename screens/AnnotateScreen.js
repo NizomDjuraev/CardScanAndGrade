@@ -4,6 +4,13 @@ import Svg, { Circle } from 'react-native-svg';
 import { useRoute } from '@react-navigation/native';
 import RNPickerSelect from "react-native-picker-select";
 
+/**
+* AnnotateScreen component allows users to annotate an image by drawing circles on it.
+* It supports pan gestures for drawing and resizing the circles.
+* @function AnnotateScreen
+* @param {Object} navigation - Navigation prop for screen transitions.
+* @returns {Object} The Annotate screen component.
+*/
 export default function AnnotateScreen({ navigation }) {
   const route = useRoute();
   const [imageUri, setImageUri] = useState("");
@@ -18,6 +25,12 @@ export default function AnnotateScreen({ navigation }) {
   const [circleColor, setCircleColor] = useState("black"); 
   const [buttonPressed, setButtonPressed] = useState(false); 
 
+  /**
+  * Handles the movement of the pan responder to resize the current circle.
+  * @function handlePanResponderMove
+  * @param {Object} event - The pan responder event.
+  * @param {Object} gesture - The pan responder gesture state.
+  */
   const handlePanResponderMove = (event, gesture) => {
     if (currentCircle) {
       const radius = Math.sqrt(
@@ -55,17 +68,30 @@ export default function AnnotateScreen({ navigation }) {
     },
   });
 
+  /**
+  * Changes the color of the circles.
+  * @function changeCircleColor
+  * @param {string} color - The new color for the circles.
+  */
   const changeCircleColor = (color) => {
     setButtonPressed(true);
     setCircleColor(color);
   };
 
+  /**
+  * Undoes the last drawn circle.
+  * @function undoButton
+  */
   const undoButton = () => {
     const undoneCircles = [...circles];
     undoneCircles.pop();
     setCircles(undoneCircles);
   }
 
+  /**
+  * Navigates to the Score screen with the annotated image data.
+  * @function nextButton
+  */
   const nextButton = async () => {
     navigation.navigate("Score", { imageData: { uri: imageUri } })
   }

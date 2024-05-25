@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: screens/AnnotateScreen.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: screens/AnnotateScreen.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useEffect, useState } from 'react';
+import { View, Image, StyleSheet, PanResponder, Text, TouchableOpacity, Dimensions } from 'react-native';
+import Svg, { Circle } from 'react-native-svg';
+import { useRoute } from '@react-navigation/native';
+import RNPickerSelect from "react-native-picker-select";
+
+/**
+* AnnotateScreen component allows users to annotate an image by drawing circles on it.
+* It supports pan gestures for drawing and resizing the circles.
+* @function AnnotateScreen
+* @param {Object} navigation - Navigation prop for screen transitions.
+* @returns {Object} The Annotate screen component.
+*/
+export default function AnnotateScreen({ navigation }) {
+  const route = useRoute();
+  const [imageUri, setImageUri] = useState("");
+  useEffect(() => {
+    if (route.params &amp;&amp; route.params.imageData.uri) {
+      setImageUri(route.params.imageData.uri);
+    }
+  }, [route.params]);
+
+  const [circles, setCircles] = useState([]);
+  const [currentCircle, setCurrentCircle] = useState(null);
+  const [circleColor, setCircleColor] = useState("black"); 
+  const [buttonPressed, setButtonPressed] = useState(false); 
+
+  /**
+  * Handles the movement of the pan responder to resize the current circle.
+  * @function handlePanResponderMove
+  * @param {Object} event - The pan responder event.
+  * @param {Object} gesture - The pan responder gesture state.
+  */
+  const handlePanResponderMove = (event, gesture) => {
+    if (currentCircle) {
+      const radius = Math.sqrt(
+        Math.pow(gesture.moveX - currentCircle.startX, 2) +
+          Math.pow(gesture.moveY - currentCircle.startY, 2)
+      );
+      const updatedCircles = circles.map((circle) =>
+        circle.id === currentCircle.id ? { ...circle, r: radius } : circle
+      );
+      setCircles(updatedCircles);
+    }
+  };
+
+  const panResponder = PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponder: () => true,
+    onPanResponderGrant: (event, gesture) => {
+      const touchX = event.nativeEvent.locationX;
+      const touchY = event.nativeEvent.locationY;
+      const newCircle = {
+        id: Date.now(),
+        startX: touchX,
+        startY: touchY,
+        cx: touchX,
+        cy: touchY,
+        r: gesture.dx / 2,
+        color: buttonPressed ? circleColor : "transparent",
+      };
+      setCurrentCircle(newCircle);
+      setCircles([...circles, newCircle]);
+    },
+    onPanResponderMove: handlePanResponderMove,
+    onPanResponderRelease: () => {
+      setCurrentCircle(null);
+    },
+  });
+
+  /**
+  * Changes the color of the circles.
+  * @function changeCircleColor
+  * @param {string} color - The new color for the circles.
+  */
+  const changeCircleColor = (color) => {
+    setButtonPressed(true);
+    setCircleColor(color);
+  };
+
+  /**
+  * Undoes the last drawn circle.
+  * @function undoButton
+  */
+  const undoButton = () => {
+    const undoneCircles = [...circles];
+    undoneCircles.pop();
+    setCircles(undoneCircles);
+  }
+
+  /**
+  * Navigates to the Score screen with the annotated image data.
+  * @function nextButton
+  */
+  const nextButton = async () => {
+    navigation.navigate("Score", { imageData: { uri: imageUri } })
+  }
+
+  return (
+    &lt;View style={styles.container}>
+      {imageUri ? (
+        &lt;View style={styles.imageContainer}>
+          &lt;Image
+            source={{ uri: imageUri }}
+            style={styles.image}
+            resizeMode="contain"
+          />
+
+        &lt;Svg height="100%" width="100%" style={styles.svgContainer}>
+          {circles.map((circle) => (
+            &lt;Circle
+              key={circle.id}
+              cx={circle.cx}
+              cy={circle.cy}
+              r={circle.r / 5}
+              fill='transparent'
+              stroke={circle.color}
+              strokeWidth={2}
+            />
+          ))}
+        &lt;/Svg>
+
+          &lt;View style={styles.gestureContainer} {...panResponder.panHandlers} />
+        &lt;/View>
+      ) : null}
+
+      &lt;View style={styles.buttonContainer}>
+        &lt;RNPickerSelect
+        onValueChange={(value) => changeCircleColor(value)}
+        items={[
+          { label: "Crease Red", value: "red" },
+          { label: "Dent Green", value: "green" },
+          { label: "Focus Blue", value: "blue" },
+          { label: "Gum Brown", value: "brown" },
+          { label: "Hole Black", value: "black"},
+          { label: "Mark Yellow", value: "yellow"},
+          { label: "Paper Loss Purple", value: "purple"},
+          { label: "Scratch Pink", value: "pink"},
+          { label: "Stain Orange", value: "orange"},
+          { label: "Tear Gray", value: "gray"},
+          { label: "Wax Teal", value: "teal"},
+          { label: "Other Cyan", value: "cyan"}
+          ]}
+          style={{
+            inputAndroid: {
+              height: 50,
+              width: 200,
+              backgroundColor: "white",
+              paddingHorizontal: 10,
+              borderRadius: 4,
+            },
+            inputIOS: {
+              height: 50,
+              width: 200,
+              backgroundColor: "white",
+              paddingHorizontal: 10,
+              borderRadius: 4,
+            },
+          }}
+        />
+        &lt;TouchableOpacity onPress={undoButton} style={styles.button}>
+          &lt;Text style={styles.buttonText}>undo&lt;/Text>
+        &lt;/TouchableOpacity>
+        &lt;TouchableOpacity onPress={nextButton} style={styles.button}>
+          &lt;Text style={styles.buttonText}>Next&lt;/Text>
+        &lt;/TouchableOpacity>
+      &lt;/View>
+    &lt;/View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 50,
+    alignItems: "center",
+  },
+  imageContainer: {
+    width: 300,
+    height: 300,
+    position: 'center',
+    backgroundColor: "white",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+  },
+  svgContainer: {
+    ...StyleSheet.absoluteFillObject,
+    overflow: "hidden",
+  },
+  gestureContainer: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    marginTop: 20,
+  },
+  button: {
+    padding: 10,
+    backgroundColor: "black",
+    marginRight: 10,
+  },
+  buttonText: {
+    color: "white",
+    textAlign: "center",
+  },
+  next: {
+    padding: 10,
+    backgroundColor: "black",
+  },
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AdjustBordersScreen">AdjustBordersScreen</a></li><li><a href="global.html#AnnotateScreen">AnnotateScreen</a></li><li><a href="global.html#CameraScreen">CameraScreen</a></li><li><a href="global.html#CameraStack">CameraStack</a></li><li><a href="global.html#ExportScreen">ExportScreen</a></li><li><a href="global.html#ForgotPasswordScreen">ForgotPasswordScreen</a></li><li><a href="global.html#HomeScreen">HomeScreen</a></li><li><a href="global.html#MainTabs">MainTabs</a></li><li><a href="global.html#MyProfileScreen">MyProfileScreen</a></li><li><a href="global.html#Navigation">Navigation</a></li><li><a href="global.html#OAuthButtons">OAuthButtons</a></li><li><a href="global.html#ScoreScreen">ScoreScreen</a></li><li><a href="global.html#SettingsScreen">SettingsScreen</a></li><li><a href="global.html#SignInScreen">SignInScreen</a></li><li><a href="global.html#SignUpScreen">SignUpScreen</a></li><li><a href="global.html#VerifyCodeScreen">VerifyCodeScreen</a></li><li><a href="global.html#changeCircleColor">changeCircleColor</a></li><li><a href="global.html#createCollection">createCollection</a></li><li><a href="global.html#edgeResponderBottom">edgeResponderBottom</a></li><li><a href="global.html#edgeResponderLeft">edgeResponderLeft</a></li><li><a href="global.html#edgeResponderRight">edgeResponderRight</a></li><li><a href="global.html#edgeResponderTop">edgeResponderTop</a></li><li><a href="global.html#fetchCardInfo">fetchCardInfo</a></li><li><a href="global.html#fetchPresignedUrl">fetchPresignedUrl</a></li><li><a href="global.html#filteredCollections">filteredCollections</a></li><li><a href="global.html#getCollections">getCollections</a></li><li><a href="global.html#getInitials">getInitials</a></li><li><a href="global.html#handleAddToCollectionButtonClick">handleAddToCollectionButtonClick</a></li><li><a href="global.html#handleBack">handleBack</a></li><li><a href="global.html#handleCloseModal">handleCloseModal</a></li><li><a href="global.html#handleDeleteAccount">handleDeleteAccount</a></li><li><a href="global.html#handleEditButtonClick">handleEditButtonClick</a></li><li><a href="global.html#handleExitButtonClick">handleExitButtonClick</a></li><li><a href="global.html#handlePanResponderMove">handlePanResponderMove</a></li><li><a href="global.html#handleResetPassword">handleResetPassword</a></li><li><a href="global.html#handleShare">handleShare</a></li><li><a href="global.html#handleShareButtonClick">handleShareButtonClick</a></li><li><a href="global.html#handleSignOutPress">handleSignOutPress</a></li><li><a href="global.html#loadResourcesAndDataAsync">loadResourcesAndDataAsync</a></li><li><a href="global.html#nextButton">nextButton</a></li><li><a href="global.html#onCreateCollectionPress">onCreateCollectionPress</a></li><li><a href="global.html#onForgotPasswordPress">onForgotPasswordPress</a></li><li><a href="global.html#onPress">onPress</a></li><li><a href="global.html#onSignInPress">onSignInPress</a></li><li><a href="global.html#onSignUpPress">onSignUpPress</a></li><li><a href="global.html#openCameraRoll">openCameraRoll</a></li><li><a href="global.html#panResponderBottom">panResponderBottom</a></li><li><a href="global.html#panResponderLeft">panResponderLeft</a></li><li><a href="global.html#panResponderRight">panResponderRight</a></li><li><a href="global.html#panResponderTop">panResponderTop</a></li><li><a href="global.html#promptForCredentials">promptForCredentials</a></li><li><a href="global.html#reloadCollections">reloadCollections</a></li><li><a href="global.html#retakePicture">retakePicture</a></li><li><a href="global.html#submitCardForGrading">submitCardForGrading</a></li><li><a href="global.html#submitPhoto">submitPhoto</a></li><li><a href="global.html#takePicture">takePicture</a></li><li><a href="global.html#undoButton">undoButton</a></li><li><a href="global.html#updateSearchQuery">updateSearchQuery</a></li><li><a href="global.html#useCachedResources">useCachedResources</a></li><li><a href="global.html#useCollections">useCollections</a></li><li><a href="global.html#useEffect">useEffect</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sat May 25 2024 16:17:20 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

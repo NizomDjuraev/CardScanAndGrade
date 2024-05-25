@@ -8,6 +8,13 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
+/**
+* SettingsScreen component that displays various settings options for the user. 
+* Each setting option is represented by a touchable item with an icon, text, and a forward arrow.
+* @function SettingsScreen
+* @param {Object} navigation - Navigation prop for screen transitions.
+* @returns {Object} The Settings screen component.
+*/
 export default function SettingsScreen({ navigation }) {
   return (
     <View style={styles.container}>

@@ -14,6 +14,12 @@ import { useCollections } from "../hooks/useCollections";
 // import { useUser } from "@clerk/clerk-expo";
 import { auth } from "../firebaseConfig";
 
+/**
+* HomeScreen component displays a user's collections and allows for searching and creating new collections. 
+* It utilizes user authentication and collection management hooks.
+* @function HomeScreen
+* @returns {Object} The Home screen component.
+*/
 export default function HomeScreen() {
   const [user, setUser ] = useState(null);
 
@@ -29,12 +35,24 @@ export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
+  /**
+  * Filters collections based on the search query. 
+  * @function filteredCollections
+  * @returns {Array} Filtered list of collections.
+  */
   const filteredCollections = collections.filter((collection) => {
     return collection.collection
       .toLowerCase()
       .startsWith(searchQuery.toLowerCase());
   });
 
+  /**
+  * Creates a new collection for the user and reloads the collection list.
+  * Requires the user to be defined and collectionName to be not empty.
+  * @async
+  * @function onCreateCollectionPress
+  * @returns {Promise<void>} A promise that resolves once the collection has been created and the list reloaded.
+  */
   const onCreateCollectionPress = async () => {
     if (collectionName && user) {
       await createCollection(
@@ -48,6 +66,11 @@ export default function HomeScreen() {
     }
   };
 
+  /**
+  * Updates the search query state.
+  * @function updateSearchQuery
+  * @param {string} query - The current text in the search input.
+  */
   const updateSearchQuery = (query) => {
     setSearchQuery(query);
   };
