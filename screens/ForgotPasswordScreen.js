@@ -11,10 +11,21 @@ import { auth } from "../firebaseConfig";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 
+/**
+* ForgotPasswordScreen component for handling the password reset process. Allows users to enter their email to receive a password reset link.
+* @function ForgotPasswordScreen
+* @returns {Object} The Forgot Password screen component.
+*/
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState("");
   const navigation = useNavigation();
 
+  /**
+  * Sends a password reset email to the provided email address. Alerts the user about the status and navigates back to the SignIn screen upon success.
+  * @async
+  * @function handleResetPassword
+  * @returns {Promise<void>} A promise that resolves when the password reset email is sent.
+  */
   const handleResetPassword = () => {
     sendPasswordResetEmail(auth, email)
       .then(() => {

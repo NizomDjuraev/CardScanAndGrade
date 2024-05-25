@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: screens/CameraScreen.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: screens/CameraScreen.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect, useRef } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+  PanResponder,
+} from "react-native";
+import { CameraView, useCameraPermissions } from "expo-camera";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
+
+/**
+* CameraScreen component for capturing and selecting photos. Manages camera permissions, captures photos, allows photo retaking, and accesses the camera roll.
+* @function CameraScreen
+* @param {Object} navigation - Navigation prop for screen transitions.
+* @returns {Object} The Camera screen component.
+*/
+export default function CameraScreen({ navigation }) {
+  const [capturedPhoto, setCapturedPhoto] = useState(null);
+  const cameraRef = useRef(null);
+  const [permission, requestPermission] = useCameraPermissions();
+  const [corners, setCorners] = useState({
+    topLeft: { x: 40, y: 110 },
+    topRight: { x: 40, y: 110 },
+    bottomLeft: { x: 40, y: 110 },
+    bottomRight: { x: 40, y: 110 },
+  });
+
+  useEffect(() => {
+    const createPanResponder = (cornerName) =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onPanResponderMove: (event, gestureState) => {
+          const newCorners = { ...corners };
+          newCorners[cornerName] = {
+            x: newCorners[cornerName].x + gestureState.dx,
+            y: newCorners[cornerName].y + gestureState.dy,
+          };
+          setCorners(newCorners);
+        },
+      });
+
+    const topLeftResponder = createPanResponder("topLeft");
+    const topRightResponder = createPanResponder("topRight");
+    const bottomLeftResponder = createPanResponder("bottomLeft");
+    const bottomRightResponder = createPanResponder("bottomRight");
+  }, []);
+
+  /**
+  * Captures a photo using the camera API, then manipulates the image.
+  * @async
+  * @function takePicture
+  * @returns {Promise&lt;void>} Resolves once the photo has been captured.
+  */
+  const takePicture = async () => {
+    if (cameraRef.current) {
+      const photo = await cameraRef.current.takePictureAsync();
+      const croppedPhoto = await ImageManipulator.manipulateAsync(
+        photo.uri,
+        [
+          {
+            crop: {
+              originX: 0,
+              originY: 0,
+              width: photo.width,
+              height: photo.height,
+            },
+          },
+        ],
+        { compress: 1, format: ImageManipulator.SaveFormat.PNG }
+      );
+      setCapturedPhoto(croppedPhoto.uri);
+      navigation.navigate("Adjust Borders", {
+        imageData: { uri: croppedPhoto.uri },
+      });
+    }
+  };
+
+  /**
+  * Resets the captured photo state, allowing the user to take another photo.
+  * @function retakePicture
+  */
+  const retakePicture = () => {
+    setCapturedPhoto(null);
+  };
+
+  /**
+  * Requests permission to access the camera roll and allows the user to pick a photo. Displays an alert if access is denied.
+  * @async
+  * @function openCameraRoll
+  * @returns {Promise&lt;void>} Resolves after the user has selected a photo or the action has been cancelled.
+  */
+  const openCameraRoll = async () => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      alert("This app doesn't have permission to access your camera roll");
+      return;
+    }
+
+    const pickerResult = await ImagePicker.launchImageLibraryAsync();
+
+    if (pickerResult.canceled === true) {
+      return;
+    }
+
+    if (pickerResult.assets &amp;&amp; pickerResult.assets.length > 0) {
+      const selectedUri = pickerResult.assets[0].uri;
+      navigation.navigate("Adjust Borders", {
+        imageData: { uri: selectedUri },
+      });
+      setCapturedPhoto(pickerResult.assets[0].uri);
+    }
+  };
+
+  if (!permission) {
+    // Camera permissions are still loading.
+    return &lt;View />;
+  }
+
+  if (!permission.granted) {
+    // Camera permissions are not granted yet.
+    return (
+      &lt;View style={styles.container}>
+        &lt;Text style={{ textAlign: "center" }}>
+          We need your permission to show the camera
+        &lt;/Text>
+        &lt;TouchableOpacity onPress={requestPermission}>
+          &lt;Text>Grant permission&lt;/Text>
+        &lt;/TouchableOpacity>
+      &lt;/View>
+    );
+  }
+
+  /**
+  * Submits the captured photo.
+  * @function submitPhoto
+  */
+  const submitPhoto = () => {
+    navigation.navigate("MainTabs", { screen: "Adjust Borders" });
+  };
+
+  return (
+    &lt;View style={styles.container}>
+      {capturedPhoto ? (
+        &lt;View style={styles.previewContainer}>
+          &lt;Image source={{ uri: capturedPhoto }} style={styles.previewImage} />
+          &lt;TouchableOpacity onPress={submitPhoto} style={styles.submitButton}>
+            &lt;Text style={styles.submitButtonText}>Submit&lt;/Text>
+          &lt;/TouchableOpacity>
+          &lt;TouchableOpacity
+            style={[
+              styles.corner,
+              { top: corners.topLeft.y, left: corners.topLeft.x },
+            ]}
+            // {...topLeftResponder.panHandlers}
+          />
+          &lt;TouchableOpacity
+            style={[
+              styles.corner,
+              { top: corners.topRight.y, right: corners.topRight.x },
+            ]}
+            // {...topRightResponder.panHandlers}
+          />
+          &lt;TouchableOpacity
+            style={[
+              styles.corner,
+              { bottom: corners.bottomLeft.y, left: corners.bottomLeft.x },
+            ]}
+            // {...bottomLeftResponder.panHandlers}
+          />
+          &lt;TouchableOpacity
+            style={[
+              styles.corner,
+              { bottom: corners.bottomRight.y, right: corners.bottomRight.x },
+            ]}
+            // {...bottomRightResponder.panHandlers}
+          />
+          &lt;TouchableOpacity onPress={retakePicture} style={styles.closeButton}>
+            &lt;Text style={styles.closeButtonText}>X&lt;/Text>
+          &lt;/TouchableOpacity>
+        &lt;/View>
+      ) : (
+        &lt;CameraView style={styles.camera} ref={cameraRef}>
+          &lt;View style={styles.overlay} />
+          &lt;View style={styles.rectangleContainer}>
+            &lt;View style={styles.tab}>
+              &lt;Text style={styles.tabText}>Front of Card&lt;/Text>
+            &lt;/View>
+            &lt;View style={styles.rectangle} />
+          &lt;/View>
+          &lt;View style={styles.cameraFooter}>
+            &lt;TouchableOpacity
+              onPress={openCameraRoll}
+              style={styles.iconButton}
+            >
+              &lt;MaterialIcons name="insert-photo" size={24} color="white" />
+            &lt;/TouchableOpacity>
+            &lt;TouchableOpacity
+              onPress={takePicture}
+              style={styles.takePictureButton}
+            />
+            &lt;TouchableOpacity style={styles.iconButton}>
+              &lt;Ionicons name="arrow-forward" size={24} color="white" />
+            &lt;/TouchableOpacity>
+          &lt;/View>
+        &lt;/CameraView>
+      )}
+    &lt;/View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  previewContainer: {
+    flex: 1,
+  },
+  previewImage: {
+    flex: 1,
+  },
+  closeButton: {
+    position: "absolute",
+    top: 20,
+    left: 20,
+  },
+  closeButtonText: {
+    fontSize: 18,
+    color: "white",
+  },
+  camera: {
+    flex: 1,
+  },
+  cameraFooter: {
+    flex: 1,
+    backgroundColor: "transparent",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "flex-end",
+    marginBottom: 20,
+  },
+  takePictureButton: {
+    borderWidth: 2,
+    borderColor: "white",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 70,
+    height: 70,
+    backgroundColor: "#1D9DB9",
+    borderRadius: 35,
+  },
+  cameraRollButton: {
+    width: 50,
+    height: 50,
+    backgroundColor: "#1D9DB9",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cameraRollButtonText: {
+    color: "white",
+    fontSize: 16,
+  },
+  placeholderButton: {
+    width: 50,
+    height: 50,
+    backgroundColor: "#1D9DB9",
+  },
+  iconButton: {
+    width: 50,
+    height: 50,
+    backgroundColor: "transparent",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  rectangle: {
+    position: "absolute",
+    alignSelf: "center",
+    height: "70%",
+    width: "80%",
+    borderWidth: 2,
+    borderColor: "white",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    backgroundColor: "transparent",
+  },
+  tab: {
+    width: "50%",
+    backgroundColor: "black",
+    padding: 4,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    transform: [{ translateY: 90 }],
+  },
+  tabText: {
+    color: "white",
+    textAlign: "center",
+  },
+  rectangleContainer: {
+    position: "absolute",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    justifyContent: "center",
+    alignItems: "flex-start",
+  },
+  corner: {
+    position: "absolute",
+    width: 10,
+    height: 10,
+    backgroundColor: "red", // A bright color for visibility
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1, // Ensure it's above other elements
+  },
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AdjustBordersScreen">AdjustBordersScreen</a></li><li><a href="global.html#AnnotateScreen">AnnotateScreen</a></li><li><a href="global.html#CameraScreen">CameraScreen</a></li><li><a href="global.html#CameraStack">CameraStack</a></li><li><a href="global.html#ExportScreen">ExportScreen</a></li><li><a href="global.html#ForgotPasswordScreen">ForgotPasswordScreen</a></li><li><a href="global.html#HomeScreen">HomeScreen</a></li><li><a href="global.html#MainTabs">MainTabs</a></li><li><a href="global.html#MyProfileScreen">MyProfileScreen</a></li><li><a href="global.html#Navigation">Navigation</a></li><li><a href="global.html#OAuthButtons">OAuthButtons</a></li><li><a href="global.html#ScoreScreen">ScoreScreen</a></li><li><a href="global.html#SettingsScreen">SettingsScreen</a></li><li><a href="global.html#SignInScreen">SignInScreen</a></li><li><a href="global.html#SignUpScreen">SignUpScreen</a></li><li><a href="global.html#VerifyCodeScreen">VerifyCodeScreen</a></li><li><a href="global.html#changeCircleColor">changeCircleColor</a></li><li><a href="global.html#createCollection">createCollection</a></li><li><a href="global.html#edgeResponderBottom">edgeResponderBottom</a></li><li><a href="global.html#edgeResponderLeft">edgeResponderLeft</a></li><li><a href="global.html#edgeResponderRight">edgeResponderRight</a></li><li><a href="global.html#edgeResponderTop">edgeResponderTop</a></li><li><a href="global.html#fetchCardInfo">fetchCardInfo</a></li><li><a href="global.html#fetchPresignedUrl">fetchPresignedUrl</a></li><li><a href="global.html#filteredCollections">filteredCollections</a></li><li><a href="global.html#getCollections">getCollections</a></li><li><a href="global.html#getInitials">getInitials</a></li><li><a href="global.html#handleAddToCollectionButtonClick">handleAddToCollectionButtonClick</a></li><li><a href="global.html#handleBack">handleBack</a></li><li><a href="global.html#handleCloseModal">handleCloseModal</a></li><li><a href="global.html#handleDeleteAccount">handleDeleteAccount</a></li><li><a href="global.html#handleEditButtonClick">handleEditButtonClick</a></li><li><a href="global.html#handleExitButtonClick">handleExitButtonClick</a></li><li><a href="global.html#handlePanResponderMove">handlePanResponderMove</a></li><li><a href="global.html#handleResetPassword">handleResetPassword</a></li><li><a href="global.html#handleShare">handleShare</a></li><li><a href="global.html#handleShareButtonClick">handleShareButtonClick</a></li><li><a href="global.html#handleSignOutPress">handleSignOutPress</a></li><li><a href="global.html#loadResourcesAndDataAsync">loadResourcesAndDataAsync</a></li><li><a href="global.html#nextButton">nextButton</a></li><li><a href="global.html#onCreateCollectionPress">onCreateCollectionPress</a></li><li><a href="global.html#onForgotPasswordPress">onForgotPasswordPress</a></li><li><a href="global.html#onPress">onPress</a></li><li><a href="global.html#onSignInPress">onSignInPress</a></li><li><a href="global.html#onSignUpPress">onSignUpPress</a></li><li><a href="global.html#openCameraRoll">openCameraRoll</a></li><li><a href="global.html#panResponderBottom">panResponderBottom</a></li><li><a href="global.html#panResponderLeft">panResponderLeft</a></li><li><a href="global.html#panResponderRight">panResponderRight</a></li><li><a href="global.html#panResponderTop">panResponderTop</a></li><li><a href="global.html#promptForCredentials">promptForCredentials</a></li><li><a href="global.html#reloadCollections">reloadCollections</a></li><li><a href="global.html#retakePicture">retakePicture</a></li><li><a href="global.html#submitCardForGrading">submitCardForGrading</a></li><li><a href="global.html#submitPhoto">submitPhoto</a></li><li><a href="global.html#takePicture">takePicture</a></li><li><a href="global.html#undoButton">undoButton</a></li><li><a href="global.html#updateSearchQuery">updateSearchQuery</a></li><li><a href="global.html#useCachedResources">useCachedResources</a></li><li><a href="global.html#useCollections">useCollections</a></li><li><a href="global.html#useEffect">useEffect</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sat May 25 2024 16:17:20 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -11,6 +11,11 @@ import { captureRef } from "react-native-view-shot";
 import { useRoute, useNavigation } from "@react-navigation/native"; // Import useRoute and useNavigation
 import { Ionicons } from "@expo/vector-icons"; // Import Ionicons
 
+/**
+* ExportScreen component for exporting and sharing an image. Utilizes the captureRef method to capture the screen and the Share API to share the captured image.
+* @function ExportScreen
+* @returns {Object} The Export screen component.
+*/
 export default function ExportScreen() {
   const cardRef = useRef();
   const route = useRoute(); // Use the useRoute hook to access the route object
@@ -19,6 +24,12 @@ export default function ExportScreen() {
     route.params?.imageData?.uri ??
     "https://m.media-amazon.com/images/I/71-orZ7bqqL.jpg"; // Use the passed URI or fallback to a default
 
+  /**
+  * Captures the screen and shares the image using the Share API.
+  * @async
+  * @function handleShare
+  * @returns {Promise<void>} A promise that resolves when the image is shared.
+  */
   const handleShare = async () => {
     try {
       const uri = await captureRef(cardRef, {
@@ -34,6 +45,10 @@ export default function ExportScreen() {
     }
   };
 
+  /**
+  * Navigates back to the Score screen.
+  * @function handleBack
+  */
   const handleBack = () => {
     navigation.navigate("Score"); // Navigate back
   };

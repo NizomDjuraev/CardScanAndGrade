@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: screens/SignUpScreen.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: screens/SignUpScreen.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import * as React from "react";
+import { Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
+import { styles } from "../components/Styles";
+import { Ionicons } from "@expo/vector-icons";
+import { auth } from "../firebaseConfig";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  sendEmailVerification,
+} from "firebase/auth";
+import { createCollection } from "../backend/server";
+
+/**
+* SignUpScreen component for user registration. It provides fields for first name, last name, email, and password, and manages the sign-up process.
+* @function SignUpScreen
+* @param {Object} navigation - Navigation prop for screen transitions.
+* @returns {Object} The Sign Up screen component.
+*/
+export default function SignUpScreen({ navigation }) {
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
+  const [emailAddress, setEmailAddress] = React.useState("");
+  const [password, setPassword] = React.useState("");
+
+  /**
+  * Handles the sign-up process. Creates a new user, updates the profile, sends an email verification, and creates a default collection.
+  * @async
+  * @function onSignUpPress
+  * @returns {Promise&lt;void>} A promise that resolves when the sign-up process is complete.
+  */
+  const onSignUpPress = async () => {
+    try {
+      // Create user with email and password
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        emailAddress,
+        password
+      );
+
+      // Extract user from userCredential
+      const user = userCredential.user;
+
+      // Update profile with first and last name
+      await updateProfile(user, {
+        displayName: `${firstName} ${lastName}`,
+      });
+
+      // Send email verification
+      await sendEmailVerification(user);
+
+      navigation.replace("SignIn");
+
+      // Show alert after navigating to sign-in screen
+      Alert.alert(
+        "Email Verification",
+        "A verification email has been sent. Please verify your email then sign in.",
+        [{ text: "OK", onPress: () => console.log("OK Pressed") }]
+      );
+
+      //Create Default Collection if new user signs up with valid email and password
+      await createCollection(
+        user.email,
+        user.displayName.split(" ")[0],
+        user.displayName.split(" ")[1] || "",
+        "Default Collection"
+      );
+    } catch (error) {
+      console.log("Error signing up:", error.message);
+    }
+  };
+
+  /**
+  * Navigates to the SignIn screen.
+  * @function onSignInPress
+  */
+  const onSignInPress = () => navigation.replace("SignIn");
+
+  return (
+    &lt;View style={styles.loginView}>
+      &lt;View style={styles.loginInputView}>
+        &lt;View style={styles.iconContainer}>
+          &lt;Ionicons name="person-outline" size={20} color="#fff" />
+        &lt;/View>
+        &lt;TextInput
+          value={firstName}
+          style={styles.loginTextInput}
+          placeholder="First name..."
+          placeholderTextColor="#fff"
+          onChangeText={(firstName) => setFirstName(firstName)}
+        />
+      &lt;/View>
+
+      &lt;View style={styles.loginInputView}>
+        &lt;View style={styles.iconContainer}>
+          &lt;Ionicons name="person-outline" size={20} color="#fff" />
+        &lt;/View>
+        &lt;TextInput
+          value={lastName}
+          style={styles.loginTextInput}
+          placeholder="Last name..."
+          placeholderTextColor="#fff"
+          onChangeText={(lastName) => setLastName(lastName)}
+        />
+      &lt;/View>
+
+      &lt;View style={styles.loginInputView}>
+        &lt;View style={styles.iconContainer}>
+          &lt;Ionicons name="mail-outline" size={20} color="#fff" />
+        &lt;/View>
+        &lt;TextInput
+          autoCapitalize="none"
+          value={emailAddress}
+          style={styles.loginTextInput}
+          placeholder="Email..."
+          placeholderTextColor="#fff"
+          onChangeText={(email) => setEmailAddress(email)}
+        />
+      &lt;/View>
+
+      &lt;View style={styles.loginInputView}>
+        &lt;View style={styles.iconContainer}>
+          &lt;Ionicons name="lock-closed-outline" size={20} color="#fff" />
+        &lt;/View>
+        &lt;TextInput
+          value={password}
+          style={styles.loginTextInput}
+          placeholder="Password..."
+          placeholderTextColor="#fff"
+          secureTextEntry={true}
+          onChangeText={(password) => setPassword(password)}
+        />
+      &lt;/View>
+
+      &lt;TouchableOpacity style={styles.loginButton} onPress={onSignUpPress}>
+        &lt;Text style={styles.loginButtonText}>Sign up&lt;/Text>
+      &lt;/TouchableOpacity>
+
+      &lt;View style={styles.loginFooter}>
+        &lt;Text style={{ color: "#fff" }}>Have an account?&lt;/Text>
+
+        &lt;TouchableOpacity
+          style={styles.secondaryButton}
+          onPress={onSignInPress}
+        >
+          &lt;Text style={styles.secondaryButtonText}>Sign in&lt;/Text>
+        &lt;/TouchableOpacity>
+      &lt;/View>
+    &lt;/View>
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AdjustBordersScreen">AdjustBordersScreen</a></li><li><a href="global.html#AnnotateScreen">AnnotateScreen</a></li><li><a href="global.html#CameraScreen">CameraScreen</a></li><li><a href="global.html#CameraStack">CameraStack</a></li><li><a href="global.html#ExportScreen">ExportScreen</a></li><li><a href="global.html#ForgotPasswordScreen">ForgotPasswordScreen</a></li><li><a href="global.html#HomeScreen">HomeScreen</a></li><li><a href="global.html#MainTabs">MainTabs</a></li><li><a href="global.html#MyProfileScreen">MyProfileScreen</a></li><li><a href="global.html#Navigation">Navigation</a></li><li><a href="global.html#OAuthButtons">OAuthButtons</a></li><li><a href="global.html#ScoreScreen">ScoreScreen</a></li><li><a href="global.html#SettingsScreen">SettingsScreen</a></li><li><a href="global.html#SignInScreen">SignInScreen</a></li><li><a href="global.html#SignUpScreen">SignUpScreen</a></li><li><a href="global.html#VerifyCodeScreen">VerifyCodeScreen</a></li><li><a href="global.html#changeCircleColor">changeCircleColor</a></li><li><a href="global.html#createCollection">createCollection</a></li><li><a href="global.html#edgeResponderBottom">edgeResponderBottom</a></li><li><a href="global.html#edgeResponderLeft">edgeResponderLeft</a></li><li><a href="global.html#edgeResponderRight">edgeResponderRight</a></li><li><a href="global.html#edgeResponderTop">edgeResponderTop</a></li><li><a href="global.html#fetchCardInfo">fetchCardInfo</a></li><li><a href="global.html#fetchPresignedUrl">fetchPresignedUrl</a></li><li><a href="global.html#filteredCollections">filteredCollections</a></li><li><a href="global.html#getCollections">getCollections</a></li><li><a href="global.html#getInitials">getInitials</a></li><li><a href="global.html#handleAddToCollectionButtonClick">handleAddToCollectionButtonClick</a></li><li><a href="global.html#handleBack">handleBack</a></li><li><a href="global.html#handleCloseModal">handleCloseModal</a></li><li><a href="global.html#handleDeleteAccount">handleDeleteAccount</a></li><li><a href="global.html#handleEditButtonClick">handleEditButtonClick</a></li><li><a href="global.html#handleExitButtonClick">handleExitButtonClick</a></li><li><a href="global.html#handlePanResponderMove">handlePanResponderMove</a></li><li><a href="global.html#handleResetPassword">handleResetPassword</a></li><li><a href="global.html#handleShare">handleShare</a></li><li><a href="global.html#handleShareButtonClick">handleShareButtonClick</a></li><li><a href="global.html#handleSignOutPress">handleSignOutPress</a></li><li><a href="global.html#loadResourcesAndDataAsync">loadResourcesAndDataAsync</a></li><li><a href="global.html#nextButton">nextButton</a></li><li><a href="global.html#onCreateCollectionPress">onCreateCollectionPress</a></li><li><a href="global.html#onForgotPasswordPress">onForgotPasswordPress</a></li><li><a href="global.html#onPress">onPress</a></li><li><a href="global.html#onSignInPress">onSignInPress</a></li><li><a href="global.html#onSignUpPress">onSignUpPress</a></li><li><a href="global.html#openCameraRoll">openCameraRoll</a></li><li><a href="global.html#panResponderBottom">panResponderBottom</a></li><li><a href="global.html#panResponderLeft">panResponderLeft</a></li><li><a href="global.html#panResponderRight">panResponderRight</a></li><li><a href="global.html#panResponderTop">panResponderTop</a></li><li><a href="global.html#promptForCredentials">promptForCredentials</a></li><li><a href="global.html#reloadCollections">reloadCollections</a></li><li><a href="global.html#retakePicture">retakePicture</a></li><li><a href="global.html#submitCardForGrading">submitCardForGrading</a></li><li><a href="global.html#submitPhoto">submitPhoto</a></li><li><a href="global.html#takePicture">takePicture</a></li><li><a href="global.html#undoButton">undoButton</a></li><li><a href="global.html#updateSearchQuery">updateSearchQuery</a></li><li><a href="global.html#useCachedResources">useCachedResources</a></li><li><a href="global.html#useCollections">useCollections</a></li><li><a href="global.html#useEffect">useEffect</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sat May 25 2024 16:17:20 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

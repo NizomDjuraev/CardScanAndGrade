@@ -9,6 +9,11 @@ import {
   EmailAuthProvider,
 } from "firebase/auth";
 
+/**
+* MyProfileScreen component displays the user's profile information and provides options for signing out and deleting the account.
+* @function MyProfileScreen
+* @returns {Object} The My Profile screen component.
+*/
 export default function MyProfileScreenScreen() {
   const navigation = useNavigation();
   const [user, setUser] = useState(null);
@@ -20,6 +25,12 @@ export default function MyProfileScreenScreen() {
     }
   }, []);
 
+  /**
+  * Gets the initials of the user's display name.
+  * @function getInitials
+  * @param {string} displayName - The display name of the user.
+  * @returns {string} The initials of the display name.
+  */
   const getInitials = (displayName) => {
     const names = displayName.split(" ");
     const firstInitial = names[0] ? names[0][0].toUpperCase() : "";
@@ -27,6 +38,12 @@ export default function MyProfileScreenScreen() {
     return `${firstInitial}${lastInitial}`;
   };
 
+  /**
+  * Signs out the current user and navigates to the SignIn screen.
+  * @async
+  * @function handleSignOutPress
+  * @returns {Promise<void>} A promise that resolves when the user is signed out.
+  */
   const handleSignOutPress = async () => {
     try {
       await auth.signOut();
@@ -36,6 +53,11 @@ export default function MyProfileScreenScreen() {
     }
   };
 
+  /**
+  * Prompts the user to enter their password for reauthentication.
+  * @function promptForCredentials
+  * @returns {Promise<string|null>} A promise that resolves with the entered password or null if canceled.
+  */
   const promptForCredentials = async () => {
     return new Promise((resolve) => {
       Alert.prompt(
@@ -57,6 +79,12 @@ export default function MyProfileScreenScreen() {
     });
   };
 
+  /**
+  * Deletes the user's account after reauthentication.
+  * @async
+  * @function handleDeleteAccount
+  * @returns {Promise<void>} A promise that resolves when the account is deleted.
+  */
   const handleDeleteAccount = async () => {
     try {
       // Prompt the user to re-enter their password for reauthentication

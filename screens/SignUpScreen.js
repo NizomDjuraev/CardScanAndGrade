@@ -10,12 +10,24 @@ import {
 } from "firebase/auth";
 import { createCollection } from "../backend/server";
 
+/**
+* SignUpScreen component for user registration. It provides fields for first name, last name, email, and password, and manages the sign-up process.
+* @function SignUpScreen
+* @param {Object} navigation - Navigation prop for screen transitions.
+* @returns {Object} The Sign Up screen component.
+*/
 export default function SignUpScreen({ navigation }) {
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [emailAddress, setEmailAddress] = React.useState("");
   const [password, setPassword] = React.useState("");
 
+  /**
+  * Handles the sign-up process. Creates a new user, updates the profile, sends an email verification, and creates a default collection.
+  * @async
+  * @function onSignUpPress
+  * @returns {Promise<void>} A promise that resolves when the sign-up process is complete.
+  */
   const onSignUpPress = async () => {
     try {
       // Create user with email and password
@@ -57,6 +69,10 @@ export default function SignUpScreen({ navigation }) {
     }
   };
 
+  /**
+  * Navigates to the SignIn screen.
+  * @function onSignInPress
+  */
   const onSignInPress = () => navigation.replace("SignIn");
 
   return (

@@ -16,6 +16,13 @@ import * as ImageManipulator from 'expo-image-manipulator';
 const imageWidth = 281;
 const imageHeight = 500;
 
+/**
+* AdjustBordersScreen component allows users to adjust the borders of an image.
+* It supports pan gestures for resizing and moving the borders.
+* @function AdjustBordersScreen
+* @param {Object} navigation - Navigation prop for screen transitions.
+* @returns {Object} The Adjust Borders screen component.
+*/
 const AdjustBordersScreen = ({ navigation }) => {
   const route = useRoute();
   const [imageUri, setImageUri] = useState("");
@@ -26,6 +33,10 @@ const AdjustBordersScreen = ({ navigation }) => {
     }
   }, [route.params]);
 
+  /**
+  * Navigates to the Annotate screen with the adjusted image data.
+  * @function nextButton
+  */
   const nextButton = async () => {
     navigation.navigate("Annotate", { imageData: { uri: imageUri } });
   };
@@ -46,6 +57,10 @@ const AdjustBordersScreen = ({ navigation }) => {
     left: 150,
   });
 
+  /**
+  * Creates a pan responder for the left edge of the square.
+  * @function panResponderLeft
+  */
   const panResponderLeft = PanResponder.create({
     onStartShouldSetPanResponder: (_, gestureState) => {
       const { left, top, width, height } = squareDimensions;
@@ -70,6 +85,10 @@ const AdjustBordersScreen = ({ navigation }) => {
     }
   });
 
+  /**
+  * Creates a pan responder for the right edge of the square.
+  * @function panResponderRight
+  */
   const panResponderRight = PanResponder.create({
     onStartShouldSetPanResponder: (_, gestureState) => {
       const { left, top, width, height } = squareDimensions;
@@ -93,6 +112,10 @@ const AdjustBordersScreen = ({ navigation }) => {
     }
   });
 
+  /**
+  * Creates a pan responder for the top edge of the square.
+  * @function panResponderTop
+  */
   const panResponderTop = PanResponder.create({
     onStartShouldSetPanResponder: (_, gestureState) => {
       const { left, top, width, height } = squareDimensions;
@@ -117,6 +140,10 @@ const AdjustBordersScreen = ({ navigation }) => {
     }
   });
 
+  /**
+  * Creates a pan responder for the bottom edge of the square.
+  * @function panResponderBottom
+  */
   const panResponderBottom = PanResponder.create({
     onStartShouldSetPanResponder: (_, gestureState) => {
       const { left, top, width, height } = squareDimensions;
@@ -140,6 +167,10 @@ const AdjustBordersScreen = ({ navigation }) => {
     }
   });
 
+  /**
+  * Creates a pan responder for the left edge of the second square.
+  * @function edgeResponderLeft
+  */
   const edgeResponderLeft = PanResponder.create({
     onStartShouldSetPanResponder: (_, gestureState) => {
       const { left, top, width, height } = secondSquareDimensions;
@@ -164,6 +195,10 @@ const AdjustBordersScreen = ({ navigation }) => {
     }
   });
 
+  /**
+  * Creates a pan responder for the right edge of the second square.
+  * @function edgeResponderRight
+  */
   const edgeResponderRight = PanResponder.create({
     onStartShouldSetPanResponder: (_, gestureState) => {
       const { left, top, width, height } = secondSquareDimensions;
@@ -187,6 +222,10 @@ const AdjustBordersScreen = ({ navigation }) => {
     }
   });
 
+  /**
+  * Creates a pan responder for the top edge of the second square.
+  * @function edgeResponderTop
+  */
   const edgeResponderTop = PanResponder.create({
     onStartShouldSetPanResponder: (_, gestureState) => {
       const { left, top, width, height } = secondSquareDimensions;
@@ -211,6 +250,10 @@ const AdjustBordersScreen = ({ navigation }) => {
     }
   });
 
+  /**
+  * Creates a pan responder for the bottom edge of the second square.
+  * @function edgeResponderBottom
+  */
   const edgeResponderBottom = PanResponder.create({
     onStartShouldSetPanResponder: (_, gestureState) => {
       const { left, top, width, height } = secondSquareDimensions;

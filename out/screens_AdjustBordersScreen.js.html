@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: screens/AdjustBordersScreen.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: screens/AdjustBordersScreen.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect } from 'react';
+import {
+  View,
+  StyleSheet,
+  Image,
+  Text,
+  Dimensions,
+  TouchableOpacity,
+  PanResponder,
+} from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import * as ImageManipulator from 'expo-image-manipulator';
+
+
+
+const imageWidth = 281;
+const imageHeight = 500;
+
+/**
+* AdjustBordersScreen component allows users to adjust the borders of an image.
+* It supports pan gestures for resizing and moving the borders.
+* @function AdjustBordersScreen
+* @param {Object} navigation - Navigation prop for screen transitions.
+* @returns {Object} The Adjust Borders screen component.
+*/
+const AdjustBordersScreen = ({ navigation }) => {
+  const route = useRoute();
+  const [imageUri, setImageUri] = useState("");
+
+  useEffect(() => {
+    if (route.params &amp;&amp; route.params.imageData) {
+      setImageUri(route.params.imageData.uri);
+    }
+  }, [route.params]);
+
+  /**
+  * Navigates to the Annotate screen with the adjusted image data.
+  * @function nextButton
+  */
+  const nextButton = async () => {
+    navigation.navigate("Annotate", { imageData: { uri: imageUri } });
+  };
+
+  const [squareDimensions, setSquareDimensions] = useState({
+    width: 100,
+    height: 100,
+    top: 50,
+    left: 50,
+
+    
+  });
+
+  const [secondSquareDimensions, setSecondSquareDimensions] = useState({
+    width: 80,
+    height: 80,
+    top: 150,
+    left: 150,
+  });
+
+  /**
+  * Creates a pan responder for the left edge of the square.
+  * @function panResponderLeft
+  */
+  const panResponderLeft = PanResponder.create({
+    onStartShouldSetPanResponder: (_, gestureState) => {
+      const { left, top, width, height } = squareDimensions;
+      const { x0, y0 } = gestureState;
+      return (
+        x0 >= left &amp;&amp; x0 &lt;= left + 20 &amp;&amp;
+        y0 >= top &amp;&amp; y0 &lt;= top + height
+      );
+    },
+    onMoveShouldSetPanResponder: (_, gestureState) => {
+      const { dx, dy } = gestureState;
+      return Math.abs(dx) > Math.abs(dy) &amp;&amp; dx &lt; 0;
+    },
+    onPanResponderMove: (evt, gestureState) => {
+      const { dx } = gestureState;
+      const newWidth = Math.max(50, squareDimensions.width - dx);
+      setSquareDimensions(prevDimensions => ({
+        ...prevDimensions,
+        width: newWidth,
+        left: prevDimensions.left + dx
+      }));
+    }
+  });
+
+  /**
+  * Creates a pan responder for the right edge of the square.
+  * @function panResponderRight
+  */
+  const panResponderRight = PanResponder.create({
+    onStartShouldSetPanResponder: (_, gestureState) => {
+      const { left, top, width, height } = squareDimensions;
+      const { x0, y0 } = gestureState;
+      return (
+        x0 >= left + width - 20 &amp;&amp; x0 &lt;= left + width &amp;&amp;
+        y0 >= top &amp;&amp; y0 &lt;= top + height
+      );
+    },
+    onMoveShouldSetPanResponder: (_, gestureState) => {
+      const { dx, dy } = gestureState;
+      return Math.abs(dx) > Math.abs(dy) &amp;&amp; dx > 0;
+    },
+    onPanResponderMove: (evt, gestureState) => {
+      const { dx } = gestureState;
+      const newWidth = Math.max(50, squareDimensions.width + dx);
+      setSquareDimensions(prevDimensions => ({
+        ...prevDimensions,
+        width: newWidth,
+      }));
+    }
+  });
+
+  /**
+  * Creates a pan responder for the top edge of the square.
+  * @function panResponderTop
+  */
+  const panResponderTop = PanResponder.create({
+    onStartShouldSetPanResponder: (_, gestureState) => {
+      const { left, top, width, height } = squareDimensions;
+      const { x0, y0 } = gestureState;
+      return (
+        x0 >= left &amp;&amp; x0 &lt;= left + width &amp;&amp;
+        y0 >= top &amp;&amp; y0 &lt;= top + 20
+      );
+    },
+    onMoveShouldSetPanResponder: (_, gestureState) => {
+      const { dx, dy } = gestureState;
+      return Math.abs(dy) > Math.abs(dx) &amp;&amp; dy &lt; 0;
+    },
+    onPanResponderMove: (evt, gestureState) => {
+      const { dy } = gestureState;
+      const newHeight = Math.max(50, squareDimensions.height - dy);
+      setSquareDimensions(prevDimensions => ({
+        ...prevDimensions,
+        height: newHeight,
+        top: prevDimensions.top + dy
+      }));
+    }
+  });
+
+  /**
+  * Creates a pan responder for the bottom edge of the square.
+  * @function panResponderBottom
+  */
+  const panResponderBottom = PanResponder.create({
+    onStartShouldSetPanResponder: (_, gestureState) => {
+      const { left, top, width, height } = squareDimensions;
+      const { x0, y0 } = gestureState;
+      return (
+        x0 >= left &amp;&amp; x0 &lt;= left + width &amp;&amp;
+        y0 >= top + height - 20 &amp;&amp; y0 &lt;= top + height
+      );
+    },
+    onMoveShouldSetPanResponder: (_, gestureState) => {
+      const { dx, dy } = gestureState;
+      return Math.abs(dy) > Math.abs(dx) &amp;&amp; dy > 0;
+    },
+    onPanResponderMove: (evt, gestureState) => {
+      const { dy } = gestureState;
+      const newHeight = Math.max(50, squareDimensions.height + dy);
+      setSquareDimensions(prevDimensions => ({
+        ...prevDimensions,
+        height: newHeight,
+      }));
+    }
+  });
+
+  /**
+  * Creates a pan responder for the left edge of the second square.
+  * @function edgeResponderLeft
+  */
+  const edgeResponderLeft = PanResponder.create({
+    onStartShouldSetPanResponder: (_, gestureState) => {
+      const { left, top, width, height } = secondSquareDimensions;
+      const { x0, y0 } = gestureState;
+      return (
+        x0 >= left &amp;&amp; x0 &lt;= left + 20 &amp;&amp;
+        y0 >= top &amp;&amp; y0 &lt;= top + height
+      );
+    },
+    onMoveShouldSetPanResponder: (_, gestureState) => {
+      const { dx, dy } = gestureState;
+      return Math.abs(dx) > Math.abs(dy) &amp;&amp; dx &lt; 0;
+    },
+    onPanResponderMove: (evt, gestureState) => {
+      const { dx } = gestureState;
+      const newWidth = Math.max(50, secondSquareDimensions.width - dx);
+      setSecondSquareDimensions(prevDimensions => ({
+        ...prevDimensions,
+        width: newWidth,
+        left: prevDimensions.left + dx
+      }));
+    }
+  });
+
+  /**
+  * Creates a pan responder for the right edge of the second square.
+  * @function edgeResponderRight
+  */
+  const edgeResponderRight = PanResponder.create({
+    onStartShouldSetPanResponder: (_, gestureState) => {
+      const { left, top, width, height } = secondSquareDimensions;
+      const { x0, y0 } = gestureState;
+      return (
+        x0 >= left + width - 20 &amp;&amp; x0 &lt;= left + width &amp;&amp;
+        y0 >= top &amp;&amp; y0 &lt;= top + height
+      );
+    },
+    onMoveShouldSetPanResponder: (_, gestureState) => {
+      const { dx, dy } = gestureState;
+      return Math.abs(dx) > Math.abs(dy) &amp;&amp; dx > 0;
+    },
+    onPanResponderMove: (evt, gestureState) => {
+      const { dx } = gestureState;
+      const newWidth = Math.max(50, secondSquareDimensions.width + dx);
+      setSecondSquareDimensions(prevDimensions => ({
+        ...prevDimensions,
+        width: newWidth,
+      }));
+    }
+  });
+
+  /**
+  * Creates a pan responder for the top edge of the second square.
+  * @function edgeResponderTop
+  */
+  const edgeResponderTop = PanResponder.create({
+    onStartShouldSetPanResponder: (_, gestureState) => {
+      const { left, top, width, height } = secondSquareDimensions;
+      const { x0, y0 } = gestureState;
+      return (
+        x0 >= left &amp;&amp; x0 &lt;= left + width &amp;&amp;
+        y0 >= top &amp;&amp; y0 &lt;= top + 20
+      );
+    },
+    onMoveShouldSetPanResponder: (_, gestureState) => {
+      const { dx, dy } = gestureState;
+      return Math.abs(dy) > Math.abs(dx) &amp;&amp; dy &lt; 0;
+    },
+    onPanResponderMove: (evt, gestureState) => {
+      const { dy } = gestureState;
+      const newHeight = Math.max(50, secondSquareDimensions.height - dy);
+      setSecondSquareDimensions(prevDimensions => ({
+        ...prevDimensions,
+        height: newHeight,
+        top: prevDimensions.top + dy
+      }));
+    }
+  });
+
+  /**
+  * Creates a pan responder for the bottom edge of the second square.
+  * @function edgeResponderBottom
+  */
+  const edgeResponderBottom = PanResponder.create({
+    onStartShouldSetPanResponder: (_, gestureState) => {
+      const { left, top, width, height } = secondSquareDimensions;
+      const { x0, y0 } = gestureState;
+      return (
+        x0 >= left &amp;&amp; x0 &lt;= left + width &amp;&amp;
+        y0 >= top + height - 20 &amp;&amp; y0 &lt;= top + height
+      );
+    },
+    onMoveShouldSetPanResponder: (_, gestureState) => {
+      const { dx, dy } = gestureState;
+      return Math.abs(dy) > Math.abs(dx) &amp;&amp; dy > 0;
+    },
+    onPanResponderMove: (evt, gestureState) => {
+      const { dy } = gestureState;
+      const newHeight = Math.max(50, secondSquareDimensions.height + dy);
+      setSecondSquareDimensions(prevDimensions => ({
+        ...prevDimensions,
+        height: newHeight,
+      }));
+    }
+  });
+
+  return (
+    &lt;View style={styles.container}>
+      {imageUri ? (
+        &lt;View style={styles.imageContainer}>
+          &lt;Image source={{ uri: imageUri }} style={styles.image} />
+          &lt;View {...panResponderLeft.panHandlers} style={[styles.resizableSquare, styles.leftResizer, { height: squareDimensions.height, top: squareDimensions.top, left: squareDimensions.left }]} />
+          &lt;View {...panResponderRight.panHandlers} style={[styles.resizableSquare, styles.rightResizer, { height: squareDimensions.height, top: squareDimensions.top+10, left: squareDimensions.left + squareDimensions.width }]} />
+          &lt;View {...panResponderTop.panHandlers} style={[styles.resizableSquare, styles.topResizer, { width: squareDimensions.width, top: squareDimensions.top, left: squareDimensions.left+10}]} />
+          &lt;View {...panResponderBottom.panHandlers} style={[styles.resizableSquare, styles.bottomResizer, { width: squareDimensions.width, top: squareDimensions.top + squareDimensions.height, left: squareDimensions.left }]} />
+
+          &lt;View {...edgeResponderLeft.panHandlers} style={[styles.resizableEdges, styles.leftEdge, { height: secondSquareDimensions.height, top: secondSquareDimensions.top, left: secondSquareDimensions.left  }]} />
+          &lt;View {...edgeResponderRight.panHandlers} style={[styles.resizableEdges, styles.rightEdge, { height: secondSquareDimensions.height, top: secondSquareDimensions.top+10, left: secondSquareDimensions.left + secondSquareDimensions.width }]} />
+          &lt;View {...edgeResponderTop.panHandlers} style={[styles.resizableEdges, styles.topEdge, { width: secondSquareDimensions.width, top: secondSquareDimensions.top , left: secondSquareDimensions.left+10 }]} />
+          &lt;View {...edgeResponderBottom.panHandlers} style={[styles.resizableEdges, styles.bottomEdge, { width: secondSquareDimensions.width, top: secondSquareDimensions.top + secondSquareDimensions.height, left: secondSquareDimensions.left }]} />
+        &lt;/View>
+      ) : null}
+     
+      &lt;View style={styles.buttonContainer}>
+        &lt;TouchableOpacity onPress={nextButton} style={styles.next}>
+          &lt;Text style={styles.buttonText}>Next&lt;/Text>
+        &lt;/TouchableOpacity>
+      &lt;/View>
+    &lt;/View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  imageContainer: {
+    width: imageWidth,
+    height: imageHeight,
+    position: 'relative',
+    borderWidth: 1,
+    borderColor: 'black',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+  },
+  resizableSquare: {
+    position: 'absolute',
+    backgroundColor: 'rgba(0, 0, 0, 1)',
+    zIndex: 1000,
+  },
+  leftResizer: {
+    width: 10,
+  },
+  rightResizer: {
+    width: 10,
+  },
+  topResizer: {
+    height: 10,
+  },
+  bottomResizer: {
+    height: 10,
+  },
+
+  resizableEdges: {
+    position: 'absolute',
+    backgroundColor: 'rgba(255,255,255, 0.5)',
+    zIndex: 1000,
+  },
+  leftEdge: {
+    width: 10,
+  },
+  rightEdge: {
+    width: 10,
+  },
+  topEdge: {
+    height: 10,
+  },
+  bottomEdge: {
+    height: 10,
+  },
+
+  next: {
+    padding: 10,
+    marginTop: 20,
+  },
+  buttonText: {
+    color: 'black',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+});
+
+export default AdjustBordersScreen;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AdjustBordersScreen">AdjustBordersScreen</a></li><li><a href="global.html#AnnotateScreen">AnnotateScreen</a></li><li><a href="global.html#CameraScreen">CameraScreen</a></li><li><a href="global.html#CameraStack">CameraStack</a></li><li><a href="global.html#ExportScreen">ExportScreen</a></li><li><a href="global.html#ForgotPasswordScreen">ForgotPasswordScreen</a></li><li><a href="global.html#HomeScreen">HomeScreen</a></li><li><a href="global.html#MainTabs">MainTabs</a></li><li><a href="global.html#MyProfileScreen">MyProfileScreen</a></li><li><a href="global.html#Navigation">Navigation</a></li><li><a href="global.html#OAuthButtons">OAuthButtons</a></li><li><a href="global.html#ScoreScreen">ScoreScreen</a></li><li><a href="global.html#SettingsScreen">SettingsScreen</a></li><li><a href="global.html#SignInScreen">SignInScreen</a></li><li><a href="global.html#SignUpScreen">SignUpScreen</a></li><li><a href="global.html#VerifyCodeScreen">VerifyCodeScreen</a></li><li><a href="global.html#changeCircleColor">changeCircleColor</a></li><li><a href="global.html#createCollection">createCollection</a></li><li><a href="global.html#edgeResponderBottom">edgeResponderBottom</a></li><li><a href="global.html#edgeResponderLeft">edgeResponderLeft</a></li><li><a href="global.html#edgeResponderRight">edgeResponderRight</a></li><li><a href="global.html#edgeResponderTop">edgeResponderTop</a></li><li><a href="global.html#fetchCardInfo">fetchCardInfo</a></li><li><a href="global.html#fetchPresignedUrl">fetchPresignedUrl</a></li><li><a href="global.html#filteredCollections">filteredCollections</a></li><li><a href="global.html#getCollections">getCollections</a></li><li><a href="global.html#getInitials">getInitials</a></li><li><a href="global.html#handleAddToCollectionButtonClick">handleAddToCollectionButtonClick</a></li><li><a href="global.html#handleBack">handleBack</a></li><li><a href="global.html#handleCloseModal">handleCloseModal</a></li><li><a href="global.html#handleDeleteAccount">handleDeleteAccount</a></li><li><a href="global.html#handleEditButtonClick">handleEditButtonClick</a></li><li><a href="global.html#handleExitButtonClick">handleExitButtonClick</a></li><li><a href="global.html#handlePanResponderMove">handlePanResponderMove</a></li><li><a href="global.html#handleResetPassword">handleResetPassword</a></li><li><a href="global.html#handleShare">handleShare</a></li><li><a href="global.html#handleShareButtonClick">handleShareButtonClick</a></li><li><a href="global.html#handleSignOutPress">handleSignOutPress</a></li><li><a href="global.html#loadResourcesAndDataAsync">loadResourcesAndDataAsync</a></li><li><a href="global.html#nextButton">nextButton</a></li><li><a href="global.html#onCreateCollectionPress">onCreateCollectionPress</a></li><li><a href="global.html#onForgotPasswordPress">onForgotPasswordPress</a></li><li><a href="global.html#onPress">onPress</a></li><li><a href="global.html#onSignInPress">onSignInPress</a></li><li><a href="global.html#onSignUpPress">onSignUpPress</a></li><li><a href="global.html#openCameraRoll">openCameraRoll</a></li><li><a href="global.html#panResponderBottom">panResponderBottom</a></li><li><a href="global.html#panResponderLeft">panResponderLeft</a></li><li><a href="global.html#panResponderRight">panResponderRight</a></li><li><a href="global.html#panResponderTop">panResponderTop</a></li><li><a href="global.html#promptForCredentials">promptForCredentials</a></li><li><a href="global.html#reloadCollections">reloadCollections</a></li><li><a href="global.html#retakePicture">retakePicture</a></li><li><a href="global.html#submitCardForGrading">submitCardForGrading</a></li><li><a href="global.html#submitPhoto">submitPhoto</a></li><li><a href="global.html#takePicture">takePicture</a></li><li><a href="global.html#undoButton">undoButton</a></li><li><a href="global.html#updateSearchQuery">updateSearchQuery</a></li><li><a href="global.html#useCachedResources">useCachedResources</a></li><li><a href="global.html#useCollections">useCollections</a></li><li><a href="global.html#useEffect">useEffect</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sat May 25 2024 16:17:20 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
