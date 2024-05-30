@@ -19,7 +19,11 @@ Our codebase is written in JavaScript using React Native, enabling compatibility
 React Native enables the use of modular UI components as the building blocks of the application, promoting reusability and efficient UI development.
 
 - **Firebase**: Used for OAuth to provide secure user authentication, as well as for the login and account creation processes. Unique tokens generated through Firebase are used for backend API calls.
-- **AWS**: Used to host user collections, assist with backend API calls, and store all backend application data for the grading process.
+- **AWS**: Used to host user collections, assist with backend API calls, and store all application data. Specifically, we use AWS RDS to host two schemas and an API Gateway as the trigger for AWS Lambda functions.
+
+### AWS Architecture Details
+
+The AWS portion includes an API Gateway that triggers the `Frontend-Card-Collections` Lambda function, which contains the `index.js` file that needs to be updated if any backend changes are needed for the frontside application
 
 ## Code Documentation
 
